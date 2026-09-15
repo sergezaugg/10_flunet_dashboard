@@ -18,34 +18,69 @@ df_meta.shape
 
 
 
+
+
+
+
+
+
+
 # select only relevant columns 
-df_data = df_dat[["COUNTRY_CODE", "ORIGIN_SOURCE", "ISO_YEAR", "ISO_WEEK", "MMWR_WEEKSTARTDATE", "INF_A", "INF_B", "INF_ALL"]]
+df_data = df_dat[["COUNTRY_CODE", "COUNTRY_AREA_TERRITORY", 
+                    "ORIGIN_SOURCE", 
+                    "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE", 
+                    "SPEC_RECEIVED_NB", "SPEC_PROCESSED_NB",
+                    "INF_A", "INF_B", "INF_ALL"]]
 
 # convert str to datetime 
-df_data["date"] = pd.to_datetime(df_data["MMWR_WEEKSTARTDATE"],errors="coerce")
+df_data["ISO_WEEKSTARTDATE"] = pd.to_datetime(df_data["ISO_WEEKSTARTDATE"],errors="coerce")
 
 # select date from 2015
 df_data.shape
-df_data = df_data[df_data["date"] >= "2015-01-01"]
+df_data = df_data[df_data["ISO_WEEKSTARTDATE"] >= "2015-01-01"]
 df_data.shape
+
+
+
+# exclude country yeras with too many missings 
+thld = 0.30  
+
+# NA proportion per COUNTRY_CODE 
+df_data["na_prop"] = (df_data.groupby(["COUNTRY_CODE", ])["INF_ALL"].transform(lambda s: s.isna().mean()))
+
+# Filter out country-years above threshold
+df_data = df_data[df_data["na_prop"] <= thld].copy()
+df_data.shape
+
+
 
 # select only countries with sufficient data 
 country_counts = df_data["COUNTRY_CODE"].value_counts()
-countries = country_counts[country_counts >= 1200].index
-df_filt = df_data[df_data["COUNTRY_CODE"].isin(countries)]
-
+countries = country_counts[country_counts >= 500].index
+df_data = df_data[df_data["COUNTRY_CODE"].isin(countries)]
 # check
 df_data.shape
-df_filt.shape
-print(df_filt["COUNTRY_CODE"].value_counts().to_string())
 
-for country in df_filt["COUNTRY_CODE"].dropna().unique():
 
-    df_cnt = df_filt[df_filt["COUNTRY_CODE"] == country]
+# check
+all_selected_countries = df_data["COUNTRY_CODE"].value_counts()
+all_selected_countries.shape
+print(all_selected_countries.to_string())
+
+
+
+
+
+
+
+
+for country in df_data["COUNTRY_CODE"].dropna().unique():
+
+    df_cnt = df_data[df_data["COUNTRY_CODE"] == country]
 
     fig = px.line(
         df_cnt,
-        x="date",
+        x="ISO_WEEKSTARTDATE",
         y="INF_ALL",
         color="ORIGIN_SOURCE",
         title=f"Weekly Influenza cases — {country}",
@@ -54,7 +89,7 @@ for country in df_filt["COUNTRY_CODE"].dropna().unique():
 
     fig.update_layout(
         xaxis_title="Week",
-        yaxis_title="Influenza A cases",
+        yaxis_title="Influenza cases",
         hovermode="x unified",
     )
 
