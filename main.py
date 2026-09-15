@@ -33,7 +33,6 @@ df_meta.shape
 df_data = df_dat[["COUNTRY_AREA_TERRITORY", 
                     "ORIGIN_SOURCE", 
                     "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE", 
-                    "SPEC_RECEIVED_NB", "SPEC_PROCESSED_NB",
                     "INF_A", "INF_B", "INF_ALL"]]
 
 
@@ -49,16 +48,28 @@ inf_cols = df_data.filter(regex=r"^INF_").columns
 # Keep one row per country and date
 group_cols = ["COUNTRY", "ISO_WEEKSTARTDATE"]
 
+# df_sum = (
+#     df_data
+#     .groupby(group_cols, as_index=False)[inf_cols]
+#     .sum(min_count=1)      # keeps NaN if all values are NaN
+# )
+
 df_sum = (
     df_data
-    .groupby(group_cols, as_index=False)[inf_cols]
-    .sum(min_count=1)      # keeps NaN if all values are NaN
+    .groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False)
+    .agg(
+        **{col: (col, "sum") for col in inf_cols},
+        ISO_YEAR=("ISO_YEAR", "min"),
+        ISO_WEEK=("ISO_WEEK", "min"),
+    )
 )
+
+df_sum["ORIGIN_SOURCE"] = "SUM_ALL"
 
 df_sum.shape
 df_data.shape
-
-df_sum["ORIGIN_SOURCE"] = "SUM_ALL"
+df_sum.head()
+df_data.head()
 
 df_data = pd.concat([df_data, df_sum], ignore_index=True)
 
@@ -138,9 +149,11 @@ df_data["ORIGIN_SOURCE"].value_counts()
 
 df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "SENTINEL"]
+df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
 
-# re center
-df_data2["week_plot"] = (df_data2["ISO_WEEK"] - 30) 
+# # re center (not good)
+# df_data2["week_plot"] = (df_data2["ISO_WEEK"] - 35) 
+# df_data2["week_plot"] = ((df_data2["ISO_WEEK"] - 35) % 52)
 
 fig = px.line(
     df_data2,
@@ -163,7 +176,14 @@ fig.show()
 
 
 
-#------------------------
+
+
+
+
+
+
+
+
 
 
 
