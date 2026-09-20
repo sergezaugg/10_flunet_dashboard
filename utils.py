@@ -44,15 +44,13 @@ def preprocess_flunet_data(df):
 def include_rows_for_total_flunet_data(df):
     """total over ORIGIN_SOURCE of 'INF_A', 'INF_B', 'INF_ALL' per country and week"""
     df_sum = (
-        df
-        .groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False)
-        .agg(
-            **{col: (col, "sum") for col in ['INF_A', 'INF_B', 'INF_ALL']},
-            ISO_YEAR  = ("ISO_YEAR",  "first"),
-            ISO_WEEK  = ("ISO_WEEK",  "first"),
-            WHOREGION = ("WHOREGION", "first"), 
-            FLUSEASON = ("FLUSEASON", "first"),
-            ITZ       = ("ITZ",       "first"),
+        df.groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False)
+        .agg(**{col: (col, lambda s: s.sum(min_count=1)) for col in ["INF_A", "INF_B", "INF_ALL"]},
+            ISO_YEAR=("ISO_YEAR", "first"),
+            ISO_WEEK=("ISO_WEEK", "first"),
+            WHOREGION=("WHOREGION", "first"),
+            FLUSEASON=("FLUSEASON", "first"),
+            ITZ=("ITZ", "first"),
         )
     )
     df_sum["ORIGIN_SOURCE"] = "SUM_ALL"
@@ -75,14 +73,14 @@ def filter_by_date_range(df, date_range):
 
 
 @st.cache_data()
-def filter_data(df, prop_na_tol = 0.30, mean_count_tol = 40):
+def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, who_regions = ['EUR']):
     """ aaaa """
 
     df = df.copy()
 
     # exclude country with too many missings 
-    df["na_prop"] = (df.groupby(["COUNTRY", ])["INF_ALL"].transform(lambda s: s.isna().mean()))
-    df = df[df["na_prop"] <= prop_na_tol].copy()
+    df["prop_non_na"] = (df.groupby("COUNTRY")["INF_ALL"].transform(lambda s: s.notna().mean()))
+    df = df[df["prop_non_na"] >= prop_non_na_tol].copy()
 
     # filter out countries with low mean count
     df["mean_count_per_country"] = (df.groupby(["COUNTRY"])["INF_ALL"].transform(lambda s: s.mean()))
@@ -92,6 +90,9 @@ def filter_data(df, prop_na_tol = 0.30, mean_count_tol = 40):
     country_counts = df["COUNTRY"].value_counts()
     countries = country_counts[country_counts >= 700].index
     df = df[df["COUNTRY"].isin(countries)]
+
+    # select based on WHOREGION
+    df = df[df["WHOREGION"].isin(who_regions)]
 
     # check
     n_countries = df["COUNTRY"].value_counts().shape

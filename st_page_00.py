@@ -6,11 +6,16 @@
 import streamlit as st
 from streamlit import session_state as ss
 import plotly.express as px
+import pandas as pd
+n_countries = ss.df_data_plot["COUNTRY"].nunique()
 
-n_countries = ss.df_data["COUNTRY"].nunique()
+# handle NAs before plot
+df_plot = ss.df_data_plot.copy()
+
+df_plot.loc[df_plot["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
 
 fig = px.line(
-    ss.df_data,
+    df_plot,
     x="ISO_WEEKSTARTDATE",
     y="INF_ALL",
     color="ORIGIN_SOURCE",
