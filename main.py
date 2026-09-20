@@ -1,4 +1,3 @@
-
 """
 Exploration of FluNet data
 Author: Serge Zaugg
@@ -7,6 +6,7 @@ Date: 2026-09-14
 
 import pandas as pd
 import plotly.express as px
+
 
 #---------------------------------
 # download data
@@ -26,52 +26,82 @@ df_meta.shape
 #---------------------------------
 # pre-process
 
-# df_dat['COUNTRY_CODE'].unique().shape
-# df_dat['COUNTRY_AREA_TERRITORY'].unique().shape
-
 # select only relevant columns 
-df_data = df_dat[["COUNTRY_AREA_TERRITORY", 
-                    "ORIGIN_SOURCE", 
-                    "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE", 
-                    "INF_A", "INF_B", "INF_ALL"]]
+df_data = df_dat[[
+    "WHOREGION", "FLUSEASON", "ITZ", # "Influenza transmission zone"
+    "COUNTRY_AREA_TERRITORY", 
+    "ORIGIN_SOURCE", 
+    "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE", 
+    "INF_A", "INF_B", "INF_ALL"]]
 
-
+# re-name variables 
 df_data = df_data.rename(columns={"COUNTRY_AREA_TERRITORY": "COUNTRY"})
 
 # convert str to datetime 
 df_data["ISO_WEEKSTARTDATE"] = pd.to_datetime(df_data["ISO_WEEKSTARTDATE"],errors="coerce")
 
 
-# Columns to sum
-inf_cols = df_data.filter(regex=r"^INF_").columns
 
-# Keep one row per country and date
-group_cols = ["COUNTRY", "ISO_WEEKSTARTDATE"]
 
-# df_sum = (
-#     df_data
-#     .groupby(group_cols, as_index=False)[inf_cols]
-#     .sum(min_count=1)      # keeps NaN if all values are NaN
-# )
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# total over ORIGIN_SOURCE of 'INF_A', 'INF_B', 'INF_ALL' per country and week
 df_sum = (
     df_data
     .groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False)
     .agg(
-        **{col: (col, "sum") for col in inf_cols},
-        ISO_YEAR=("ISO_YEAR", "min"),
-        ISO_WEEK=("ISO_WEEK", "min"),
+        **{col: (col, "sum") for col in ['INF_A', 'INF_B', 'INF_ALL']},
+        ISO_YEAR  = ("ISO_YEAR",  "min"),
+        ISO_WEEK  = ("ISO_WEEK",  "min"),
+        WHOREGION = ("WHOREGION", "first"), 
+        FLUSEASON = ("FLUSEASON", "first"),
+        ITZ       = ("ITZ",       "first"),
     )
 )
 
 df_sum["ORIGIN_SOURCE"] = "SUM_ALL"
-
 df_sum.shape
 df_data.shape
-df_sum.head()
-df_data.head()
-
 df_data = pd.concat([df_data, df_sum], ignore_index=True)
+del(df_sum)
+df_data.shape
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #---------------------------------
@@ -147,20 +177,54 @@ fig.show()
 
 df_data["ORIGIN_SOURCE"].value_counts()
 
-df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
-df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "SENTINEL"]
+# df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
+# df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "SENTINEL"]
 df_data2 = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
 
-# # re center (not good)
-# df_data2["week_plot"] = (df_data2["ISO_WEEK"] - 35) 
-# df_data2["week_plot"] = ((df_data2["ISO_WEEK"] - 35) % 52)
+# select only relevant columns 
+df_data2 = df_data2[["COUNTRY", "ISO_WEEKSTARTDATE", "ISO_YEAR", "ISO_WEEK", "INF_ALL"]]
+
+
+#------------------
+# New seasonality plot 
+
+df = df_data2.copy()
+df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"])
+
+# window starts every 1 year
+starts = pd.date_range(
+    df["ISO_WEEKSTARTDATE"].min(),
+    df["ISO_WEEKSTARTDATE"].max() - pd.DateOffset(months=18),
+    freq="YS"
+)
+
+windows = []
+for start in starts:
+    end = start + pd.DateOffset(months=18)
+
+    d = df[
+        (df["ISO_WEEKSTARTDATE"] >= start) &
+        (df["ISO_WEEKSTARTDATE"] < end)
+    ].copy()
+
+    d["window"] = start.year
+    d["relative_date"] = (
+        d["ISO_WEEKSTARTDATE"] - start
+    ).dt.days
+
+    windows.append(d)
+
+df_windows = pd.concat(windows)
+
+df_windows.shape
+
 
 fig = px.line(
-    df_data2,
-    x="week_plot",
+    df_windows,
+    x="relative_date",
     y="INF_ALL",
-    color="ISO_YEAR",
-    facet_row="COUNTRY",      # one row per country
+    color="window",
+    facet_row="COUNTRY",
     facet_row_spacing=0.003,
     height=4000
 )
@@ -172,9 +236,11 @@ for annotation in fig.layout.annotations:
     annotation.text = annotation.text.replace("COUNTRY=", "")
     annotation.textangle = 0
 
+fig.update_xaxes(
+    title="Time from window start (days)"
+)
+
 fig.show()
-
-
 
 
 
