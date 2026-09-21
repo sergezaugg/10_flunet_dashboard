@@ -9,6 +9,10 @@ import plotly.express as px
 import pandas as pd
 n_countries = ss.df_data_plot["COUNTRY"].nunique()
 
+
+
+
+
 # handle NAs before plot
 df_plot = ss.df_data_plot.copy()
 
