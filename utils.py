@@ -73,7 +73,8 @@ def filter_by_date_range(df, date_range):
 
 
 @st.cache_data()
-def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, who_regions = ['EUR']):
+def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, 
+                who_regions = ['EUR'], fse_regions = ['aa'], itz_regions = ['bb']):
     """ aaaa """
 
     df = df.copy()
@@ -94,8 +95,14 @@ def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, who_regions = [
     # select based on WHOREGION
     df = df[df["WHOREGION"].isin(who_regions)]
 
+    # select based on FLUSEASON
+    df = df[df["FLUSEASON"].isin(fse_regions)]
+
+    # select based on ITZ
+    df = df[df["ITZ"].isin(itz_regions)]
+
     # check
-    n_countries = df["COUNTRY"].value_counts().shape
+    n_countries = df["COUNTRY"].unique().value_counts().shape
 
     return(df, n_countries) 
 
