@@ -102,7 +102,7 @@ def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40,
     df = df[df["ITZ"].isin(itz_regions)]
 
     # check
-    n_countries = df["COUNTRY"].value_counts().shape
+    n_countries = df["COUNTRY"].unique().value_counts().shape
 
     return(df, n_countries) 
 

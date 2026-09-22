@@ -7,44 +7,42 @@ import streamlit as st
 from streamlit import session_state as ss
 import plotly.express as px
 import pandas as pd
-n_countries = ss.df_data_plot["COUNTRY"].nunique()
+from utils import filter_data
+from utils_plots import make_facet_line_plot
 
+# build control items in sidebar
+with st.sidebar:
 
+    with st.expander("WHO regions", expanded=False):
+        who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_01")
 
+    print(type(who_regions))    
 
+    with st.expander("Flu Season regions", expanded=False):
+        fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_02")
 
-# handle NAs before plot
-df_plot = ss.df_data_plot.copy()
+    with st.expander("Data quality filters", expanded=False):
+        prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_04") 
+        mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_05")  
 
-df_plot.loc[df_plot["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
+    country_info = st.empty() 
 
-fig = px.line(
-    df_plot,
-    x="ISO_WEEKSTARTDATE",
-    y="INF_ALL",
-    color="ORIGIN_SOURCE",
-    facet_row="COUNTRY",
-    facet_row_spacing=0.004,
-    height= (n_countries * 200)
-)
+# apply user's data filter to data 
+ss.df_data_reg, n_countries = filter_data(df = ss.df_data, 
+    prop_non_na_tol = prop_na_tol, mean_count_tol = mean_count_tol, 
+    who_regions = who_regions, 
+    fse_regions = fse_regions, 
+    itz_regions = ss.ITZ_levels.to_numpy().tolist())
 
-fig.update_yaxes(matches=None)     # optional: independent y-scales
-fig.update_layout(showlegend=True)
-fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
-fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-
-for annotation in fig.layout.annotations:
-    annotation.text = annotation.text.replace("COUNTRY=", "")
-    annotation.textangle = 45
-
-st.plotly_chart(
-    fig,
-    use_container_width=True,
-    config={"displayModeBar": False}
-)
-
+# plot if n countries not too large
+if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:
+    country_info.text(f"N Countries too large!  = {n_countries[0]}")
+else:
+    country_info.text(f"N Countries = {n_countries[0]}")
+    # handle NAs before plot
+    ss.df_data_reg.loc[ss.df_data_reg["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
+    fig = make_facet_line_plot(df = ss.df_data_reg, n_countr = n_countries[0])
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 
