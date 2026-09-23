@@ -60,9 +60,9 @@ with st.sidebar:
     st.info(ss.date_range)
     
 # make navigation
-p0 = st.Page("st_page_00.py", title="Count (By Regions)")
-p1 = st.Page("st_page_01.py", title="Count (By ITZ)")
-p2 = st.Page("st_page_02.py", title="Flu wave onset")
+p0 = st.Page("st_page_00.py", title="Flu Trend by Regions")
+p1 = st.Page("st_page_01.py", title="Flu Trend by ITZ")
+p2 = st.Page("st_page_02.py", title="Flu Wave Onset")
 
 pg = st.navigation([p0, p1, p2], position="top")
 

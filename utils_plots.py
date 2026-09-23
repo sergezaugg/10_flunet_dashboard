@@ -32,12 +32,14 @@ def make_facet_line_plot(df, n_countr):
     return(fig)    
 
 @st.cache_data()
-def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False):
+def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False, plot_height = 150):
 
     # handle reverse plotting 
     years = sorted(df["SEASON_YEAR"].unique(), reverse=False)
     if inverse_year:    
         years = sorted(df["SEASON_YEAR"].unique(), reverse=True)
+
+    row_spac = 0.005
 
     fig = px.bar(
         df,
@@ -45,8 +47,8 @@ def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False
         y="INF_ALL",
         facet_row="SEASON_YEAR",
         category_orders={"SEASON_YEAR": years},
-        facet_row_spacing=0.006,
-        height= (n_years * 150)
+        facet_row_spacing = row_spac,
+        height= (n_years * (plot_height))
         )
 
     fig.add_vline(x=0, line_dash="dash", line_color="green", line_width=2)
