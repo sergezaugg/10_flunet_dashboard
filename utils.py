@@ -34,6 +34,8 @@ def preprocess_flunet_data(df):
     df = df.rename(columns={"COUNTRY_AREA_TERRITORY": "COUNTRY"})
     # convert str to datetime 
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"],errors="coerce")
+    # shorten lon countrynames to 3 words
+    df["COUNTRY"] = df["COUNTRY"].str.split().str[:3].str.join(" ")
     return(df)
 
 
@@ -102,7 +104,25 @@ def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40,
     df = df[df["ITZ"].isin(itz_regions)]
 
     # check
-    n_countries = df["COUNTRY"].unique().value_counts().shape
+    n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
 
     return(df, n_countries) 
 
+
+
+@st.cache_data()
+def re_center_season(df):
+    # Re-define "year" as period from July -> June
+    df["SEASON_YEAR"] = (df["ISO_WEEKSTARTDATE"].dt.year - (df["ISO_WEEKSTARTDATE"].dt.month < 7))
+    # Reference date = 1 January within that season
+    jan1 = pd.to_datetime((df["SEASON_YEAR"] + 1).astype(str) + "-01-01")
+    # Set Jan 1 = week 0, previous weeks = -1, -2, ...
+    df["SEASON_WEEK"] = ((df["ISO_WEEKSTARTDATE"] - jan1).dt.days // 7) + 0
+    return(df)
+
+
+@st.cache_data()
+def filter_a_country(df, c):
+    df = df[df["COUNTRY"] == c]
+    df = df[df["ORIGIN_SOURCE"] == "SUM_ALL"]
+    return(df)
