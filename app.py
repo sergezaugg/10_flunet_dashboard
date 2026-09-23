@@ -18,13 +18,19 @@ df_data = include_rows_for_total_flunet_data(df = df_data)
 # get global data dependent parameters  
 min_date         = df_data["ISO_WEEKSTARTDATE"].min().date().strftime("%Y-%m-%d")
 max_date         = df_data["ISO_WEEKSTARTDATE"].max().date().strftime("%Y-%m-%d")
+min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
+max_date_dt      = df_data["ISO_WEEKSTARTDATE"].max().date()
+
 WHOREGION_levels = df_data["WHOREGION"].unique()
 FLUSEASON_levels = df_data["FLUSEASON"].unique()
 ITZ_levels       = df_data["ITZ"].unique()
 MAX_COUNTRIES_IN_PLOTS = 30
 
+
+
 # initialize session state
 ss.setdefault("date_range", f"Data range: {min_date} to {max_date}")
+ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
 ss.setdefault("df_data", df_data)
 ss.setdefault("df_data_reg", df_data.iloc[[0]])
 ss.setdefault("df_data_itz", df_data.iloc[[0]])
