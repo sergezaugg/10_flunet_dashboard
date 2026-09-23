@@ -13,10 +13,10 @@ from utils_plots import make_facet_line_plot
 # build control items in sidebar
 with st.sidebar:
 
-    with st.expander("Influenza transmission zones", expanded=False):
+    with st.expander("Influenza transmission zones", expanded=True):
         itz_regions = st.pills("ITZ region", options = ss.ITZ_levels, selection_mode="multi", key="k_itz_03")
 
-    with st.expander("Data quality filters", expanded=False):
+    with st.expander("Data quality filters", expanded=True):
         prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0, step=0.05, format="%.2f", key="k_itz_04") 
         mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_itz_05")  
 

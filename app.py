@@ -56,7 +56,9 @@ with st.sidebar:
 # make navigation
 p0 = st.Page("st_page_00.py", title="Count (By Regions)")
 p1 = st.Page("st_page_01.py", title="Count (By ITZ)")
-pg = st.navigation([p0, p1], position="top")
+p2 = st.Page("st_page_02.py", title="Flu wave onset")
+
+pg = st.navigation([p0, p1, p2], position="top")
 
 pg.run()
 

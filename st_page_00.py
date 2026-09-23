@@ -13,15 +13,13 @@ from utils_plots import make_facet_line_plot
 # build control items in sidebar
 with st.sidebar:
 
-    with st.expander("WHO regions", expanded=False):
+    with st.expander("WHO regions", expanded=True):
         who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_01")
 
-    print(type(who_regions))    
-
-    with st.expander("Flu Season regions", expanded=False):
+    with st.expander("Flu Season regions", expanded=True):
         fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_02")
 
-    with st.expander("Data quality filters", expanded=False):
+    with st.expander("Data quality filters", expanded=True):
         prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_04") 
         mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_05")  
 

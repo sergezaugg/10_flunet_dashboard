@@ -25,9 +25,10 @@ def make_facet_line_plot(df, n_countr):
     fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
     for annotation in fig.layout.annotations:
         annotation.text = annotation.text.replace("COUNTRY=", "")
-        annotation.textangle = 45
+        annotation.textangle = 90
     return(fig)    
 
 
