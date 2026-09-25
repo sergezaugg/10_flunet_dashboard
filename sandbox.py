@@ -6,8 +6,38 @@ Date: 2026-09-14
 
 import pandas as pd
 import plotly.express as px
+# from streamlit import session_state as ss
+# import streamlit as st
+from utils import download_flunet_data, preprocess_flunet_data, include_rows_for_total_flunet_data
+from plotly.subplots import make_subplots
 
-# df_data.columns
+# download and pre-process (do once)
+df_dat, df_meta = download_flunet_data()
+df_data = preprocess_flunet_data(df = df_dat)
+df_data = include_rows_for_total_flunet_data(df = df_data)
+
+
+
+
+
+
+
+
+
+
+
+
+# df_data = ss.df_data
+
+
+
+
+
+
+
+
+
+
 
 # --------------------------
 # check onset of flu wave 

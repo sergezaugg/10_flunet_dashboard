@@ -63,8 +63,9 @@ with st.sidebar:
 p0 = st.Page("st_page_00.py", title="Flu Trend by Regions")
 p1 = st.Page("st_page_01.py", title="Flu Trend by ITZ")
 p2 = st.Page("st_page_02.py", title="Flu Wave Onset")
+p3 = st.Page("st_page_03.py", title="Type A vs B")
 
-pg = st.navigation([p0, p1, p2], position="top")
+pg = st.navigation([p0, p1, p2, p3], position="top")
 
 pg.run()
 
