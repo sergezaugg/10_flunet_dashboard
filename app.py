@@ -9,6 +9,7 @@ from streamlit import session_state as ss
 from src.utils import download_flunet_data, preprocess_flunet_data, include_rows_for_total_flunet_data
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
+st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/sergezaugg")
 
 # download and pre-process (do once)
 df_dat, df_meta, download_ts = download_flunet_data()
@@ -80,11 +81,17 @@ pg.run()
 # add info on sidebar
 with st.sidebar:
     st.text("  ")
-    st.text("Download on: " + str(download_ts))
-    st.text(f"First data:  {(ss.date_range_dt[0])}")
-    st.text(f"Latest data: {(ss.date_range_dt[1])}")
-
-
+   
+    st.markdown(
+        f"""
+        # <div style="line-height:1.1; font-size:0.85rem;">
+        Download: {download_ts}<br>
+        First data: {ss.date_range_dt[0]}<br>
+        Latest data: {ss.date_range_dt[1]}
+        # </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 
