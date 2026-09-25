@@ -8,15 +8,29 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from config import FLUNET_DATA_URL, FLUNET_META_URL
-
-
+import requests
+from io import BytesIO
+from datetime import datetime
 
 @st.cache_data(ttl=86400) 
 def download_flunet_data():
     """Download FluNet data and metadata."""
-    df_dat = pd.read_csv(FLUNET_DATA_URL)
+    
     df_meta = pd.read_csv(FLUNET_META_URL)
-    return(df_dat, df_meta)
+
+    # old method - pd wrapper
+    # df_dat = pd.read_csv(FLUNET_DATA_URL)
+    # step-by-step import 
+    response = requests.get(FLUNET_DATA_URL, timeout=60)
+    response.raise_for_status()
+    # Keep downloaded CSV in memory
+    csv_data = BytesIO(response.content)
+    # convert to DataFrame
+    df_dat = pd.read_csv(csv_data, engine="python")
+
+    download_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return(df_dat, df_meta, download_ts)
 
 
 @st.cache_data()
@@ -112,10 +126,11 @@ def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40,
 
 @st.cache_data()
 def re_center_season(df):
+    print("check : >>>>", df.shape)
     # Re-define "year" as period from July -> June
     df["SEASON_YEAR"] = (df["ISO_WEEKSTARTDATE"].dt.year - (df["ISO_WEEKSTARTDATE"].dt.month < 7))
     # Reference date = 1 January within that season
-    jan1 = pd.to_datetime((df["SEASON_YEAR"] + 1).astype(str) + "-01-01")
+    jan1 = pd.to_datetime((df["SEASON_YEAR"] + 1).astype("Int64").astype(str), format="%Y")
     # Set Jan 1 = week 0, previous weeks = -1, -2, ...
     df["SEASON_WEEK"] = ((df["ISO_WEEKSTARTDATE"] - jan1).dt.days // 7) + 0
     return(df)

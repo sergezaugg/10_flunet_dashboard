@@ -20,12 +20,11 @@ indx = int(np.where(all_countries == "Switzerland")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx)
-    date_range = st.slider("Date range", min_value=ss.date_range_dt[0], max_value=ss.date_range_dt[1], value = ss.date_range_dt, format="YYYY") 
-    curr_year_first = st.toggle(label = "Current year first", value=True)
-    indep_y_scales  = st.toggle(label = "Same Y-scales", value=True)
-    plot_height = st.slider("Plot height", min_value=25, max_value=500, value = 125, step=25) 
-    st.text(plot_height)
+    selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx, key="k_wave_01")
+    date_range = st.slider("Date range", min_value=ss.date_range_dt[0], max_value=ss.date_range_dt[1], format="YYYY", key="k_wave_02") # format="YYYY") 
+    curr_year_first = st.toggle(label = "Current year first", key="k_wave_03")
+    indep_y_scales  = st.toggle(label = "Same Y-scales", key="k_wave_04")
+    plot_height = st.slider("Plot height", min_value=25, max_value=500, step=25, key="k_wave_05") 
 
 # apply filters 
 df_data = filter_by_date_range(df = df_data, date_range = date_range)

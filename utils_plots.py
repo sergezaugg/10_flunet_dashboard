@@ -17,8 +17,11 @@ def make_facet_line_plot(df, n_countr):
         color="ORIGIN_SOURCE",
         facet_row="COUNTRY",
         facet_row_spacing=0.004,
-        height= (n_countr * 200)
+        height= (n_countr * 200),
+        markers=True,
     )
+    fig.update_traces(marker=dict(size=5))
+    fig.update_yaxes(title_text="Weekly Infl. Detect.")
     fig.update_yaxes(matches=None)     # optional: independent y-scales
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
@@ -50,7 +53,8 @@ def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False
         facet_row_spacing = row_spac,
         height= (n_years * (plot_height))
         )
-
+    
+    fig.update_yaxes(title_text="Weekly Infl. Detect.")
     fig.add_vline(x=0, line_dash="dash", line_color="green", line_width=2)
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
