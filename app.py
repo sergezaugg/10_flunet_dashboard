@@ -68,7 +68,8 @@ for key in list(st.session_state.keys()):
 
 # build control items in sidebar
 with st.sidebar:
-    st.markdown(":primary[**Interactive Exploration of FluNet data**]") 
+    st.markdown(f""":primary[**Interactive Exploration of FluNet data**]
+    Download: {download_ts}""")
     
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="Flu Trend by Regions")
@@ -78,20 +79,9 @@ p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 pg = st.navigation([p0, p1, p2, p3], position="top")
 pg.run()
 
-# add info on sidebar
-with st.sidebar:
-    st.text("  ")
+
    
-    st.markdown(
-        f"""
-        # <div style="line-height:1.1; font-size:0.85rem;">
-        Download: {download_ts}<br>
-        First data: {ss.date_range_dt[0]}<br>
-        Latest data: {ss.date_range_dt[1]}
-        # </div>
-        """,
-        unsafe_allow_html=True,
-    )
+   
 
 
 
