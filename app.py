@@ -6,7 +6,7 @@
 
 import streamlit as st
 from streamlit import session_state as ss
-from utils import download_flunet_data, preprocess_flunet_data, include_rows_for_total_flunet_data
+from src.utils import download_flunet_data, preprocess_flunet_data, include_rows_for_total_flunet_data
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 
@@ -55,6 +55,10 @@ ss.setdefault("k_wave_03", True)
 ss.setdefault("k_wave_04", True)
 ss.setdefault("k_wave_05", 125)
 
+# defaults for A vs B (page 03)
+ss.setdefault("k_ab_01", 10)
+ss.setdefault("k_ab_02", 600)
+ss.setdefault("k_ab_03", 50)
 
 
 # Protects every key from being deleted
@@ -66,10 +70,10 @@ with st.sidebar:
     st.markdown(":primary[**Interactive Exploration of FluNet data**]") 
     
 # make navigation
-p0 = st.Page("st_page_00.py", title="Flu Trend by Regions")
-p1 = st.Page("st_page_01.py", title="Flu Trend by ITZ")
-p2 = st.Page("st_page_02.py", title="Flu Wave Onset")
-p3 = st.Page("st_page_03.py", title="Type A vs B")
+p0 = st.Page("pages/st_page_00.py", title="Flu Trend by Regions")
+p1 = st.Page("pages/st_page_01.py", title="Flu Trend by ITZ")
+p2 = st.Page("pages/st_page_02.py", title="Flu Wave Onset")
+p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 pg = st.navigation([p0, p1, p2, p3], position="top")
 pg.run()
 
