@@ -3,47 +3,30 @@
 # Description : trend from past few weeks 
 #--------------------
 
-
-import numpy as np
-import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import filter_a_country, filter_data
-
-bin_size = 7
-
-def rolling_consecutive(g):
-    d = g["ISO_WEEKSTARTDATE"]
-    # length of consecutive 7-day streak
-    consecutive = d.diff().eq(pd.Timedelta(days=7))
-    streak = consecutive.groupby((~consecutive).cumsum()).cumsum() + 1
-    ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=True).mean()
-    return ma.where(streak >= bin_size)
-
-
-
-df_data = ss.df_data.copy()
-
-# use only SUM_ALL here 
-df = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
-df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
-df["INF_MA"] = df.groupby("COUNTRY", group_keys=False).apply(rolling_consecutive)
-
+from src.utils import filter_data, ma_by_country
 
 # build control items in sidebar
 with st.sidebar:
-    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_01")
-    fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_02")
-    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_04") 
-    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_05")  
+    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_ma_01")
+    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_ma_04") 
+    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_ma_05")  
+    ma_bin_size = st.select_slider("Moving Avg N weeks", options=[1,2,3,4,5,6,7,8,9,30], value=3, key="k_ma_06")
     country_info = st.empty() 
 
+# load data to local page 
+df = ss.df_sumall.copy()
+
+# apply moving average 
+df_ma = ma_by_country(df, bin_size = ma_bin_size)
+
 # apply user's data filter to data 
-df_plot, n_countries = filter_data(df = df, 
+df_plot, n_countries = filter_data(df = df_ma, 
     prop_non_na_tol = prop_na_tol, mean_count_tol = mean_count_tol, 
     who_regions = who_regions, 
-    fse_regions = fse_regions, 
+    fse_regions = ss.FLUSEASON_levels.to_numpy().tolist(), 
     itz_regions = ss.ITZ_levels.to_numpy().tolist())
 
 # plot if n countries not too large

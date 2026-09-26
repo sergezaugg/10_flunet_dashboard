@@ -15,6 +15,7 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 df_dat, df_meta, download_ts = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
 df_data = include_rows_for_total_flunet_data(df = df_data)
+df_sumall = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
 
 # get global data dependent parameters  
 min_date         = df_data["ISO_WEEKSTARTDATE"].min().date().strftime("%Y-%m-%d")
@@ -31,6 +32,8 @@ MAX_COUNTRIES_IN_PLOTS = 30
 ss.setdefault("date_range", f"Data range: {min_date} to {max_date}")
 ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
 ss.setdefault("df_data", df_data)
+ss.setdefault("df_sumall", df_sumall)
+
 ss.setdefault("df_data_reg", df_data.iloc[[0]])
 ss.setdefault("df_data_itz", df_data.iloc[[0]])
 ss.setdefault("WHOREGION_levels", WHOREGION_levels)
@@ -76,7 +79,7 @@ p0 = st.Page("pages/st_page_00.py", title="Flu Trend by Regions")
 p1 = st.Page("pages/st_page_01.py", title="Flu Trend by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Flu Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
-p4 = st.Page("pages/st_page_04.py", title="temp")
+p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
 pg = st.navigation([p0, p1, p2, p3, p4], position="top")
 pg.run()
 

@@ -141,3 +141,22 @@ def filter_a_country(df, c):
     df = df[df["COUNTRY"] == c]
     df = df[df["ORIGIN_SOURCE"] == "SUM_ALL"]
     return(df)
+
+
+
+@st.cache_data()
+def rolling_consecutive(g, bin_size):
+    d = g["ISO_WEEKSTARTDATE"]
+    consecutive = d.diff().eq(pd.Timedelta(days=7))
+    streak = consecutive.groupby((~consecutive).cumsum()).cumsum() + 1
+    ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=False).mean()
+    return ma.where(streak >= bin_size)
+
+@st.cache_data()
+def ma_by_country(df, bin_size):
+    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
+    df["INF_MA"] = (df.groupby("COUNTRY", group_keys=False).apply(lambda g: rolling_consecutive(g, bin_size)))
+    return df
+
+
+
