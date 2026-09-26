@@ -5,6 +5,7 @@
 #--------------------
 
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import streamlit as st
 from config import FLUNET_DATA_URL, FLUNET_META_URL
@@ -142,7 +143,8 @@ def filter_a_country(df, c):
     df = df[df["ORIGIN_SOURCE"] == "SUM_ALL"]
     return(df)
 
-
+#-----------------------------------------
+# rolling functions 
 
 @st.cache_data()
 def rolling_consecutive(g, bin_size):
@@ -158,5 +160,20 @@ def ma_by_country(df, bin_size):
     df["INF_MA"] = (df.groupby("COUNTRY", group_keys=False).apply(lambda g: rolling_consecutive(g, bin_size)))
     return df
 
+@st.cache_data
+def cond_mean(y, bin_size):
+    "conditional mean ¨from regression (degree 1 polyfit)"
+    x = np.arange(bin_size)
+    b1, b0 = np.polyfit(x, y, 1)   
+    return b0 + b1 * (bin_size - 1)   
 
-
+@st.cache_data
+def polyreg_by_country(df, bin_size):
+    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
+    df["INF_MA"] = (
+        df.groupby("COUNTRY")["INF_ALL"]
+          .rolling(bin_size, min_periods=bin_size)
+          .apply(lambda y: cond_mean(y, bin_size), raw=True)
+          .reset_index(level=0, drop=True)
+    )
+    return df
