@@ -42,8 +42,10 @@ ss.setdefault("ITZ_levels", ITZ_levels)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", MAX_COUNTRIES_IN_PLOTS)
 
 # defaults for WHOREGION (page 00)
-ss.setdefault("k_who_01", ss.WHOREGION_levels.to_numpy().tolist())
-ss.setdefault("k_who_02", ss.FLUSEASON_levels.to_numpy().tolist())
+# ss.setdefault("k_who_01", ss.WHOREGION_levels.to_numpy().tolist())
+# ss.setdefault("k_who_02", ss.FLUSEASON_levels.to_numpy().tolist())
+ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
+ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
 

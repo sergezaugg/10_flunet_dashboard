@@ -20,14 +20,14 @@ indx = int(np.where(all_countries == "Switzerland")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx, key="k_wave_01")
-    ma_bin_size = st.select_slider("Moving Avg N weeks", options=[1,3,5,7,9], value=3, key="k_ma_06")
+    selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx, key="k_tre_01")
+    ma_bin_size = st.select_slider("Moving Avg N weeks", options=[1,3,5,7,9], value=3, key="k_tre_02")
 
 # keep only n most recent weeks 
-st.text(df.shape)
+# st.text(df.shape)
 s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=53)
 df = df[df["ISO_WEEKSTARTDATE"] > s2]
-st.text(df.shape)
+# st.text(df.shape)
 
 # apply moving average 
 # df_ma = ma_by_country(df, bin_size = ma_bin_size)
