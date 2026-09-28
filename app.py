@@ -4,29 +4,34 @@
 # run locally : streamlit run stmain.py
 #--------------------
 
+import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import download_flunet_data, preprocess_flunet_data, include_rows_for_total_flunet_data
+from src.utils import download_flunet_data, preprocess_flunet_data
+from src.utils import sum_over_origin_source, concat_and_sort
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/sergezaugg")
 
 # download and pre-process (do once)
-df_dat, df_meta, download_ts = download_flunet_data()
+df_dat, download_ts = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
-df_data = include_rows_for_total_flunet_data(df = df_data)
-df_sumall = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
+df_sumall = sum_over_origin_source(df = df_data)
+df_data = concat_and_sort(df_data, df_sumall)
+
+
+# set global params
+MAX_COUNTRIES_IN_PLOTS = 30
 
 # get global data dependent parameters  
 min_date         = df_data["ISO_WEEKSTARTDATE"].min().date().strftime("%Y-%m-%d")
 max_date         = df_data["ISO_WEEKSTARTDATE"].max().date().strftime("%Y-%m-%d")
 min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
 max_date_dt      = df_data["ISO_WEEKSTARTDATE"].max().date()
-
 WHOREGION_levels = df_data["WHOREGION"].unique()
 FLUSEASON_levels = df_data["FLUSEASON"].unique()
 ITZ_levels       = df_data["ITZ"].unique()
-MAX_COUNTRIES_IN_PLOTS = 30
+
 
 # initialize session state
 ss.setdefault("date_range", f"Data range: {min_date} to {max_date}")

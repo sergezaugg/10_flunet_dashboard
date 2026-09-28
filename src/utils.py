@@ -15,23 +15,17 @@ from datetime import datetime
 
 @st.cache_data(ttl=86400) 
 def download_flunet_data():
-    """Download FluNet data and metadata."""
-    
-    df_meta = pd.read_csv(FLUNET_META_URL)
-
-    # old method - pd wrapper
-    # df_dat = pd.read_csv(FLUNET_DATA_URL)
+    """Download FluNet data"""
     # step-by-step import 
     response = requests.get(FLUNET_DATA_URL, timeout=60)
     response.raise_for_status()
     # Keep downloaded CSV in memory
     csv_data = BytesIO(response.content)
     # convert to DataFrame
-    df_dat = pd.read_csv(csv_data, engine="python")
-
+    df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
+    # get a timestamp
     download_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    return(df_dat, df_meta, download_ts)
+    return(df_dat, download_ts)
 
 
 @st.cache_data()
@@ -54,27 +48,27 @@ def preprocess_flunet_data(df):
     return(df)
 
 
+@st.cache_data
+def sum_over_origin_source(df):
+    """ Take sum over "ORIGIN_SOURCE" of "INF_A", "INF_B", "INF_ALL" """
 
+    # remove dups ignoring ORIGIN_SOURCE and outcomes ("INF_A", "INF_B", "INF_ALL")
+    df1 = df[["COUNTRY", "ISO_WEEKSTARTDATE","ISO_YEAR", "ISO_WEEK","WHOREGION", "FLUSEASON", "ITZ"]]
+    df1 = df1.drop_duplicates()
 
+    cols = ["COUNTRY", "ISO_WEEKSTARTDATE", "INF_A", "INF_B", "INF_ALL"]
+    df2 = (df[cols].groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False, sort=False).sum(min_count=1))
+    df2["ORIGIN_SOURCE"] = "SUM_ALL"
 
-@st.cache_data()
-def include_rows_for_total_flunet_data(df):
-    """total over ORIGIN_SOURCE of 'INF_A', 'INF_B', 'INF_ALL' per country and week"""
-    df_sum = (
-        df.groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False)
-        .agg(**{col: (col, lambda s: s.sum(min_count=1)) for col in ["INF_A", "INF_B", "INF_ALL"]},
-            ISO_YEAR=("ISO_YEAR", "first"),
-            ISO_WEEK=("ISO_WEEK", "first"),
-            WHOREGION=("WHOREGION", "first"),
-            FLUSEASON=("FLUSEASON", "first"),
-            ITZ=("ITZ", "first"),
-        )
-    )
-    df_sum["ORIGIN_SOURCE"] = "SUM_ALL"
-    df = pd.concat([df, df_sum], ignore_index=True)
-    return(df)
+    df_out = df1.merge(df2, on=["COUNTRY", "ISO_WEEKSTARTDATE"], how="left")
 
+    return (df_out)
 
+@st.cache_data
+def concat_and_sort(df1, df2):
+    df_out = pd.concat([df1, df2], ignore_index=True)
+    df_out = df_out.sort_values(by=["COUNTRY", "ORIGIN_SOURCE", "ISO_WEEKSTARTDATE"])
+    return(df_out)
 
 
 
