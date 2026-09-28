@@ -24,8 +24,6 @@ df_data = concat_and_sort(df_data, df_sumall)
 MAX_COUNTRIES_IN_PLOTS = 30
 
 # get global data dependent parameters  
-min_date         = df_data["ISO_WEEKSTARTDATE"].min().date().strftime("%Y-%m-%d")
-max_date         = df_data["ISO_WEEKSTARTDATE"].max().date().strftime("%Y-%m-%d")
 min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
 max_date_dt      = df_data["ISO_WEEKSTARTDATE"].max().date()
 WHOREGION_levels = df_data["WHOREGION"].unique()
@@ -34,7 +32,6 @@ ITZ_levels       = df_data["ITZ"].unique()
 
 
 # initialize session state
-ss.setdefault("date_range", f"Data range: {min_date} to {max_date}")
 ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
 ss.setdefault("df_data", df_data)
 ss.setdefault("df_sumall", df_sumall)
@@ -47,8 +44,6 @@ ss.setdefault("ITZ_levels", ITZ_levels)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", MAX_COUNTRIES_IN_PLOTS)
 
 # defaults for WHOREGION (page 00)
-# ss.setdefault("k_who_01", ss.WHOREGION_levels.to_numpy().tolist())
-# ss.setdefault("k_who_02", ss.FLUSEASON_levels.to_numpy().tolist())
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
@@ -71,8 +66,7 @@ ss.setdefault("k_ab_01", 10)
 ss.setdefault("k_ab_02", 600)
 ss.setdefault("k_ab_03", 50)
 
-
-# Protects every key from being deleted
+# Protects every key from being deleted (for multipage consistency)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
