@@ -45,6 +45,9 @@ def preprocess_flunet_data(df):
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"],errors="coerce")
     # shorten lon countrynames to 3 words
     df["COUNTRY"] = df["COUNTRY"].str.split().str[:3].str.join(" ")
+    # shorten itz levels
+    df['ITZ'] = df['ITZ'].str.replace("FLU_", "", regex=False)
+
     return(df)
 
 

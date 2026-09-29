@@ -24,7 +24,7 @@ ss.df_data_reg, n_countries = filter_data(df = ss.df_data,
     prop_non_na_tol = prop_na_tol, mean_count_tol = mean_count_tol, 
     who_regions = who_regions, 
     fse_regions = fse_regions, 
-    itz_regions = ss.ITZ_levels.to_numpy().tolist())
+    itz_regions = ss.ITZ_levels)
 
 # plot if n countries not too large
 if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:

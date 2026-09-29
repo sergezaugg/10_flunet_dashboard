@@ -12,7 +12,16 @@ from src.utils_plots import make_facet_line_plot
 
 # build control items in sidebar
 with st.sidebar:
-    itz_regions = st.pills("ITZ region", options = ss.ITZ_levels, selection_mode="multi", key="k_itz_03")
+    col1, col2 = st.columns(2)
+    itz_regions_a = col1.pills("Africa", options = ss.ITZ_levels_AFR, selection_mode="multi", width = 100, wrap = True, key="k_itz_03a")
+    itz_regions_b = col2.pills("America", options = ss.ITZ_levels_AMC, selection_mode="multi", width = 100, wrap = True, key="k_itz_03b")
+    col1, col2 = st.columns(2)
+    itz_regions_c = col1.pills("Asia", options = ss.ITZ_levels_ASI, selection_mode="multi", width = 100, wrap = True, key="k_itz_03c")
+    itz_regions_d = col2.pills("Europe", options = ss.ITZ_levels_EUR, selection_mode="multi", width = 100, wrap = True, key="k_itz_03d")
+    col1, col2 = st.columns(2)
+    itz_regions_e = col1.pills("Oceania", options = ss.ITZ_levels_OCE, selection_mode="multi", width = 100, wrap = True, key="k_itz_03e")
+    itz_regions = itz_regions_a + itz_regions_b + itz_regions_c + itz_regions_d + itz_regions_e
+
     prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0, step=0.05, format="%.2f", key="k_itz_04") 
     mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_itz_05")  
     country_info = st.empty() 

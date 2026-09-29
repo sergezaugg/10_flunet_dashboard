@@ -19,7 +19,6 @@ df_data = preprocess_flunet_data(df = df_dat)
 df_sumall = sum_over_origin_source(df = df_data)
 df_data = concat_and_sort(df_data, df_sumall)
 
-
 # set global params
 MAX_COUNTRIES_IN_PLOTS = 30
 
@@ -28,7 +27,15 @@ min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
 max_date_dt      = df_data["ISO_WEEKSTARTDATE"].max().date()
 WHOREGION_levels = df_data["WHOREGION"].unique()
 FLUSEASON_levels = df_data["FLUSEASON"].unique()
-ITZ_levels       = df_data["ITZ"].unique()
+ITZ_levels       = df_data["ITZ"].unique().tolist()
+
+# Handle ITZ regions 
+ITZ_levels_AFR = ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR']
+ITZ_levels_AMC = ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR']
+ITZ_levels_ASI = ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 'WST_ASIA']
+ITZ_levels_EUR = ['EST_EUR', 'NTH_EUR', 'SW_EUR']
+ITZ_levels_OCE = ['OCE_MEL_POL']
+
 
 
 # initialize session state
@@ -40,7 +47,14 @@ ss.setdefault("df_data_reg", df_data.iloc[[0]])
 ss.setdefault("df_data_itz", df_data.iloc[[0]])
 ss.setdefault("WHOREGION_levels", WHOREGION_levels)
 ss.setdefault("FLUSEASON_levels", FLUSEASON_levels)
+
 ss.setdefault("ITZ_levels", ITZ_levels)
+ss.setdefault("ITZ_levels_AFR", ITZ_levels_AFR)
+ss.setdefault("ITZ_levels_AMC", ITZ_levels_AMC)
+ss.setdefault("ITZ_levels_ASI", ITZ_levels_ASI)
+ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
+ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
+
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", MAX_COUNTRIES_IN_PLOTS)
 
 # defaults for WHOREGION (page 00)
@@ -50,9 +64,9 @@ ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
 
 # defaults for ITZ (page 01)
-ss.setdefault("k_itz_03", ss.ITZ_levels.to_numpy().tolist())
-ss.setdefault("k_itz_04", 0.80)
-ss.setdefault("k_itz_05", 30)
+# ss.setdefault("k_itz_03", ss.ITZ_levels.to_numpy().tolist()) # we want it empty 
+ss.setdefault("k_itz_04", 0.30)
+ss.setdefault("k_itz_05", 10)
 
 # defaults for wave onset (page 02)
 ss.setdefault("k_wave_01", 10)
