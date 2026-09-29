@@ -6,4 +6,5 @@ secondaryBackgroundColor = "#262730"
 textColor = "#FAFAFA"
 font = "sans serif"
 
-
+metricValueFontSize = "1.5rem" 
+metricValueFontWeight = 500
