@@ -90,12 +90,12 @@ with st.sidebar:
     Download: {download_ts}""")
     
 # make navigation
-p0 = st.Page("pages/st_page_00.py", title="Flu Trend by Regions")
-p1 = st.Page("pages/st_page_01.py", title="Flu Trend by ITZ")
-p2 = st.Page("pages/st_page_02.py", title="Flu Wave Onset")
+p0 = st.Page("pages/st_page_00.py", title="Case History by Regions")
+p1 = st.Page("pages/st_page_01.py", title="Case History by ITZ")
+p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
-p5 = st.Page("pages/st_page_05.py", title="Recent values")
+p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 
 pg = st.navigation([p5, p0, p1, p2, p3, p4], position="top")
 pg.run()
