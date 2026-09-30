@@ -16,6 +16,15 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 # download and pre-process (do once)
 df_dat, download_ts = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
+
+
+# dev - remove a few weeks from all data 
+DEV_MODE = True
+if DEV_MODE:
+    s2 = df_data['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=40)
+    df_data = df_data[df_data["ISO_WEEKSTARTDATE"] < s2]
+    # df_data.shape
+
 df_sumall = sum_over_origin_source(df = df_data)
 df_data = concat_and_sort(df_data, df_sumall)
 
