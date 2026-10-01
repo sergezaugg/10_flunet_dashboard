@@ -33,7 +33,7 @@ def preprocess_flunet_data(df):
     """pre-process FluNet dataframe : select variable, rename, convert formats"""
     # select only relevant columns 
     columns = [
-        "WHOREGION","FLUSEASON", "ITZ", # Influenza transmission zone
+        "WHOREGION","FLUSEASON", "ITZ", 
         "COUNTRY_AREA_TERRITORY","ORIGIN_SOURCE",
         "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE",
         "SPEC_PROCESSED_NB",
@@ -48,32 +48,13 @@ def preprocess_flunet_data(df):
     df["COUNTRY"] = df["COUNTRY"].str.split().str[:3].str.join(" ")
     # shorten itz levels
     df['ITZ'] = df['ITZ'].str.replace("FLU_", "", regex=False)
-
+    # set na where INF_ALL > SPEC_PROCESSED_NB
+    df.loc[df["INF_ALL"] > df["SPEC_PROCESSED_NB"], "SPEC_PROCESSED_NB"] = pd.NA
+    # compute positivity 
+    df["POSITIVITY"] = np.where(df["SPEC_PROCESSED_NB"] >= 10, (100 * df["INF_ALL"] / df["SPEC_PROCESSED_NB"]), np.nan)
+    # sort nicely 
+    df = df.sort_values(by=["COUNTRY", "ORIGIN_SOURCE", "ISO_WEEKSTARTDATE"])
     return(df)
-
-
-@st.cache_data
-def sum_over_origin_source(df):
-    """ Take sum over "ORIGIN_SOURCE" of outcomes : "SPEC_PROCESSED_NB", "INF_A", "INF_B", "INF_ALL" """
-
-    # remove dups ignoring ORIGIN_SOURCE and outcomes 
-    df1 = df[["COUNTRY", "ISO_WEEKSTARTDATE","ISO_YEAR", "ISO_WEEK","WHOREGION", "FLUSEASON", "ITZ"]]
-    df1 = df1.drop_duplicates()
-
-    cols = ["COUNTRY", "ISO_WEEKSTARTDATE", "SPEC_PROCESSED_NB", "INF_A", "INF_B", "INF_ALL"]
-    df2 = (df[cols].groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False, sort=False).sum(min_count=1))
-    df2["ORIGIN_SOURCE"] = "SUM_ALL"
-
-    df_out = df1.merge(df2, on=["COUNTRY", "ISO_WEEKSTARTDATE"], how="left")
-
-    return (df_out)
-
-@st.cache_data
-def concat_and_sort(df1, df2):
-    df_out = pd.concat([df1, df2], ignore_index=True)
-    df_out = df_out.sort_values(by=["COUNTRY", "ORIGIN_SOURCE", "ISO_WEEKSTARTDATE"])
-    return(df_out)
-
 
 
 @st.cache_data()
@@ -85,15 +66,14 @@ def filter_by_date_range(df, date_range):
     return(df) 
 
 
-
-
 @st.cache_data()
 def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, 
                 who_regions = ['EUR'], fse_regions = ['aa'], itz_regions = ['bb']):
-    """ aaaa """
-
+    """
+    aaaa 
+    """
     df = df.copy()
-
+    
     # exclude country with too many missings 
     df["prop_non_na"] = (df.groupby("COUNTRY")["INF_ALL"].transform(lambda s: s.notna().mean()))
     df = df[df["prop_non_na"] >= prop_non_na_tol].copy()
@@ -138,7 +118,6 @@ def re_center_season(df):
 @st.cache_data()
 def filter_a_country(df, c):
     df = df[df["COUNTRY"] == c]
-    df = df[df["ORIGIN_SOURCE"] == "SUM_ALL"]
     return(df)
 
 #-----------------------------------------

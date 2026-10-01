@@ -17,7 +17,7 @@ with st.sidebar:
     country_info = st.empty() 
 
 # apply user's data filter to data 
-ss.df_data_reg, n_countries = filter_data(df = ss.df_data, 
+df_plot, n_countries = filter_data(df = ss.df_data, 
     prop_non_na_tol = prop_na_tol, mean_count_tol = mean_count_tol, 
     who_regions = who_regions, 
     fse_regions = fse_regions, 
@@ -30,5 +30,5 @@ if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:
 country_info.text(f"N Countries = {n_countries[0]}")
 
 # plot 
-fig = make_facet_line_plot(df = ss.df_data_reg, n_countr = n_countries[0], outcome = "INF_ALL")
+fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
 st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

@@ -8,11 +8,13 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import polyreg_by_country, filter_a_country
-
+from src.utils import polyreg_by_country
 
 # load data to local page 
-df = ss.df_sumall.copy()
+df = ss.df_data.copy()
+# df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
+df = df[df["ORIGIN_SOURCE"] == "SENTINEL"]
+
 
 # keep only n most recent weeks 
 s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=15)
@@ -20,12 +22,9 @@ df = df[df["ISO_WEEKSTARTDATE"] > s2]
 df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df = df.sort_values('ISO_WEEKSTARTDATE', ascending=False)
 
+df = polyreg_by_country(df, bin_size = 3, deg = 1)
 
-
-
-df = polyreg_by_country(df, bin_size = 5, deg = 2)
-
-param_dif = 4
+param_dif = 3
 
 # take recent weeks only  
 latest_date = df['ISO_WEEKSTARTDATE'].max()
@@ -36,16 +35,12 @@ df0 = df0.sort_values('ISO_WEEKSTARTDATE', ascending=False)
 # compute simple slope 
 df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
-
 # df0[df0['COUNTRY'] == "China"]
 # df0[df0['COUNTRY'] == "Bahrain"]
-
-
 
 # keep only latest row per country 
 week_1 = latest_date - pd.Timedelta(weeks=0)
 df1 = df0[df0['ISO_WEEKSTARTDATE'] == week_1]
-
 
 # select to with higherst slope 
 df1 = df1.sort_values('SLOPE', ascending=False)

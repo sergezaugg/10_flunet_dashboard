@@ -11,7 +11,8 @@ import streamlit as st
 from src.utils import polyreg_by_country, filter_a_country
 
 # load data to local page 
-df = ss.df_sumall.copy()
+df = ss.df_data.copy()
+df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
 
 all_countries = df['COUNTRY'].unique()
 # Choose index of starting country

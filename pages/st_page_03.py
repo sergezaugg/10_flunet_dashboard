@@ -16,8 +16,7 @@ from plotly.subplots import make_subplots
 df_data = ss.df_data.copy()
 
 # use only SUM_ALL here 
-df_data = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
-
+df_data = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
 
 all_countries = df_data['COUNTRY'].unique()
 # Choose index of starting country

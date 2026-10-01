@@ -13,6 +13,9 @@ from src.utils_plots import make_facet_bar_plot
 import pandas as pd
 
 df_data = ss.df_data.copy()
+df_data = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
+
+
 df_data = re_center_season(df_data)
 all_countries = df_data['COUNTRY'].unique()
 # Choose index of starting country
