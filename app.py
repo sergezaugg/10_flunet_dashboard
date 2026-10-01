@@ -18,6 +18,9 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 df_dat, download_ts = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
 
+# df_data[[ 'COUNTRY' , "ORIGIN_SOURCE" ,  'ISO_WEEKSTARTDATE' ,  'INF_A' , 'INF_B' , 'INF_ALL' ]]
+
+
 #----------------------------------
 # set APP_ENV=dev 
 # echo %APP_ENV%
@@ -56,13 +59,17 @@ ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
 ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
 
-
-
 # defaults for WHOREGION (page 00)
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
+
+# defaults for WHOREGION - positivity (page 06)
+ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
+ss.setdefault("k_who_pos_02", ss.FLUSEASON_levels.tolist())
+ss.setdefault("k_who_pos_04", 0.80)
+ss.setdefault("k_who_pos_05", 30)
 
 # defaults for ITZ (page 01)
 # ss.setdefault("k_itz_03", ss.ITZ_levels.to_numpy().tolist()) # we want it empty 
@@ -98,9 +105,11 @@ p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
 p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
+p7 = st.Page("pages/st_page_07.py", title="Baseline thresholds")
+
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
-pg = st.navigation([p5, p0, p1, p6, p2, p3, p4, p_dev], position="top")
+pg = st.navigation([p5, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")
 pg.run()
 
 

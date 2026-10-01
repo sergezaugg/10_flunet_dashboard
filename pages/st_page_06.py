@@ -10,10 +10,10 @@ from src.utils_plots import make_facet_line_plot
 
 # build control items in sidebar
 with st.sidebar:
-    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_b_01")
-    fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_b_02")
-    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_b_04") 
-    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_b_05")  
+    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_pos_01")
+    fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_pos_02")
+    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_pos_04") 
+    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_pos_05")  
     country_info = st.empty() 
 
 # apply user's data filter to data 
