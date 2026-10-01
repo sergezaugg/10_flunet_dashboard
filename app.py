@@ -92,7 +92,7 @@ ss.setdefault("k_ab_03", 50)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
-# build control items in sidebar
+# build sidebar
 with st.sidebar:
     st.markdown(f""":primary[**Interactive Exploration of FluNet data**]
     Download: {download_ts}""")
@@ -106,7 +106,6 @@ p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
 p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Baseline thresholds")
-
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
 pg = st.navigation([p5, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")

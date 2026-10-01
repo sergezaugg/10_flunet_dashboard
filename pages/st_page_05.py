@@ -12,22 +12,31 @@ from src.utils import polyreg_by_country
 
 # load data to local page 
 df = ss.df_data.copy()
-# df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
-df = df[df["ORIGIN_SOURCE"] == "SENTINEL"]
 
+with st.sidebar:
+    date_info = st.empty()
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
+st.text(sel_data_source)
+
+# df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
+# df = df[df["ORIGIN_SOURCE"] == "SENTINEL"]
+df = df[df["ORIGIN_SOURCE"] == sel_data_source]
+
+latest_date = df["ISO_WEEKSTARTDATE"].max()
+ 
+date_info.text(f"Latest data from: \n {latest_date.strftime("%Y-%m-%d")}")
 
 # keep only n most recent weeks 
 s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=15)
 df = df[df["ISO_WEEKSTARTDATE"] > s2]
 df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
-df = df.sort_values('ISO_WEEKSTARTDATE', ascending=False)
 
 df = polyreg_by_country(df, bin_size = 3, deg = 1)
 
-param_dif = 3
 
 # take recent weeks only  
-latest_date = df['ISO_WEEKSTARTDATE'].max()
+param_dif = 3 # 3 will take 3 steps, i.e. change week-3 to week-0
+# latest_date = df['ISO_WEEKSTARTDATE'].max()
 week_0 = latest_date - pd.Timedelta(weeks=param_dif)
 df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
 df0 = df0.sort_values('ISO_WEEKSTARTDATE', ascending=False)
@@ -38,7 +47,7 @@ df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shif
 # df0[df0['COUNTRY'] == "China"]
 # df0[df0['COUNTRY'] == "Bahrain"]
 
-# keep only latest row per country 
+# keep only one row per country (latest)
 week_1 = latest_date - pd.Timedelta(weeks=0)
 df1 = df0[df0['ISO_WEEKSTARTDATE'] == week_1]
 
@@ -66,7 +75,7 @@ for i, row in df1.iterrows():
                 delta_arrow = "auto", 
                 delta_description = "Avg 3W change",
                 border  = False, 
-                width = 250, height = 180)
+                width = 250, height = int(0.75*height_row))
             
         
     with c2:
