@@ -36,6 +36,7 @@ def preprocess_flunet_data(df):
         "WHOREGION","FLUSEASON", "ITZ", # Influenza transmission zone
         "COUNTRY_AREA_TERRITORY","ORIGIN_SOURCE",
         "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE",
+        "SPEC_PROCESSED_NB",
         "INF_A", "INF_B", "INF_ALL",
         ]
     df = df[columns].copy()
@@ -53,13 +54,13 @@ def preprocess_flunet_data(df):
 
 @st.cache_data
 def sum_over_origin_source(df):
-    """ Take sum over "ORIGIN_SOURCE" of "INF_A", "INF_B", "INF_ALL" """
+    """ Take sum over "ORIGIN_SOURCE" of outcomes : "SPEC_PROCESSED_NB", "INF_A", "INF_B", "INF_ALL" """
 
-    # remove dups ignoring ORIGIN_SOURCE and outcomes ("INF_A", "INF_B", "INF_ALL")
+    # remove dups ignoring ORIGIN_SOURCE and outcomes 
     df1 = df[["COUNTRY", "ISO_WEEKSTARTDATE","ISO_YEAR", "ISO_WEEK","WHOREGION", "FLUSEASON", "ITZ"]]
     df1 = df1.drop_duplicates()
 
-    cols = ["COUNTRY", "ISO_WEEKSTARTDATE", "INF_A", "INF_B", "INF_ALL"]
+    cols = ["COUNTRY", "ISO_WEEKSTARTDATE", "SPEC_PROCESSED_NB", "INF_A", "INF_B", "INF_ALL"]
     df2 = (df[cols].groupby(["COUNTRY", "ISO_WEEKSTARTDATE"], as_index=False, sort=False).sum(min_count=1))
     df2["ORIGIN_SOURCE"] = "SUM_ALL"
 

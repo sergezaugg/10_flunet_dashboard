@@ -10,10 +10,10 @@ from src.utils_plots import make_facet_line_plot
 
 # build control items in sidebar
 with st.sidebar:
-    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_01")
-    fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_02")
-    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_04") 
-    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_05")  
+    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_who_b_01")
+    fse_regions = st.multiselect("Flu Season region", options = ss.FLUSEASON_levels, key="k_who_b_02")
+    prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_who_b_04") 
+    mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_who_b_05")  
     country_info = st.empty() 
 
 # apply user's data filter to data 
@@ -30,5 +30,5 @@ if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:
 country_info.text(f"N Countries = {n_countries[0]}")
 
 # plot 
-fig = make_facet_line_plot(df = ss.df_data_reg, n_countr = n_countries[0], outcome = "INF_ALL")
+fig = make_facet_line_plot(df = ss.df_data_reg, n_countr = n_countries[0], outcome = "POSITIVITY")
 st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

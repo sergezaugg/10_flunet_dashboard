@@ -15,18 +15,37 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 
 # download and pre-process (do once)
 df_dat, download_ts = download_flunet_data()
+
 df_data = preprocess_flunet_data(df = df_dat)
+# df_data.shape
+
+df_2 = sum_over_origin_source(df_data) # we realy need that ???????????????
+# df_2.shape
+
+# set na where INF_ALL > SPEC_PROCESSED_NB
+df_data.loc[df_data["INF_ALL"] > df_data["SPEC_PROCESSED_NB"], "SPEC_PROCESSED_NB"] = pd.NA
+df_data["POSITIVITY"] = 100*(df_data["INF_ALL"] / df_data["SPEC_PROCESSED_NB"])
+
+df_data = concat_and_sort(df_data, df_2)
+# df_data.shape
+
+df_sumall = df_data[df_data["ORIGIN_SOURCE"] == "SUM_ALL"]
+# df_sumall.shape
+
+# # df_data.columns
+# df_data.loc[df_data['COUNTRY'] == "Belgium", 
+#             ["ISO_WEEKSTARTDATE", "ORIGIN_SOURCE", "SPEC_PROCESSED_NB", "INF_ALL", "POSITIVITY"]].tail(50)
 
 
-# dev - remove a few weeks from all data 
-DEV_MODE = False
-if DEV_MODE:
-    s2 = df_data['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=40)
-    df_data = df_data[df_data["ISO_WEEKSTARTDATE"] < s2]
-    # df_data.shape
 
-df_sumall = sum_over_origin_source(df = df_data)
-df_data = concat_and_sort(df_data, df_sumall)
+
+
+# # dev - remove a few weeks from all data 
+# DEV_MODE = False
+# if DEV_MODE:
+#     s2 = df_data['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=40)
+#     df_data = df_data[df_data["ISO_WEEKSTARTDATE"] < s2]
+#     # df_data.shape
 
 # set global params
 MAX_COUNTRIES_IN_PLOTS = 30
@@ -101,12 +120,13 @@ with st.sidebar:
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="Case History by Regions")
 p1 = st.Page("pages/st_page_01.py", title="Case History by ITZ")
+p6 = st.Page("pages/st_page_00b.py", title="Positivity by Regions")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
 p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 
-pg = st.navigation([p5, p0, p1, p2, p3, p4], position="top")
+pg = st.navigation([p5, p0, p6, p1, p2, p3, p4], position="top")
 pg.run()
 
 

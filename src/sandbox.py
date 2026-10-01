@@ -15,10 +15,17 @@ df_meta = pd.read_csv(FLUNET_META_URL)
 # download and pre-process (do once)
 df_dat, download_ts = download_flunet_data()
 
+df_dat["POSITIVITY"] = df_dat["INF_ALL"] / df_dat["SPEC_PROCESSED_NB"]
+
+
 df_dat.columns
-df_dat['SPEC_RECEIVED_NB'].isna().mean()
 df_dat['SPEC_PROCESSED_NB'].isna().mean()
 df_dat['INF_ALL'].isna().mean()
+df_dat['POSITIVITY'].isna().mean()
+
+
+
+
 
 pd.crosstab(df_dat['SPEC_PROCESSED_NB'].isna(), 
             df_dat['INF_ALL'].isna())

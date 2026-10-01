@@ -5,8 +5,6 @@
 
 import streamlit as st
 from streamlit import session_state as ss
-import plotly.express as px
-import pandas as pd
 from src.utils import filter_data
 from src.utils_plots import make_facet_line_plot
 
@@ -21,7 +19,6 @@ with st.sidebar:
     col1, col2 = st.columns(2)
     itz_regions_e = col1.pills("Oceania", options = ss.ITZ_levels_OCE, selection_mode="multi", width = 100, wrap = True, key="k_itz_03e")
     itz_regions = itz_regions_a + itz_regions_b + itz_regions_c + itz_regions_d + itz_regions_e
-
     prop_na_tol = st.slider("Required proportion non-NAs", min_value=0.0, max_value=1.0, step=0.05, format="%.2f", key="k_itz_04") 
     mean_count_tol = st.slider("Required Average count", min_value=0, max_value=100, step=1, format="%d", key="k_itz_05")  
     country_info = st.empty() 
@@ -35,13 +32,10 @@ df_plot, n_countries = filter_data(df = ss.df_data,
 
 # plot if n countries not too large
 if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:
-    country_info.text(f"N Countries too large!  = {n_countries[0]}")
-else:
-    country_info.text(f"N Countries = {n_countries[0]}")
-    # handle NAs before plot
-    df_plot.loc[df_plot["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
-    fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    country_info.text(f"Too many countries: {n_countries[0]} \n Max allowed: {ss.MAX_COUNTRIES_IN_PLOTS}")
+    st.stop()
+country_info.text(f"N Countries = {n_countries[0]}")
 
-
-
+# plot 
+fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
+st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
