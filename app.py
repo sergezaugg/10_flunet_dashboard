@@ -19,7 +19,7 @@ df_data = preprocess_flunet_data(df = df_dat)
 
 
 # dev - remove a few weeks from all data 
-DEV_MODE = True
+DEV_MODE = False
 if DEV_MODE:
     s2 = df_data['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=40)
     df_data = df_data[df_data["ISO_WEEKSTARTDATE"] < s2]

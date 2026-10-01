@@ -8,8 +8,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import ma_by_country, polyreg_by_country, filter_a_country
-
+from src.utils import polyreg_by_country, filter_a_country
 
 # load data to local page 
 df = ss.df_sumall.copy()
@@ -21,20 +20,19 @@ indx = int(np.where(all_countries == "Switzerland")[0][0])
 # build control items in sidebar
 with st.sidebar:
     selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx, key="k_tre_01")
-    ma_bin_size = st.select_slider("Moving Avg N weeks", options=[1,3,5,7,9], value=3, key="k_tre_02")
+    ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), value=3, key="k_tre_02")
+    ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), value=1, key="k_tre_03")
 
 # keep only n most recent weeks 
-# st.text(df.shape)
-s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=53)
+s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=100)
 df = df[df["ISO_WEEKSTARTDATE"] > s2]
-# st.text(df.shape)
 
 # apply moving average 
-# df_ma = ma_by_country(df, bin_size = ma_bin_size)
-df_ma = polyreg_by_country(df, bin_size = ma_bin_size)
+df_ma = polyreg_by_country(df, bin_size = ma_bin_size, deg = ma_degree)
 
 df_plot = filter_a_country(df_ma, selected_country)
 
+# reshape to long for easy plotting of two traces 
 df_long = df_plot.melt(
     id_vars=[c for c in df.columns if c not in ["INF_ALL", "INF_MA"]],
     value_vars=["INF_ALL", "INF_MA"],
@@ -50,7 +48,7 @@ fig = px.line(
     facet_row="COUNTRY",
     height=300,
     markers=True,
-    color_discrete_map={"INF_ALL": "#1f77b4",   "INF_MA": "#d62728",   "OTHER": "#2ca02c"},
+    color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
 )
 
 fig.update_traces(marker=dict(size=5))

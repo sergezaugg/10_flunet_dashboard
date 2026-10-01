@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import ma_by_country, polyreg_by_country, filter_a_country
+from src.utils import polyreg_by_country, filter_a_country
 
 
 # load data to local page 
@@ -21,10 +21,11 @@ df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df = df.sort_values('ISO_WEEKSTARTDATE', ascending=False)
 
 
-param_ma = 3
-param_dif = 4
-df = polyreg_by_country(df, bin_size = param_ma)
 
+
+df = polyreg_by_country(df, bin_size = 5, deg = 2)
+
+param_dif = 4
 
 # take recent weeks only  
 latest_date = df['ISO_WEEKSTARTDATE'].max()

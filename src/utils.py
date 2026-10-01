@@ -151,26 +151,23 @@ def rolling_consecutive(g, bin_size):
     ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=False).mean()
     return ma.where(streak >= bin_size)
 
-@st.cache_data()
-def ma_by_country(df, bin_size):
-    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
-    df["INF_MA"] = (df.groupby("COUNTRY", group_keys=False).apply(lambda g: rolling_consecutive(g, bin_size)))
-    return df
+def cond_expect_last_polyfit(y, deg=1):
+    """
+    Conditional expectaion at last week from polynomial regression.
+    To be used by polyreg_by_country for curve smoothing 
+    """
+    n = len(y)
+    x = np.arange(n)
+    coef = np.polyfit(x, y, deg)
+    return np.polyval(coef, n - 1)
 
 @st.cache_data
-def cond_mean(y, bin_size):
-    "conditional mean ¨from regression (degree 1 polyfit)"
-    x = np.arange(bin_size)
-    b1, b0 = np.polyfit(x, y, 1)   
-    return b0 + b1 * (bin_size - 1)   
-
-@st.cache_data
-def polyreg_by_country(df, bin_size):
+def polyreg_by_country(df, bin_size, deg):
     df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
     df["INF_MA"] = (
         df.groupby("COUNTRY")["INF_ALL"]
           .rolling(bin_size, min_periods=bin_size)
-          .apply(lambda y: cond_mean(y, bin_size), raw=True)
+          .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
           .reset_index(level=0, drop=True)
     )
     return df
