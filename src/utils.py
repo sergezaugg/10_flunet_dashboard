@@ -142,8 +142,21 @@ def cond_expect_last_polyfit(y, deg=1):
     return np.polyval(coef, n - 1)
 
 
+
 @st.cache_data
-def polyreg_by_country(df, bin_size, deg):
+def polyreg_by_country_only(df, bin_size, deg):
+    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
+    df["INF_MA"] = (
+        df.groupby("COUNTRY")["INF_ALL"]
+          .rolling(bin_size, min_periods=bin_size)
+          .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
+          .reset_index(level=0, drop=True)
+    )
+    return df
+
+
+@st.cache_data
+def polyreg_by_country_source(df, bin_size, deg):
     df = df.sort_values(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
     df["INF_MA"] = (
         df.groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]

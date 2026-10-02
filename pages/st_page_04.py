@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import polyreg_by_country, filter_a_country, get_baseline_count
+from src.utils import polyreg_by_country_source, filter_a_country, get_baseline_count
 
 # Choose index of starting country
 indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
@@ -39,7 +39,7 @@ thld = thld["INF_ALL_BASELINE"].item()
 
 
 # apply moving regression (for all countries)
-df_ma = polyreg_by_country(df, bin_size = ma_bin_size, deg = ma_degree)
+df_ma = polyreg_by_country_source(df, bin_size = ma_bin_size, deg = ma_degree)
 df_ma = df_ma[df_ma["ORIGIN_SOURCE"] == sel_data_source]
 df_plot = filter_a_country(df_ma, selected_country)
 

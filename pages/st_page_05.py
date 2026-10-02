@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import polyreg_by_country
+from src.utils import polyreg_by_country_only
 
 # load data to local page 
 df = ss.df_data.copy()
@@ -31,7 +31,7 @@ s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=15)
 df = df[df["ISO_WEEKSTARTDATE"] > s2]
 df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 
-df = polyreg_by_country(df, bin_size = 3, deg = 1)
+df = polyreg_by_country_only(df, bin_size = 3, deg = 1)
 
 
 # take recent weeks only  
