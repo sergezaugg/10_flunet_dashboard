@@ -141,13 +141,88 @@ def cond_expect_last_polyfit(y, deg=1):
     coef = np.polyfit(x, y, deg)
     return np.polyval(coef, n - 1)
 
+
 @st.cache_data
 def polyreg_by_country(df, bin_size, deg):
-    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
+    df = df.sort_values(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
     df["INF_MA"] = (
-        df.groupby("COUNTRY")["INF_ALL"]
+        df.groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
           .rolling(bin_size, min_periods=bin_size)
           .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
-          .reset_index(level=0, drop=True)
+          .reset_index(level=[0, 1], drop=True)
     )
+    # ad-hoc correction
+    df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0
     return df
+
+
+# @st.cache_data
+# def get_baseline_count(df, q):
+#     """
+#     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing 
+#     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
+#     """
+#     df = df[["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]]
+#     df = (
+#         df.set_index("ISO_WEEKSTARTDATE")
+#         .groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
+#         .apply(lambda x: x.reindex(
+#                 pd.date_range(x.index.min(), x.index.max(), freq="W-MON")
+#             ).fillna(0.0)
+#         )
+#         .rename("INF_ALL")
+#         .reset_index()
+#     )
+#     # compute quantile 
+#     baseline_thlds = (df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(q).reset_index(name="INF_ALL_BASELINE"))
+#     return(baseline_thlds)
+
+
+@st.cache_data
+def get_baseline_count(df, q):
+    """
+    fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
+    then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
+    """
+    df = df[["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
+
+    df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"])
+
+    # Ensure one row per source × country × week
+    df = (
+        df.groupby(
+            ["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],
+            as_index=False
+        )["INF_ALL"]
+        .sum(min_count=1)
+    )
+
+    # Add missing weeks and replace NA with 0
+    df = (
+        df.set_index("ISO_WEEKSTARTDATE")
+        .groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
+        .apply(
+            lambda x: x.reindex(
+                pd.date_range(
+                    x.index.min(),
+                    x.index.max(),
+                    freq="W-MON"
+                )
+            ).fillna(0.0)
+        )
+        .rename("INF_ALL")
+        .reset_index()
+    )
+
+    # Quantile baseline
+    baseline_thlds = (
+        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"]
+        .quantile(q)
+        .reset_index(name="INF_ALL_BASELINE")
+    )
+
+    return baseline_thlds
+
+
+
+

@@ -58,6 +58,8 @@ ss.setdefault("ITZ_levels_ASI", ITZ_levels_ASI)
 ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
 ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
+ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
+
 
 # defaults for WHOREGION (page 00)
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
@@ -105,7 +107,7 @@ p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
 p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
-p7 = st.Page("pages/st_page_07.py", title="Baseline thresholds")
+p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
 pg = st.navigation([p5, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")

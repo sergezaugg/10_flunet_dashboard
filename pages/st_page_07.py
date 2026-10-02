@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : get metric for "above baseline"
+# Description : 
 #--------------------
 
 import numpy as np
@@ -8,27 +8,22 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import filter_data
-from src.utils_plots import make_facet_line_plot
+from src.utils import filter_a_country
+
+indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
+
+# build control items in sidebar
+with st.sidebar:
+    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", index=indx, key="xxxxx")
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
+
 
 # load data to local page 
 df = ss.df_data.copy()
-# df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
+df = df[df["ORIGIN_SOURCE"] == sel_data_source]
+df_display = filter_a_country(df, selected_country)
 
-
-# keep only n most recent weeks 
-week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=150)
-df = df[df["ISO_WEEKSTARTDATE"] > week_limit]
-df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
-
-df = df[df["ORIGIN_SOURCE"] == "SENTINEL"]
-
-
-baseline_thresholds = (df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(0.40).reset_index(name="INF_ALL_BASELINE"))
-
-st.dataframe(baseline_thresholds, height = 800)
-
-
+st.dataframe(df_display, height = 800)
 
 
 
