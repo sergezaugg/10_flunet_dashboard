@@ -18,8 +18,7 @@ with st.sidebar:
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
 st.text(sel_data_source)
 
-# df = df[df["ORIGIN_SOURCE"] == "NONSENTINEL"]
-# df = df[df["ORIGIN_SOURCE"] == "SENTINEL"]
+
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 
 latest_date = df["ISO_WEEKSTARTDATE"].max()
@@ -44,9 +43,6 @@ df0 = df0.sort_values('ISO_WEEKSTARTDATE', ascending=False)
 # compute simple slope 
 df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
-# df0[df0['COUNTRY'] == "China"]
-# df0[df0['COUNTRY'] == "Bahrain"]
-
 # keep only one row per country (latest)
 week_1 = latest_date - pd.Timedelta(weeks=0)
 df1 = df0[df0['ISO_WEEKSTARTDATE'] == week_1]
@@ -56,8 +52,11 @@ df1 = df1.sort_values('SLOPE', ascending=False)
 df1 = df1.dropna(subset=['SLOPE'])
 df1 = df1.iloc[0:10].reset_index(drop=True) # top 10 
 
+# remove rows(countries) with NA at latest date.
+df1 = df1.dropna(subset=["INF_ALL", "SLOPE"])
 
-
+# df1['COUNTRY'].value_counts()
+# df1.sort_values('COUNTRY', ascending=False)
 
 c1, c2, c3, c4, c5 = st.columns([60, 150, 50 , 80 , 50])
 

@@ -52,6 +52,8 @@ def preprocess_flunet_data(df):
     df.loc[df["INF_ALL"] > df["SPEC_PROCESSED_NB"], "SPEC_PROCESSED_NB"] = pd.NA
     # compute positivity 
     df["POSITIVITY"] = np.where(df["SPEC_PROCESSED_NB"] >= 10, (100 * df["INF_ALL"] / df["SPEC_PROCESSED_NB"]), np.nan)
+    # remove dups 
+    df = df.drop_duplicates(subset=["COUNTRY", "ORIGIN_SOURCE", "ISO_WEEKSTARTDATE"],keep="last")
     # sort nicely 
     df = df.sort_values(by=["COUNTRY", "ORIGIN_SOURCE", "ISO_WEEKSTARTDATE"])
     return(df)

@@ -18,8 +18,6 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 df_dat, download_ts = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
 
-# df_data[[ 'COUNTRY' , "ORIGIN_SOURCE" ,  'ISO_WEEKSTARTDATE' ,  'INF_A' , 'INF_B' , 'INF_ALL' ]]
-
 
 #----------------------------------
 # set APP_ENV=dev 
@@ -113,7 +111,7 @@ p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
-p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
+p5 = st.Page("pages/st_page_05.py", title="Top inc countries")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
