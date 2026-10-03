@@ -90,6 +90,14 @@ ss.setdefault("k_ab_01", 10)
 ss.setdefault("k_ab_02", 600)
 ss.setdefault("k_ab_03", 50)
 
+# defaults for moving average explorer (page 04)
+# ss.setdefault("k_tre_01", 10)
+ss.setdefault("k_tre_02", 5)
+ss.setdefault("k_tre_03", 1)
+ss.setdefault("k_tre_04", 1)
+ss.setdefault("k_tre_05", 0.5)
+
+
 # Protects every key from being deleted (for multi-page consistency)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
@@ -104,7 +112,7 @@ p0 = st.Page("pages/st_page_00.py", title="Cases by Regions")
 p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
-p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avge")
+p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
 p5 = st.Page("pages/st_page_05.py", title="Top inc. cases")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")

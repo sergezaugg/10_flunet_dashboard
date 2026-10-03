@@ -15,12 +15,13 @@ indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", index=indx, key="k_tre_01")
-    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="bbbbbbb")
+    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
+                                    index=indx, key="k_tre_01")
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
     st.divider()
-    quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="aaaaaaaa")
-    ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), value=3, key="k_tre_02")
-    ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), value=1, key="k_tre_03")
+    quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
+    ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
+    ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
 
 # load data to local page 
 df = ss.df_data.copy()
