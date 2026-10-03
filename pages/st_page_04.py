@@ -10,12 +10,12 @@ from streamlit import session_state as ss
 import streamlit as st
 from src.utils import polyreg_by_country_source, filter_a_country, get_baseline_count
 
-# Choose index of starting country
+# # Choose index of starting country
 indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
+    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", 
                                     index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
     st.divider()

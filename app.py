@@ -28,6 +28,10 @@ ss.setdefault("ts_today", datetime.now())
 ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
 ss.setdefault("ts_download", ts_download)
 
+# Choose index of starting country
+ALL_COUNTRIES = df_data['COUNTRY'].unique()
+indx = int(np.where(ALL_COUNTRIES == "Switzerland")[0][0])
+
 #----------------------------------
 # set APP_ENV=dev 
 # echo %APP_ENV%
@@ -67,7 +71,7 @@ ss.setdefault("ITZ_levels_ASI", ITZ_levels_ASI)
 ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
 ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
-ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
+ss.setdefault("ALL_COUNTRIES", ALL_COUNTRIES)
 
 # defaults for WHOREGION (page 00)
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
@@ -99,7 +103,7 @@ ss.setdefault("k_ab_02", 600)
 ss.setdefault("k_ab_03", 50)
 
 # defaults for moving average explorer (page 04)
-# ss.setdefault("k_tre_01", 10)
+# ss.setdefault("k_tre_01", indx) # useless 
 ss.setdefault("k_tre_02", 5)
 ss.setdefault("k_tre_03", 1)
 ss.setdefault("k_tre_04", 1)
@@ -126,7 +130,7 @@ p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
-p5 = st.Page("pages/st_page_05.py", title="Top inc countries")
+p5 = st.Page("pages/st_page_05.py", title="Top Risers!")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
