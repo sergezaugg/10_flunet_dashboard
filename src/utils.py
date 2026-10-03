@@ -1,7 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : functions - stremlit chunks
-
+# Description : functions - streamlit chunks
 #--------------------
 
 import pandas as pd
@@ -24,7 +23,7 @@ def download_flunet_data():
     # convert to DataFrame
     df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
     # get a timestamp
-    ts = datetime.now().strftime("%Y-%m-%d")
+    ts = datetime.now()
     return(df_dat, ts)
 
 

@@ -13,7 +13,7 @@ from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_d
 from datetime import datetime
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
-st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/sergezaugg")
+st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
@@ -31,40 +31,27 @@ df_latest_data = get_latest_date_per_group(df_data)
 ss.df_data = df_data
 ss.df_latest_data = df_latest_data
 
-# get some important dates
-ts_today = datetime.now().strftime("%Y-%m-%d")
-ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max().strftime("%Y-%m-%d")
 
-# get global data dependent parameters  
-min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
-max_date_dt      = df_data["ISO_WEEKSTARTDATE"].max().date()
-WHOREGION_levels = df_data["WHOREGION"].unique()
-FLUSEASON_levels = df_data["FLUSEASON"].unique()
-ITZ_levels       = df_data["ITZ"].unique().tolist()
 
-# Handle ITZ regions 
-ITZ_levels_AFR = ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR']
-ITZ_levels_AMC = ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR']
-ITZ_levels_ASI = ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 'WST_ASIA']
-ITZ_levels_EUR = ['EST_EUR', 'NTH_EUR', 'SW_EUR']
-ITZ_levels_OCE = ['OCE_MEL_POL']
 
-# initialize session state
-ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
-ss.setdefault("df_data", df_data)
-ss.setdefault("df_latest_data", df_latest_data)
+# initialize session state (constant values)
 ss.setdefault("ts_today", datetime.now())
-ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
-ss.setdefault("ts_download", ts_download)
-ss.setdefault("WHOREGION_levels", WHOREGION_levels)
-ss.setdefault("FLUSEASON_levels", FLUSEASON_levels)
-ss.setdefault("ITZ_levels", ITZ_levels)
-ss.setdefault("ITZ_levels_AFR", ITZ_levels_AFR)
-ss.setdefault("ITZ_levels_AMC", ITZ_levels_AMC)
-ss.setdefault("ITZ_levels_ASI", ITZ_levels_ASI)
-ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
-ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
+ss.setdefault("ITZ_levels_AFR", ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR'])
+ss.setdefault("ITZ_levels_AMC", ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR'])
+ss.setdefault("ITZ_levels_ASI", ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 'WST_ASIA'])
+ss.setdefault("ITZ_levels_EUR", ['EST_EUR', 'NTH_EUR', 'SW_EUR'])
+ss.setdefault("ITZ_levels_OCE", ['OCE_MEL_POL'])
+
+# initialize session state (data dependent values)
+ss.setdefault("ts_download", ts_download)
+ss.setdefault("df_latest_data", df_latest_data)
+ss.setdefault("date_range_dt", [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()])
+ss.setdefault("df_data", df_data)
+ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
+ss.setdefault("WHOREGION_levels", df_data["WHOREGION"].unique())
+ss.setdefault("FLUSEASON_levels", df_data["FLUSEASON"].unique())
+ss.setdefault("ITZ_levels", df_data["ITZ"].unique().tolist())
 ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
 
 
@@ -114,9 +101,9 @@ for key in list(st.session_state.keys()):
 # build sidebar
 with st.sidebar:
     st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
-    Today: \t{ts_today}  
-    Downloaded: \t{ts_download}  
-    Latest data: \t{ts_latest_data}
+    Today: \t{ss.ts_today.strftime("%Y-%m-%d")}  
+    Downloaded: \t{ts_download.strftime("%Y-%m-%d")}  
+    Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
     """)
     st.divider()
     
