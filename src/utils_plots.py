@@ -38,6 +38,7 @@ def make_facet_line_plot(df, n_countr, outcome):
         annotation.textangle = 90
     return(fig)    
 
+
 @st.cache_data()
 def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False, plot_height = 150):
 
@@ -75,7 +76,6 @@ def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False
         fig.update_yaxes(matches=None) 
 
     return(fig)
-
 
 
 @st.cache_data

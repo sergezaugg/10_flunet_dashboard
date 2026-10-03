@@ -19,11 +19,11 @@ delays = df_latest_data["days_since"].unique()
 delays.sort()
 ctf = delays[0:3].max()
 
+# an let's hope sorting will remain through next steps ;-)
+df_latest_data = df_latest_data.sort_values("days_since")
 df_latest_data["days_since_cat"] = (df_latest_data["days_since"].astype(str))
-
 df_latest_data.loc[df_latest_data["days_since"] > ctf, "days_since_cat"] = "older"
 
-df_latest_data = df_latest_data.sort_values("days_since_cat")
 
 
 cols = st.columns(6)
