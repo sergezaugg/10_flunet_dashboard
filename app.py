@@ -27,12 +27,11 @@ ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all[
 df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
 df_latest_data = get_latest_date_per_group(df_data)
 
-# update data objects
+# update data dependent objects
 ss.df_data = df_data
 ss.df_latest_data = df_latest_data
-
-
-
+ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
+ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
 
 # initialize session state (constant values)
 ss.setdefault("ts_today", datetime.now())
@@ -43,12 +42,12 @@ ss.setdefault("ITZ_levels_ASI", ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 
 ss.setdefault("ITZ_levels_EUR", ['EST_EUR', 'NTH_EUR', 'SW_EUR'])
 ss.setdefault("ITZ_levels_OCE", ['OCE_MEL_POL'])
 
-# initialize session state (data dependent values)
+# initialize session state (data dependent values that need initialized once)
 ss.setdefault("ts_download", ts_download)
-ss.setdefault("df_latest_data", df_latest_data)
-ss.setdefault("date_range_dt", [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()])
-ss.setdefault("df_data", df_data)
-ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
+# ss.setdefault("df_latest_data", df_latest_data)
+# ss.setdefault("date_range_dt", [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()])
+# ss.setdefault("df_data", df_data)
+# ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
 ss.setdefault("WHOREGION_levels", df_data["WHOREGION"].unique())
 ss.setdefault("FLUSEASON_levels", df_data["FLUSEASON"].unique())
 ss.setdefault("ITZ_levels", df_data["ITZ"].unique().tolist())
@@ -92,7 +91,7 @@ ss.setdefault("k_ab_03", 50)
 ss.setdefault("k_tre_02", 5)
 ss.setdefault("k_tre_03", 1)
 ss.setdefault("k_tre_04", 1)
-ss.setdefault("k_tre_05", 0.5)
+ss.setdefault("k_tre_05", 0.66)
 
 # Protects every key from being deleted (for multi-page consistency across clicks)
 for key in list(st.session_state.keys()):

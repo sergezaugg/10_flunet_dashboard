@@ -78,3 +78,35 @@ def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False
 
 
 
+@st.cache_data
+def make_smoothed_curve_plot(df_plot):
+    """
+    TBD
+    """
+    # reshape to long for easy plotting of two traces 
+    df_long = df_plot.melt(
+        id_vars=[c for c in df_plot.columns if c not in ["INF_ALL", "INF_MA"]],
+        value_vars=["INF_ALL", "INF_MA"],
+        var_name="TYPE",
+        value_name="INF_VALUE"
+    )
+    # plot 
+    fig = px.line(
+        df_long,
+        x="ISO_WEEKSTARTDATE",
+        y="INF_VALUE",
+        color="TYPE",
+        height=500,
+        markers=True,
+        color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
+    )
+    fig.update_traces(marker=dict(size=5))
+    fig.update_yaxes(title_text="Weekly Infl. Detect.")
+    fig.update_layout(showlegend=True)
+    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
+    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    return(fig)
+
+

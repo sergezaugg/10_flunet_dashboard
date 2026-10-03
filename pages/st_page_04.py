@@ -8,7 +8,9 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import polyreg_by_country_source, filter_a_country, get_baseline_count
+from src.utils import polyreg_by_country_source, filter_a_country, get_baseline_count, filter_a_data_source
+from src.utils import det_regions, get_start_stop_of_region
+from src.utils_plots import make_smoothed_curve_plot
 
 # # Choose index of starting country
 indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
@@ -30,6 +32,18 @@ df = ss.df_data.copy()
 week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=300)
 df = df[df["ISO_WEEKSTARTDATE"] > week_limit]
 
+# sel_data_source = "SENTINEL"
+# sel_data_source = "NOTDEFINED"
+
+# apply moving regression (for all countries)
+df_ma = polyreg_by_country_source(df, bin_size = ma_bin_size, deg = ma_degree)
+df_plot = filter_a_data_source(df_ma, sel_data_source)
+df_plot = filter_a_country(df_plot, selected_country)
+
+# plot if any reasonable data 
+if len(df_plot) < 10:
+    st.info(f"Not enough data for this country and data source")
+    st.stop()
 
 # get baseline of flu counts (for all countries)
 bthld = get_baseline_count(df, q = quantile_val)
@@ -38,59 +52,18 @@ thld = bthld.loc[bthld['COUNTRY']==selected_country]
 thld = thld.loc[thld['ORIGIN_SOURCE']==sel_data_source]
 thld = thld["INF_ALL_BASELINE"].item()
 
+# define epidemic periods from smoothed count and threshold 
+df_plot['set_reg'] = det_regions(df_plot["INF_MA"], thld)
+sta, end = get_start_stop_of_region(df_plot['set_reg'], df_plot['ISO_WEEKSTARTDATE'])
 
-# apply moving regression (for all countries)
-df_ma = polyreg_by_country_source(df, bin_size = ma_bin_size, deg = ma_degree)
-df_ma = df_ma[df_ma["ORIGIN_SOURCE"] == sel_data_source]
-df_plot = filter_a_country(df_ma, selected_country)
-
-
-
-
-
-
-@st.cache_data
-def make_smoothed_curve_plot(df_plot):
-    """
-    TBD
-    """
-    # reshape to long for easy plotting of two traces 
-    df_long = df_plot.melt(
-        id_vars=[c for c in df.columns if c not in ["INF_ALL", "INF_MA"]],
-        value_vars=["INF_ALL", "INF_MA"],
-        var_name="TYPE",
-        value_name="INF_VALUE"
-    )
-
-    fig = px.line(
-        df_long,
-        x="ISO_WEEKSTARTDATE",
-        y="INF_VALUE",
-        color="TYPE",
-        facet_row="COUNTRY",
-        height=300,
-        markers=True,
-        color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
-    )
-
-    fig.update_traces(marker=dict(size=5))
-    fig.update_yaxes(title_text="Weekly Infl. Detect.")
-    fig.update_yaxes(matches=None)     # optional: independent y-scales
-    fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
-    for annotation in fig.layout.annotations:
-        annotation.text = annotation.text.replace("COUNTRY=", "")
-        annotation.textangle = 90
-    return(fig)
-
+#-----------------------
+# plot 
 fig = make_smoothed_curve_plot(df_plot)
-
+# overlay threshold 
 fig.add_hline(y=thld, line_width=2, line_dash="dash", line_color="green")
-
+# overlay epidemic periods 
+for start, end in zip(sta, end):
+    fig.add_vrect(x0=start, x1=end, fillcolor="pink", opacity=0.10, line_width=0, layer="below")
 st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

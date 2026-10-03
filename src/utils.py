@@ -121,6 +121,11 @@ def filter_a_country(df, c):
     df = df[df["COUNTRY"] == c]
     return(df)
 
+@st.cache_data()
+def filter_a_data_source(df, c):
+    df = df[df["ORIGIN_SOURCE"] == c]
+    return(df)
+
 #-----------------------------------------
 # rolling functions 
 
@@ -165,8 +170,9 @@ def polyreg_by_country_source(df, bin_size, deg):
           .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
           .reset_index(level=[0, 1], drop=True)
     )
-    # ad-hoc correction
+    # ad-hoc corrections
     df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0
+    df["INF_MA"] = df["INF_MA"].fillna(0.0)
     return df
 
 
@@ -258,6 +264,48 @@ def get_latest_date_per_group(df):
 def select_global_date_range(df, sta, end):
     df = df[df["ISO_WEEKSTARTDATE"].between(sta, end)]
     return df
+
+
+
+@st.cache_data
+def det_regions(x, t):
+    """
+    Detect threshold regions in a Series using hysteresis.
+    Parameters
+    x : (pd.Series) Continuous input values.
+    t : (float) Threshold value.
+    Returns
+    (pd.Series) Boolean Series with the same index as x.
+    """
+    lower = t*0.95
+    upper = t*1.05
+    state = False
+    regions = []
+    for value in x:
+        if not state and value > upper:
+            state = True
+        elif state and value < lower:
+            state = False
+        regions.append(state)
+    regions = pd.Series(regions, index=x.index)
+    return regions
+
+@st.cache_data
+def get_start_stop_of_region(regions, time):
+    """
+    Identify onset and offset of contiguous True regions.
+    ingests output of det_regions()
+    Parameters
+    regions : (pd.Series) Boolean Series indicating the regions.
+    time : (pd.Series) Time values corresponding to regions.
+    Returns
+    (tuple of pd.Series) Two Series containing the start and end times of each region.
+    """
+    starts = regions & ~regions.shift(fill_value=False)
+    ends = regions & ~regions.shift(-1, fill_value=False)
+    sta = time[starts]
+    end = time[ends]
+    return(sta,end)
 
 
 
