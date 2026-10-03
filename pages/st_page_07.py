@@ -17,9 +17,9 @@ with st.sidebar:
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", index=indx, key="xxxxx")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
 
-
 # load data to local page 
 df = ss.df_data.copy()
+
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 df_display = filter_a_country(df, selected_country)
 

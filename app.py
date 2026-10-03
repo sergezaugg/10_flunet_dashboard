@@ -9,15 +9,24 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import download_flunet_data, preprocess_flunet_data
+from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group
+from datetime import datetime
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/sergezaugg")
 
 # download and pre-process (do once)
-df_dat, download_ts = download_flunet_data()
+df_dat, ts_download = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
+df_latest_data = get_latest_date_per_group(df_data)
 
+# get some important dates
+ts_today = datetime.now().strftime("%Y-%m-%d")
+ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max().strftime("%Y-%m-%d")
+
+ss.setdefault("ts_today", datetime.now())
+ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
+ss.setdefault("ts_download", ts_download)
 
 #----------------------------------
 # set APP_ENV=dev 
@@ -47,6 +56,8 @@ ITZ_levels_OCE = ['OCE_MEL_POL']
 # initialize session state
 ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
 ss.setdefault("df_data", df_data)
+ss.setdefault("df_latest_data", df_latest_data)
+
 ss.setdefault("WHOREGION_levels", WHOREGION_levels)
 ss.setdefault("FLUSEASON_levels", FLUSEASON_levels)
 ss.setdefault("ITZ_levels", ITZ_levels)
@@ -57,7 +68,6 @@ ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
 ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
 ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
-
 
 # defaults for WHOREGION (page 00)
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
@@ -96,17 +106,22 @@ ss.setdefault("k_tre_04", 1)
 ss.setdefault("k_tre_05", 0.5)
 
 
-# Protects every key from being deleted (for multi-page consistency)
+# Protects every key from being deleted (for multi-page consistency across cliks)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f""":primary[**Interactive Exploration of FluNet data**]
-    Download: {download_ts}""")
+    st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
+    Today: \t{ts_today}  
+    Downloaded: \t{ts_download}  
+    Latest data: \t{ts_latest_data}
+    """)
+    st.divider()
     
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="Cases by Regions")
+p8 = st.Page("pages/st_page_08.py", title="Data recency")
 p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
@@ -116,7 +131,7 @@ p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
-pg = st.navigation([p5, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")
+pg = st.navigation([p5, p8, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")
 pg.run()
 
 

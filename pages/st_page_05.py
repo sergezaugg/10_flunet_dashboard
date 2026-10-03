@@ -14,16 +14,18 @@ from src.utils import polyreg_by_country_only
 df = ss.df_data.copy()
 
 with st.sidebar:
-    date_info = st.empty()
+    # date_info = st.empty()
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
 st.text(sel_data_source)
 
 
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 
-latest_date = df["ISO_WEEKSTARTDATE"].max()
- 
-date_info.text(f"Latest data from: \n {latest_date.strftime("%Y-%m-%d")}")
+# latest_date = df["ISO_WEEKSTARTDATE"].max()
+# date_info.text(f"Latest data from: \n {latest_date.strftime("%Y-%m-%d")}")
+
+
+
 
 # keep only n most recent weeks 
 s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=15)
@@ -35,7 +37,7 @@ df = polyreg_by_country_only(df, bin_size = 3, deg = 1)
 
 # take recent weeks only  
 param_dif = 3 # 3 will take 3 steps, i.e. change week-3 to week-0
-# latest_date = df['ISO_WEEKSTARTDATE'].max()
+latest_date = df['ISO_WEEKSTARTDATE'].max()
 week_0 = latest_date - pd.Timedelta(weeks=param_dif)
 df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
 df0 = df0.sort_values('ISO_WEEKSTARTDATE', ascending=False)

@@ -24,8 +24,8 @@ def download_flunet_data():
     # convert to DataFrame
     df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
     # get a timestamp
-    download_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return(df_dat, download_ts)
+    ts = datetime.now().strftime("%Y-%m-%d")
+    return(df_dat, ts)
 
 
 @st.cache_data()
@@ -239,5 +239,22 @@ def get_baseline_count(df, q):
     return baseline_thlds
 
 
+
+
+
+@st.cache_data()
+def get_latest_date_per_group(df):
+    """
+    Get latest date of available data per COUNTRY and ORIGIN_SOURCE
+    """
+    df = df[["COUNTRY" , "ORIGIN_SOURCE",  "ISO_WEEKSTARTDATE" , "INF_ALL",]]
+    df = df.dropna(subset=["INF_ALL"])
+    df = df.loc[df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
+    df = df.drop(columns = ["INF_ALL"])
+    df = df.pivot(
+        index="COUNTRY", columns="ORIGIN_SOURCE", values="ISO_WEEKSTARTDATE"
+        ).rename(columns=lambda x: f"{x}_latest").reset_index()
+    df["ALL_latest"] = df[["NONSENTINEL_latest", "NOTDEFINED_latest", "SENTINEL_latest"]].max(axis=1)
+    return df
 
 

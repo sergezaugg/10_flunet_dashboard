@@ -13,7 +13,7 @@ from config import FLUNET_DATA_URL, FLUNET_META_URL
 df_meta = pd.read_csv(FLUNET_META_URL)
 
 # download and pre-process (do once)
-df_dat, download_ts = download_flunet_data()
+df_dat, ts_download = download_flunet_data()
 
 df_dat["POSITIVITY"] = df_dat["INF_ALL"] / df_dat["SPEC_PROCESSED_NB"]
 
