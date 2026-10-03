@@ -239,9 +239,6 @@ def get_baseline_count(df, q):
     return baseline_thlds
 
 
-
-
-
 @st.cache_data()
 def get_latest_date_per_group(df):
     """
@@ -256,5 +253,13 @@ def get_latest_date_per_group(df):
         ).rename(columns=lambda x: f"{x}_latest").reset_index()
     df["ALL_latest"] = df[["NONSENTINEL_latest", "NOTDEFINED_latest", "SENTINEL_latest"]].max(axis=1)
     return df
+
+
+@st.cache_data()
+def select_global_date_range(df, sta, end):
+    df = df[df["ISO_WEEKSTARTDATE"].between(sta, end)]
+    return df
+
+
 
 

@@ -21,11 +21,6 @@ st.text(sel_data_source)
 
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 
-# latest_date = df["ISO_WEEKSTARTDATE"].max()
-# date_info.text(f"Latest data from: \n {latest_date.strftime("%Y-%m-%d")}")
-
-
-
 
 # keep only n most recent weeks 
 s2 = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=15)

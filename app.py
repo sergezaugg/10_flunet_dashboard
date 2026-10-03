@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group
+from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
 from datetime import datetime
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
@@ -17,31 +17,23 @@ st.logo(image='pics/z_logo_orange.png', size="large", link="https://github.com/s
 
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
-df_data = preprocess_flunet_data(df = df_dat)
+df_data_all = preprocess_flunet_data(df = df_dat)
+
+# initialise global dates parameters
+ss.setdefault("date_init", [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
+ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
+
+# update global time range ()
+df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
 df_latest_data = get_latest_date_per_group(df_data)
+
+# update data objects
+ss.df_data = df_data
+ss.df_latest_data = df_latest_data
 
 # get some important dates
 ts_today = datetime.now().strftime("%Y-%m-%d")
 ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max().strftime("%Y-%m-%d")
-
-ss.setdefault("ts_today", datetime.now())
-ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
-ss.setdefault("ts_download", ts_download)
-
-# Choose index of starting country
-ALL_COUNTRIES = df_data['COUNTRY'].unique()
-indx = int(np.where(ALL_COUNTRIES == "Switzerland")[0][0])
-
-#----------------------------------
-# set APP_ENV=dev 
-# echo %APP_ENV%
-DEV_MODE = os.getenv("APP_ENV", "prod").strip() 
-if DEV_MODE == 'dev':
-    st.text("in dev mode")
-    s2 = df_data['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=38)
-    df_data = df_data[df_data["ISO_WEEKSTARTDATE"] < s2]
-#----------------------------------
-
 
 # get global data dependent parameters  
 min_date_dt      = df_data["ISO_WEEKSTARTDATE"].min().date()
@@ -61,7 +53,9 @@ ITZ_levels_OCE = ['OCE_MEL_POL']
 ss.setdefault("date_range_dt", [min_date_dt, max_date_dt])
 ss.setdefault("df_data", df_data)
 ss.setdefault("df_latest_data", df_latest_data)
-
+ss.setdefault("ts_today", datetime.now())
+ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
+ss.setdefault("ts_download", ts_download)
 ss.setdefault("WHOREGION_levels", WHOREGION_levels)
 ss.setdefault("FLUSEASON_levels", FLUSEASON_levels)
 ss.setdefault("ITZ_levels", ITZ_levels)
@@ -71,7 +65,13 @@ ss.setdefault("ITZ_levels_ASI", ITZ_levels_ASI)
 ss.setdefault("ITZ_levels_EUR", ITZ_levels_EUR)
 ss.setdefault("ITZ_levels_OCE", ITZ_levels_OCE)
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
-ss.setdefault("ALL_COUNTRIES", ALL_COUNTRIES)
+ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
+
+
+
+
+#------------------------------
+# widget defaults
 
 # defaults for WHOREGION (page 00)
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
@@ -86,7 +86,6 @@ ss.setdefault("k_who_pos_04", 0.80)
 ss.setdefault("k_who_pos_05", 30)
 
 # defaults for ITZ (page 01)
-# ss.setdefault("k_itz_03", ss.ITZ_levels.to_numpy().tolist()) # we want it empty 
 ss.setdefault("k_itz_04", 0.30)
 ss.setdefault("k_itz_05", 10)
 
@@ -103,14 +102,12 @@ ss.setdefault("k_ab_02", 600)
 ss.setdefault("k_ab_03", 50)
 
 # defaults for moving average explorer (page 04)
-# ss.setdefault("k_tre_01", indx) # useless 
 ss.setdefault("k_tre_02", 5)
 ss.setdefault("k_tre_03", 1)
 ss.setdefault("k_tre_04", 1)
 ss.setdefault("k_tre_05", 0.5)
 
-
-# Protects every key from being deleted (for multi-page consistency across cliks)
+# Protects every key from being deleted (for multi-page consistency across clicks)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
@@ -133,9 +130,10 @@ p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
 p5 = st.Page("pages/st_page_05.py", title="Top Risers!")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
+p9 = st.Page("pages/st_page_09.py", title="Settings")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
-pg = st.navigation([p5, p8, p0, p1, p6, p2, p3, p4, p7, p_dev], position="top")
+pg = st.navigation([p5, p8, p0, p1, p6, p2, p3, p4, p7, p9, p_dev], position="top")
 pg.run()
 
 
