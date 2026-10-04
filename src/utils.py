@@ -333,9 +333,7 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     df : (pandas.DataFrame) DataFrame containing country, date, and smoothed infection data.
     latest_week : (pandas.Timestamp) Most recent week used as reference.
     Returns : 
-    df_dat00 : (pandas.DataFrame) Top N countries by slope for the latest week
-    df_dat01 : (pandas.DataFrame) Top N countries by slope for one week before latest
-    df_dat02 : (pandas.DataFrame) Top N countries by slope for two weeks before latest
+    TBD
     """
 
     # take 5 most recent weeks per country  
@@ -349,8 +347,9 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
 
     # compute simple slope from smoothed curve
     param_dif = n_weeks_for_slope-1 
-    df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
-    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
+
+    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
+    df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
     # keep only latest row per country
     df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
@@ -361,22 +360,7 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     df_slopes_all = df_slopes_all[df_slopes_all['SLOPE'] > slope_thld]
     df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
     
-    # remove slopes that are too small (typically < 0)
-    df1 = df1[df1['SLOPE'] > slope_thld]
-
-    date_00 = latest_week - pd.Timedelta(weeks=0)
-    date_01 = latest_week - pd.Timedelta(weeks=1)
-    date_02 = latest_week - pd.Timedelta(weeks=2)
-
-    df_dat00 = df1[df1['ISO_WEEKSTARTDATE']==date_00] 
-    df_dat01 = df1[df1['ISO_WEEKSTARTDATE']==date_01] 
-    df_dat02 = df1[df1['ISO_WEEKSTARTDATE']==date_02] 
-
-    df_dat00 = select_top_n_highest_slope(df_dat00, n=10)
-    df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
-    df_dat02 = select_top_n_highest_slope(df_dat02, n=10)
-
-    return df_dat00, df_dat01, df_dat02, df_slopes_all
+    return df_slopes_all
 
 
 # for st_page_05.py

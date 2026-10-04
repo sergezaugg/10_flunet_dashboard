@@ -26,7 +26,7 @@ df_data_all = preprocess_flunet_data(df = df_dat)
 ss.setdefault("date_init", [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
 ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
 
-# update global time range ()
+# update global time range
 df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
 df_latest_data = get_latest_date_per_group(df_data)
 
@@ -41,9 +41,9 @@ for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
     df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
     df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
     nw_slo = 5
-    df_dat00, df_dat01, df_dat02, df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, 
+    df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, 
         slope_thld = 0.1, n_weeks_for_slope = nw_slo)
-    slope_dfs_by_source[dasou] = [df_dat00, df_dat01, df_dat02, df_slopes_all]
+    slope_dfs_by_source[dasou] = df_slopes_all
 
 
 # update data dependent objects

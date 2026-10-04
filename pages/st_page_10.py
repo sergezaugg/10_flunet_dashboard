@@ -23,19 +23,29 @@ def make_bar_plot(df):
         y="COUNTRY",
         color="ISO_WEEKSTARTDATE",
         orientation="h",
-        height=100 + len(df)*40,
+        height=200 + len(df)*40,
         category_orders={"COUNTRY": df["COUNTRY"].tolist()},
     )
     fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
+    fig.update_layout(legend_title_text="Latest data from")
+    fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
+    fig.update_layout(legend=dict(orientation="h",x=0.5,y=1.02,xanchor="center",yanchor="bottom"))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     return fig
 
-df_dat00 = prepre_for_page10(ss.slope_dfs_by_source["SENTINEL"][3])
-df_dat01 = prepre_for_page10(ss.slope_dfs_by_source["NONSENTINEL"][3])
-df_dat02 = prepre_for_page10(ss.slope_dfs_by_source["NOTDEFINED"][3])
+df_dat00 = prepre_for_page10(ss.slope_dfs_by_source["SENTINEL"])
+df_dat01 = prepre_for_page10(ss.slope_dfs_by_source["NONSENTINEL"])
+df_dat02 = prepre_for_page10(ss.slope_dfs_by_source["NOTDEFINED"])
+
+# plot metrics and mini traces 
+c1, c2, c3 = st.columns([50, 50 , 50])
+with c1:
+    st.text("SENTINEL")
+with c2:
+    st.text("NONSENTINEL")
+with c3:
+    st.text("NOTDEFINED")
 
 
 c1, c2, c3 = st.columns([50,50,50])

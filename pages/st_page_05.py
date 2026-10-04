@@ -25,9 +25,9 @@ df02 = filter_a_data_source(df, "NOTDEFINED")
 df02 = keep_n_most_recent_weeks(df02, keep_n_weeks = 15)
 df02 = polyreg_by_country_only(df02, bin_size = 4, deg = 1)
 
-df_dat00 = ss.slope_dfs_by_source["SENTINEL"][3]
-df_dat01 = ss.slope_dfs_by_source["NONSENTINEL"][3]
-df_dat02 = ss.slope_dfs_by_source["NOTDEFINED"][3]
+df_dat00 = ss.slope_dfs_by_source["SENTINEL"]
+df_dat01 = ss.slope_dfs_by_source["NONSENTINEL"]
+df_dat02 = ss.slope_dfs_by_source["NOTDEFINED"]
 
 df_dat00 = select_top_n_highest_slope(df_dat00, n=10)
 df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
