@@ -27,20 +27,27 @@ def download_flunet_data():
     return(df_dat, ts)
 
 
+# arr = df_dat["COUNTRY_AREA_TERRITORY"].unique()
+
+# [x for x in arr if len(x) > 15]
+
+
 @st.cache_data()
 def preprocess_flunet_data(df):
     """pre-process FluNet dataframe : select variable, rename, convert formats"""
     # select only relevant columns 
     columns = [
         "WHOREGION","FLUSEASON", "ITZ", 
-        "COUNTRY_AREA_TERRITORY","ORIGIN_SOURCE",
+        # "COUNTRY_AREA_TERRITORY",
+        "ORIGIN_SOURCE", 
+        "COUNTRY_CODE",
         "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE",
         "SPEC_PROCESSED_NB",
         "INF_A", "INF_B", "INF_ALL",
         ]
     df = df[columns].copy()
     # re-name variables 
-    df = df.rename(columns={"COUNTRY_AREA_TERRITORY": "COUNTRY"})
+    df = df.rename(columns={"COUNTRY_CODE": "COUNTRY"})
     # convert str to datetime 
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"],errors="coerce")
     # shorten lon countrynames to 3 words

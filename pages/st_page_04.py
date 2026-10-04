@@ -13,7 +13,7 @@ from src.utils import det_regions, get_start_stop_of_region
 from src.utils_plots import make_smoothed_curve_plot
 
 # # Choose index of starting country
-indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
+indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:

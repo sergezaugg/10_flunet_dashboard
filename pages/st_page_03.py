@@ -20,7 +20,7 @@ df_data = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
 
 all_countries = df_data['COUNTRY'].unique()
 # Choose index of starting country
-indx = int(np.where(all_countries == "Switzerland")[0][0])
+indx = int(np.where(all_countries == "CHE")[0][0])
 
 
 # compute proportions of type A vs B

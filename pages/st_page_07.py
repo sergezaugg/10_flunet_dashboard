@@ -10,7 +10,7 @@ from streamlit import session_state as ss
 import streamlit as st
 from src.utils import filter_a_country
 
-indx = int(np.where(ss.ALL_COUNTRIES == "Switzerland")[0][0])
+indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
