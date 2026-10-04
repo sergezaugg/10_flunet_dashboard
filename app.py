@@ -12,6 +12,8 @@ from streamlit import session_state as ss
 from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
 from datetime import datetime
 
+pd.set_option('display.max_rows', 500)
+
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 
@@ -34,6 +36,7 @@ ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
 ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
 
 # initialize session state (constant values)
+ss.setdefault("colors_recency", ["#00ff55", "yellow", "orange", "red"])
 ss.setdefault("ts_today", datetime.now())
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
 ss.setdefault("ITZ_levels_AFR", ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR'])
@@ -108,7 +111,6 @@ with st.sidebar:
     
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="Cases by Regions")
-p8 = st.Page("pages/st_page_08.py", title="Data recency")
 p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
@@ -116,6 +118,7 @@ p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
 p5 = st.Page("pages/st_page_05.py", title="Top Risers!")
 p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
+p8 = st.Page("pages/st_page_08.py", title="Data recency")
 p9 = st.Page("pages/st_page_09.py", title="Settings")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 

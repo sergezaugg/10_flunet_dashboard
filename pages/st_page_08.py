@@ -28,14 +28,14 @@ df_latest_data.loc[df_latest_data["days_since"] > ctf, "days_since_cat"] = "olde
 
 cols = st.columns(6)
 
-colors = ["#00ff55", "yellow", "orange", "red"]
+# colors = ["#00ff55", "yellow", "orange", "red"]
 
 for i, (col, cat) in enumerate(zip(cols, df_latest_data["days_since_cat"].unique())):
 
     with col:
         df_sel = df_latest_data.loc[df_latest_data["days_since_cat"] == cat,["COUNTRY"]]
     
-        st.markdown(f'<span style="color:{colors[i]}"><b>{cat} days old</b></span>', unsafe_allow_html=True)
+        st.markdown(f'<span style="color:{ss.colors_recency[i]}"><b>{cat} days old</b></span>', unsafe_allow_html=True)
         st.markdown(f"**{len(df_sel)} countries**")
         st.dataframe(
             df_sel,

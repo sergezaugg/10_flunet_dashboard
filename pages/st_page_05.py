@@ -8,18 +8,23 @@ import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import polyreg_by_country_only
+from src.utils import polyreg_by_country_only, select_top_n_highest_slope
+from src.utils_plots import make_metric_items, make_mini_trace
 
 # load data to local page 
 df = ss.df_data.copy()
 
 with st.sidebar:
-    # date_info = st.empty()
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
 st.text(sel_data_source)
 
+# get top 3 weekks and delay to today 
+top3_weeks =  df["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
+delays_days = ((ss.ts_today - top3_weeks).dt.days).tolist()
+latest_week = df['ISO_WEEKSTARTDATE'].max()
 
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
+# df = df[df["ORIGIN_SOURCE"] == "NOTDEFINED"]
 
 
 # keep only n most recent weeks 
@@ -29,61 +34,67 @@ df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 
 df = polyreg_by_country_only(df, bin_size = 3, deg = 1)
 
-
-# take recent weeks only  
-param_dif = 3 # 3 will take 3 steps, i.e. change week-3 to week-0
-latest_date = df['ISO_WEEKSTARTDATE'].max()
-week_0 = latest_date - pd.Timedelta(weeks=param_dif)
+# take 5 most recent weeks per country  
+week_0 = latest_week - pd.Timedelta(weeks=5)
 df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
-df0 = df0.sort_values('ISO_WEEKSTARTDATE', ascending=False)
+# keep 3 most recent per country
+df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(3) 
+df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
 
-# compute simple slope 
+# compute simple slope from smoothed curve
+param_dif = 2 # 3 will take 3 steps, i.e. change week-3 to week-0 
 df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
-# keep only one row per country (latest)
-week_1 = latest_date - pd.Timedelta(weeks=0)
-df1 = df0[df0['ISO_WEEKSTARTDATE'] == week_1]
+# keep only latest row per country
+df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
+df1 = df1.sort_values(["COUNTRY"], ascending=[True])
 
-# select to with higherst slope 
-df1 = df1.sort_values('SLOPE', ascending=False)
-df1 = df1.dropna(subset=['SLOPE'])
-df1 = df1.iloc[0:10].reset_index(drop=True) # top 10 
+date_00 = latest_week - pd.Timedelta(weeks=0)
+date_01 = latest_week - pd.Timedelta(weeks=1)
+date_02 = latest_week - pd.Timedelta(weeks=2)
 
-# remove rows(countries) with NA at latest date.
-df1 = df1.dropna(subset=["INF_ALL", "SLOPE"])
+df_dat00 = df1[df1['ISO_WEEKSTARTDATE']==date_00] 
+df_dat01 = df1[df1['ISO_WEEKSTARTDATE']==date_01] 
+df_dat02 = df1[df1['ISO_WEEKSTARTDATE']==date_02] 
 
-# df1['COUNTRY'].value_counts()
-# df1.sort_values('COUNTRY', ascending=False)
+# df_dat00.shape
+# df_dat01.shape
+# df_dat02.shape
 
-c1, c2, c3, c4, c5 = st.columns([60, 150, 50 , 80 , 50])
+df_dat00 = select_top_n_highest_slope(df_dat00, n=10)
+df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
+df_dat02 = select_top_n_highest_slope(df_dat02, n=10)
 
-height_row = 150
+# colors_recency = ["#00ff55", "yellow", "orange", "red"]
 
-for i, row in df1.iterrows():
+
+# plot delay / recency information
+c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50 , 80, 8, 50, 80, 8])
+with st.container():
     with c1:
-        with st.container(border= True, height = height_row):
-            date_str = row['ISO_WEEKSTARTDATE'].strftime('%b %d, %Y') # Format the date into a clean string (e.g., "Jul 13, 2026")
-            st.metric(label=row['COUNTRY'], 
-                value=f"{int(row['INF_ALL'])} cases",
-                # delta=f"Δ {row['SLOPE']:+.0f}",
-                delta=int(row['SLOPE']),
-                delta_color="inverse", 
-                delta_arrow = "auto", 
-                delta_description = "Avg 3W change",
-                border  = False, 
-                width = 250, height = int(0.75*height_row))
-            
-        
+        st.markdown(f'<span style="color:{ss.colors_recency[0]}"><b>{delays_days[0]} days old</b></span>', unsafe_allow_html=True)
+    with c3:
+        st.markdown(f'<span style="color:{ss.colors_recency[1]}"><b>{delays_days[1]} days old</b></span>', unsafe_allow_html=True)
+    with c5:
+        st.markdown(f'<span style="color:{ss.colors_recency[2]}"><b>{delays_days[2]} days old</b></span>', unsafe_allow_html=True)
+    
+# plot metrics and mini traces 
+c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50 , 80, 8, 50, 80, 8])
+
+for i, row in df_dat00.iterrows():
+    with c1:
+        make_metric_items(row, height_row = 150)
     with c2:
-        with st.container(border= True, height = height_row):
-            df_subset = df[df["COUNTRY"] == row['COUNTRY']]
-            fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
-            fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"],showarrow=False,xanchor="left",yanchor="top")
-            # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
-            fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None)
-            fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
-            fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        make_mini_trace(row, height_row = 150, df_for_trace = df)
 
+for i, row in df_dat01.iterrows():
+    with c3:
+        make_metric_items(row, height_row = 150)
+    with c4:
+        make_mini_trace(row, height_row = 150, df_for_trace = df)
 
-
+for i, row in df_dat02.iterrows():
+    with c5:
+        make_metric_items(row, height_row = 150)
+    with c6:
+        make_mini_trace(row, height_row = 150, df_for_trace = df)
