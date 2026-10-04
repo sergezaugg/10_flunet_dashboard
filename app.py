@@ -35,9 +35,17 @@ ss.df_latest_data = df_latest_data
 ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
 ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
 
+# get top 3 weeks and delay to today 
+ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
+ss.setdefault("ts_today", datetime.now())
+ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
+ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
+
+
+
+
 # initialize session state (constant values)
 ss.setdefault("colors_recency", ["#00ff55", "yellow", "orange", "red"])
-ss.setdefault("ts_today", datetime.now())
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
 ss.setdefault("ITZ_levels_AFR", ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR'])
 ss.setdefault("ITZ_levels_AMC", ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR'])
@@ -47,16 +55,10 @@ ss.setdefault("ITZ_levels_OCE", ['OCE_MEL_POL'])
 
 # initialize session state (data dependent values that need initialized once)
 ss.setdefault("ts_download", ts_download)
-# ss.setdefault("df_latest_data", df_latest_data)
-# ss.setdefault("date_range_dt", [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()])
-# ss.setdefault("df_data", df_data)
-# ss.setdefault("ts_latest_data", df_data['ISO_WEEKSTARTDATE'].max())
 ss.setdefault("WHOREGION_levels", df_data["WHOREGION"].unique())
 ss.setdefault("FLUSEASON_levels", df_data["FLUSEASON"].unique())
 ss.setdefault("ITZ_levels", df_data["ITZ"].unique().tolist())
 ss.setdefault("ALL_COUNTRIES", df_data['COUNTRY'].unique())
-
-
 
 
 #------------------------------

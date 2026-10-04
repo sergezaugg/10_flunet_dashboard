@@ -9,33 +9,27 @@ from src.utils import polyreg_by_country_only, filter_a_data_source
 from src.utils import get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks
 from src.utils_plots import make_metric_items, make_mini_trace
 
-# load data to local page 
-df = ss.df_data.copy()
-
 with st.sidebar:
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
 st.text(sel_data_source)
 
-# get top 3 weeks and delay to today 
-top3_weeks =  df["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
-delays_days = ((ss.ts_today - top3_weeks).dt.days).tolist()
-latest_week = df['ISO_WEEKSTARTDATE'].max()
-
+# load data to local page 
+df = ss.df_data.copy()
 # df = df[df["ORIGIN_SOURCE"] == "NOTDEFINED"]
 df = filter_a_data_source(df, sel_data_source)
 df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
 df = polyreg_by_country_only(df, bin_size = 3, deg = 1)
-df_dat00, df_dat01, df_dat02 = get_3_dfs_by_recency_for_top_n_slope(df, latest_week)
+df_dat00, df_dat01, df_dat02 = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week)
 
 # plot delay / recency information
-c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50 , 80, 8, 50, 80, 8])
+c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50, 80, 8, 50, 80, 8])
 with st.container():
     with c1:
-        st.markdown(f'<span style="color:{ss.colors_recency[0]}"><b>{delays_days[0]} days old</b></span>', unsafe_allow_html=True)
+        st.markdown(f'<span style="color:{ss.colors_recency[0]}"><b>{ss.delays_days[0]} days old</b></span>', unsafe_allow_html=True)
     with c3:
-        st.markdown(f'<span style="color:{ss.colors_recency[1]}"><b>{delays_days[1]} days old</b></span>', unsafe_allow_html=True)
+        st.markdown(f'<span style="color:{ss.colors_recency[1]}"><b>{ss.delays_days[1]} days old</b></span>', unsafe_allow_html=True)
     with c5:
-        st.markdown(f'<span style="color:{ss.colors_recency[2]}"><b>{delays_days[2]} days old</b></span>', unsafe_allow_html=True)
+        st.markdown(f'<span style="color:{ss.colors_recency[2]}"><b>{ss.delays_days[2]} days old</b></span>', unsafe_allow_html=True)
     
 # plot metrics and mini traces 
 c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50 , 80, 8, 50, 80, 8])
