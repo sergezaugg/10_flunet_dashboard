@@ -13,8 +13,8 @@ font = "sans serif"
 headingFont = "sans serif"
 codeFont = "monospace"
 
-metricValueFontSize = "1.7rem" 
-metricValueFontWeight = 500
+metricValueFontSize = "1.6rem" 
+metricValueFontWeight = 400
 
 
 

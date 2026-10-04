@@ -118,7 +118,7 @@ def make_metric_items(row, height_row):
             delta=int(row['SLOPE']),
             delta_color="inverse", 
             delta_arrow = "auto", 
-            delta_description = "Δ 2W",
+            delta_description = "Per Week",
             border  = False, 
             width = 200, height = int(0.60*height_row))
         st.markdown(

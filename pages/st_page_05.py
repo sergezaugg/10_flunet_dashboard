@@ -46,21 +46,21 @@ with c5:
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
-nw_slo = 5
+# nw_slo = 5
 for i, row in df_dat00.iterrows():
     with c1:
         make_metric_items(row, height_row = rowheight)
     with c2:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df00, n_slope = nw_slo)
+        make_mini_trace(row, height_row = rowheight, df_for_trace = df00, n_slope = ss.nw_slo)
 
 for i, row in df_dat01.iterrows():
     with c3:
         make_metric_items(row, height_row = rowheight)
     with c4:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df01, n_slope = nw_slo)  
+        make_mini_trace(row, height_row = rowheight, df_for_trace = df01, n_slope = ss.nw_slo)  
 
 for i, row in df_dat02.iterrows():
     with c5:
         make_metric_items(row, height_row = rowheight)
     with c6:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df02, n_slope = nw_slo)  
+        make_mini_trace(row, height_row = rowheight, df_for_trace = df02, n_slope = ss.nw_slo)  

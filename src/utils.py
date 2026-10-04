@@ -328,11 +328,6 @@ def select_top_n_highest_slope(df, n):
 @st.cache_data
 def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
     """
-    get the top N countries by slope for the p most recent weeks
-    Parameters:
-    df : (pandas.DataFrame) DataFrame containing country, date, and smoothed infection data.
-    latest_week : (pandas.Timestamp) Most recent week used as reference.
-    Returns : 
     TBD
     """
 
@@ -341,15 +336,33 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
     
     # keep 3 most recent per country
-    # n_weeks_for_slope = 4
     df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
     df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
 
     # compute simple slope from smoothed curve
-    param_dif = n_weeks_for_slope-1 
-
+    # param_dif = n_weeks_for_slope-1 
     # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
-    df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
+    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
+
+    # compute slope from linear regression
+    df0["SLOPE"] = (df0.groupby("COUNTRY").apply(
+           lambda g: (
+               np.polyfit((
+                   # x normalize to 1 unit = week
+                   g.loc[g["INF_MA"].notna(), "ISO_WEEKSTARTDATE"] - g["ISO_WEEKSTARTDATE"].min()).dt.days / 7,
+                   # that is y
+                   g.loc[g["INF_MA"].notna(), "INF_MA"],
+                   # degree 1 = linear regression
+                   1
+               )[0] # this is b1 = slope
+               if g["INF_MA"].notna().sum() >= 2
+               else np.nan
+           ),
+           include_groups=False
+       )
+       .reindex(df0["COUNTRY"])
+       .to_numpy()
+    )
 
     # keep only latest row per country
     df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
