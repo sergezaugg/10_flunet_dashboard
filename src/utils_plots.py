@@ -124,11 +124,16 @@ def make_metric_items(row, height_row):
 
 
 @st.cache_data
-def make_mini_trace(row, height_row, df_for_trace):
+def make_mini_trace(row, height_row, df_for_trace, n_slope):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
-        fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
-        # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"],showarrow=False,xanchor="left",yanchor="top")
+        fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_MA', height = int(0.8*height_row), markers = True)
+        # fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
+        # plot latest vals in another color 
+        dfb = df_subset.tail(n_slope)
+        fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",line=dict(color="orange"),
+            marker=dict(color="orange"), showlegend=False)
+        # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"], showarrow=False, xanchor="left", yanchor="top")
         # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )

@@ -41,7 +41,7 @@ ss.setdefault("ts_today", datetime.now())
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
 ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 
-
+ss.all_iso_week_start_dates = sorted(df_data["ISO_WEEKSTARTDATE"].dropna().unique())
 
 
 # initialize session state (constant values)

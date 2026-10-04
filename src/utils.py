@@ -319,9 +319,9 @@ def select_top_n_highest_slope(df, n):
 
 
 @st.cache_data
-def get_3_dfs_by_recency_for_top_n_slope(df, latest_week):
+def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
     """
-    get the top N countries by slope for the three most recent weeks
+    get the top N countries by slope for the p most recent weeks
     Parameters:
     df : (pandas.DataFrame) DataFrame containing country, date, and smoothed infection data.
     latest_week : (pandas.Timestamp) Most recent week used as reference.
@@ -336,16 +336,26 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week):
     df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
     
     # keep 3 most recent per country
-    df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(3) 
+    # n_weeks_for_slope = 4
+    df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
     df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
 
     # compute simple slope from smoothed curve
-    param_dif = 2 # 3 will take 3 steps, i.e. change week-3 to week-0 
+    param_dif = n_weeks_for_slope-1 
     df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
+    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
     # keep only latest row per country
     df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
     df1 = df1.sort_values(["COUNTRY"], ascending=[True])
+
+    # prepare overview df for another use
+    df_slopes_all = df1.copy()
+    df_slopes_all = df_slopes_all.drop(columns=["INF_ALL", "INF_MA"])
+    df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
+    
+    # remove slopes that are too small (typically < 0)
+    df1 = df1[df1['SLOPE'] > slope_thld]
 
     date_00 = latest_week - pd.Timedelta(weeks=0)
     date_01 = latest_week - pd.Timedelta(weeks=1)
@@ -359,7 +369,7 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week):
     df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
     df_dat02 = select_top_n_highest_slope(df_dat02, n=10)
 
-    return df_dat00, df_dat01, df_dat02
+    return df_dat00, df_dat01, df_dat02, df_slopes_all
 
 
 # for st_page_05.py
