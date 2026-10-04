@@ -21,10 +21,9 @@ df = filter_a_data_source(df, sel_data_source)
 df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
 df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
 nw_slo = 5
-df_dat00, df_dat01, df_dat02, df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, slope_thld = 0.1, n_weeks_for_slope = nw_slo)
+# df_dat00, df_dat01, df_dat02, df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, slope_thld = 0.1, n_weeks_for_slope = nw_slo)
 
-
-
+df_dat00, df_dat01, df_dat02, df_slopes_all = ss.slope_dfs_by_source[sel_data_source]
 
 # plot delay / recency information
 c1, c2, x1, c3, c4, x2, c5, c6, x3 = st.columns([50, 80, 8, 50, 80, 8, 50, 80, 8])
@@ -58,22 +57,3 @@ for i, row in df_dat02.iterrows():
         make_mini_trace(row, height_row = 150, df_for_trace = df, n_slope = nw_slo)
 
 
-st.divider()
-
-df_slopes_all = df_slopes_all.dropna(subset=["SLOPE"])
-df_slopes_all["ISO_WEEKSTARTDATE"] = (df_slopes_all["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
-df_plot = df_slopes_all.sort_values("SLOPE", ascending = False)
-
-fig00 = px.bar(
-    df_plot,
-    x="SLOPE",
-    y="COUNTRY",
-    color="ISO_WEEKSTARTDATE",
-    orientation="h",
-    height=1000,
-    category_orders={
-        "COUNTRY": df_plot["COUNTRY"].tolist()
-    },
-)
-
-st.plotly_chart(fig00, use_container_width=True, config={"displayModeBar": False})

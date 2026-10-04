@@ -10,6 +10,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
+from src.utils import keep_n_most_recent_weeks, polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope
 from datetime import datetime
 
 pd.set_option('display.max_rows', 500)
@@ -29,9 +30,28 @@ ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all[
 df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
 df_latest_data = get_latest_date_per_group(df_data)
 
+ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
+
+
+# advanced pre-processing
+slope_dfs_by_source = {}
+for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
+    df = df_data
+    df = df[df["ORIGIN_SOURCE"] == dasou]
+    df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
+    df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
+    nw_slo = 5
+    df_dat00, df_dat01, df_dat02, df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, 
+        slope_thld = 0.1, n_weeks_for_slope = nw_slo)
+    slope_dfs_by_source[dasou] = [df_dat00, df_dat01, df_dat02, df_slopes_all]
+
+
 # update data dependent objects
 ss.df_data = df_data
 ss.df_latest_data = df_latest_data
+
+ss.slope_dfs_by_source = slope_dfs_by_source
+
 ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
 ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
 
@@ -39,7 +59,7 @@ ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEK
 ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
 ss.setdefault("ts_today", datetime.now())
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
-ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
+
 
 ss.all_iso_week_start_dates = sorted(df_data["ISO_WEEKSTARTDATE"].dropna().unique())
 
@@ -122,9 +142,10 @@ p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p8 = st.Page("pages/st_page_08.py", title="Data recency")
 p9 = st.Page("pages/st_page_09.py", title="Settings")
+p10 = st.Page("pages/st_page_10.py", title="Flu inc overview")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
-pg = st.navigation([p5, p8, p0, p1, p6, p2, p3, p4, p7, p9, p_dev], position="top")
+pg = st.navigation([p5, p10, p8, p0, p1, p6, p2, p3, p4, p7, p9, p_dev], position="top")
 pg.run()
 
 
