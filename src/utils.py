@@ -351,7 +351,7 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
 
     # prepare overview df for another use
     df_slopes_all = df1.copy()
-    df_slopes_all = df_slopes_all.drop(columns=["INF_ALL", "INF_MA"])
+    df_slopes_all = df_slopes_all[df_slopes_all['SLOPE'] > slope_thld]
     df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
     
     # remove slopes that are too small (typically < 0)

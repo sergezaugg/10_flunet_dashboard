@@ -120,7 +120,11 @@ def make_metric_items(row, height_row):
             delta_arrow = "auto", 
             delta_description = "Δ 2W",
             border  = False, 
-            width = 200, height = int(0.75*height_row))
+            width = 200, height = int(0.60*height_row))
+        st.markdown(
+            f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
+            unsafe_allow_html=True,
+        )
 
 
 @st.cache_data
