@@ -316,3 +316,62 @@ def select_top_n_highest_slope(df, n):
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
 
+
+
+@st.cache_data
+def get_3_dfs_by_recency_for_top_n_slope(df, latest_week):
+    """
+    get the top N countries by slope for the three most recent weeks
+    Parameters:
+    df : (pandas.DataFrame) DataFrame containing country, date, and smoothed infection data.
+    latest_week : (pandas.Timestamp) Most recent week used as reference.
+    Returns : 
+    df_dat00 : (pandas.DataFrame) Top N countries by slope for the latest week
+    df_dat01 : (pandas.DataFrame) Top N countries by slope for one week before latest
+    df_dat02 : (pandas.DataFrame) Top N countries by slope for two weeks before latest
+    """
+
+    # take 5 most recent weeks per country  
+    week_0 = latest_week - pd.Timedelta(weeks=5)
+    df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
+    
+    # keep 3 most recent per country
+    df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(3) 
+    df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
+
+    # compute simple slope from smoothed curve
+    param_dif = 2 # 3 will take 3 steps, i.e. change week-3 to week-0 
+    df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
+
+    # keep only latest row per country
+    df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
+    df1 = df1.sort_values(["COUNTRY"], ascending=[True])
+
+    date_00 = latest_week - pd.Timedelta(weeks=0)
+    date_01 = latest_week - pd.Timedelta(weeks=1)
+    date_02 = latest_week - pd.Timedelta(weeks=2)
+
+    df_dat00 = df1[df1['ISO_WEEKSTARTDATE']==date_00] 
+    df_dat01 = df1[df1['ISO_WEEKSTARTDATE']==date_01] 
+    df_dat02 = df1[df1['ISO_WEEKSTARTDATE']==date_02] 
+
+    df_dat00 = select_top_n_highest_slope(df_dat00, n=10)
+    df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
+    df_dat02 = select_top_n_highest_slope(df_dat02, n=10)
+
+    return df_dat00, df_dat01, df_dat02
+
+
+# for st_page_05.py
+@st.cache_data()
+def keep_n_most_recent_weeks(df, keep_n_weeks):
+    """ keep only n most recent weeks with respect to values in current df"""
+    cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks)
+    df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
+    # slim down 
+    df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+    return df
+
+
+
+
