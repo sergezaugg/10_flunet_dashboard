@@ -15,14 +15,17 @@ df = ss.df_data.copy()
 
 df00 = filter_a_data_source(df, "SENTINEL")
 df00 = keep_n_most_recent_weeks(df00, keep_n_weeks = 15)
+df00 = df00[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df00 = polyreg_by_country_only(df00, bin_size = 4, deg = 1)
 
 df01 = filter_a_data_source(df, "NONSENTINEL")
 df01 = keep_n_most_recent_weeks(df01, keep_n_weeks = 15)
+df01 = df01[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df01 = polyreg_by_country_only(df01, bin_size = 4, deg = 1)
 
 df02 = filter_a_data_source(df, "NOTDEFINED")
 df02 = keep_n_most_recent_weeks(df02, keep_n_weeks = 15)
+df02 = df02[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df02 = polyreg_by_country_only(df02, bin_size = 4, deg = 1)
 
 df_dat00 = ss.slope_dfs_by_source["SENTINEL"]

@@ -43,6 +43,7 @@ for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
     df = df_data
     df = df[df["ORIGIN_SOURCE"] == dasou]
     df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
+    df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
     # nw_slo = 5
     df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, 
@@ -159,7 +160,16 @@ pg = st.navigation([p11, p5, p10, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], posit
 pg.run()
 
 
-   
+with st.sidebar:
+    st.divider()
+    st.markdown("""
+        🔥 Hot stats  
+        📈 Overviews    
+        🔎 Deep dives  
+        ℹ️ Tabular   
+        ⚙️ Settings  
+        """)
+
 
 
 

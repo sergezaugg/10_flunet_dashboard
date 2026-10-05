@@ -136,13 +136,13 @@ def filter_a_data_source(df, c):
 #-----------------------------------------
 # rolling functions 
 
-@st.cache_data()
-def rolling_consecutive(g, bin_size):
-    d = g["ISO_WEEKSTARTDATE"]
-    consecutive = d.diff().eq(pd.Timedelta(days=7))
-    streak = consecutive.groupby((~consecutive).cumsum()).cumsum() + 1
-    ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=False).mean()
-    return ma.where(streak >= bin_size)
+# @st.cache_data()
+# def rolling_consecutive(g, bin_size):
+#     d = g["ISO_WEEKSTARTDATE"]
+#     consecutive = d.diff().eq(pd.Timedelta(days=7))
+#     streak = consecutive.groupby((~consecutive).cumsum()).cumsum() + 1
+#     ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=False).mean()
+#     return ma.where(streak >= bin_size)
 
 def cond_expect_last_polyfit(y, deg=1):
     """
@@ -181,28 +181,6 @@ def polyreg_by_country_source(df, bin_size, deg):
     df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0
     df["INF_MA"] = df["INF_MA"].fillna(0.0)
     return df
-
-
-# @st.cache_data
-# def get_baseline_count(df, q):
-#     """
-#     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing 
-#     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
-#     """
-#     df = df[["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]]
-#     df = (
-#         df.set_index("ISO_WEEKSTARTDATE")
-#         .groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
-#         .apply(lambda x: x.reindex(
-#                 pd.date_range(x.index.min(), x.index.max(), freq="W-MON")
-#             ).fillna(0.0)
-#         )
-#         .rename("INF_ALL")
-#         .reset_index()
-#     )
-#     # compute quantile 
-#     baseline_thlds = (df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(q).reset_index(name="INF_ALL_BASELINE"))
-#     return(baseline_thlds)
 
 
 @st.cache_data
@@ -383,16 +361,20 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     return df_slopes_all
 
 
-# for st_page_05.py
 @st.cache_data()
 def keep_n_most_recent_weeks(df, keep_n_weeks):
     """ keep only n most recent weeks with respect to values in current df"""
     cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks)
     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
-    # slim down 
-    df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     return df
 
-
+@st.cache_data()
+def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
+    """ keep only n most recent weeks with respect to values in current df"""
+    cutoff_week = ref_date - pd.Timedelta(weeks=keep_n_weeks)
+    df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
+    # return time range 
+    xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks), ref_date]
+    return df, xrange
 
 
