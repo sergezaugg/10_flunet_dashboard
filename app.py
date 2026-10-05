@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
+from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
 from src.utils import keep_n_most_recent_weeks, polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope
 from datetime import datetime
 
@@ -18,7 +18,7 @@ pd.set_option('display.max_rows', 500)
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 
-ss.setdefault("ts_today", datetime.now())
+ss.setdefault("ts_today", get_ts_today())
 
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
@@ -134,7 +134,7 @@ for key in list(st.session_state.keys()):
 # build sidebar
 with st.sidebar:
     st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
-    Today: \t{ss.ts_today.strftime("%Y-%m-%d")}  
+    Ref date: \t{ss.ts_today.strftime("%Y-%m-%d")}  
     Downloaded: \t{ts_download.strftime("%Y-%m-%d")}  
     Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
     """)
@@ -160,15 +160,15 @@ pg = st.navigation([p11, p5, p10, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], posit
 pg.run()
 
 
-with st.sidebar:
-    st.divider()
-    st.markdown("""
-        🔥 Hot stats  
-        📈 Overviews    
-        🔎 Deep dives  
-        ℹ️ Tabular   
-        ⚙️ Settings  
-        """)
+# with st.sidebar:
+#     st.divider()
+#     st.markdown("""
+#         🔥 Hot stats  
+#         📈 Overviews    
+#         🔎 Deep dives  
+#         ℹ️ Tabular   
+#         ⚙️ Settings  
+#         """)
 
 
 

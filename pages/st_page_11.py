@@ -12,21 +12,32 @@ from src.utils import get_baseline_count, filter_a_data_source
 from src.utils import select_top_n_highest_val_by_origin, keep_n_most_recent_weeks, keep_n_most_recent_weeks_2
 from src.utils_plots import make_smoothed_curve_plot
 
-quantile_val = 0.70
+quantile_val = 0.65
+# define time ranges in weeks 
+time_range_basli = 52*5
+time_range_trace = 24
+time_range_stats = 6
+
+with st.sidebar:
+    st.markdown(f""" BL from :primary[{quantile_val} quantile] taken over :primary[{int(time_range_basli)} weeks.]
+    Traces show latest :primary[{int(time_range_trace)} weeks.]
+    Stats from latest :primary[{int(time_range_stats)} weeks.]    
+    """)
+    
 
 # load data to local page 
 df = ss.df_data.copy()
 
 # keep last 5 years to compute baseline 
-df, _ = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = 52*5)
+df, _ = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = time_range_basli)
 # get flu baseline counts (for all countries)
 bl_thld = get_baseline_count(df, q = quantile_val)
 
 # reduce to fewer recent weeks for trace plottins
-df_tra, trace_x_range = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = 15)
+df_tra, trace_x_range = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = time_range_trace)
 
 # reduce even fewer recent weeks for recent stats (below)
-df00, stats_x_range = keep_n_most_recent_weeks_2(df_tra, ref_date = ss.ts_today, keep_n_weeks = 6)
+df00, stats_x_range = keep_n_most_recent_weeks_2(df_tra, ref_date = ss.ts_today, keep_n_weeks = time_range_stats)
 
 # merge-in baseline threshold 
 df00 = df00.merge(bl_thld, on=["COUNTRY", "ORIGIN_SOURCE"], how="left")
@@ -57,9 +68,9 @@ df_trace = [filter_a_data_source(df_tra, a)  for a in ["SENTINEL", "NONSENTINEL"
 def make_metric_items_baseline(row, height_row):
     with st.container(border= True, height = height_row):
         st.metric(label=row['COUNTRY'], 
-            value=f"{int(row['N_ABOVE_BASELINE'])} W",
+            value=f"{int(row['N_ABOVE_BASELINE'])} weeks",
             border  = False, 
-            delta_description = "Weeks above BL",
+            delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
             width = 200, height = int(0.60*height_row))
         st.markdown(
             f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
@@ -75,9 +86,10 @@ def make_mini_trace_baseline(row, height_row, df_for_trace):
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-        fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dash", line_color="green")
+        fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
+        fig.add_hrect(y0=0.0, y1=row['INF_ALL_BASELINE'], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
         fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
-        fig.add_vrect(x0=stats_x_range[0], x1=stats_x_range[1], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
+        fig.add_vrect(x0=trace_x_range[0], x1=stats_x_range[0], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

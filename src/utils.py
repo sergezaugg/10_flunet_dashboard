@@ -12,7 +12,7 @@ import requests
 from io import BytesIO
 from datetime import datetime
 
-@st.cache_data(ttl=86400) 
+@st.cache_data(ttl=12*60*60) # refresh every 12 hours 
 def download_flunet_data():
     """Download FluNet data"""
     # step-by-step import 
@@ -26,10 +26,10 @@ def download_flunet_data():
     ts = datetime.now()
     return(df_dat, ts)
 
+@st.cache_data(ttl=12*60*60) # refresh every 12 hours 
+def get_ts_today():
+    return datetime.now()
 
-# arr = df_dat["COUNTRY_AREA_TERRITORY"].unique()
-
-# [x for x in arr if len(x) > 15]
 
 
 @st.cache_data()
@@ -364,17 +364,17 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
 @st.cache_data()
 def keep_n_most_recent_weeks(df, keep_n_weeks):
     """ keep only n most recent weeks with respect to values in current df"""
-    cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks)
+    cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks, days=1)
     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
     return df
 
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     """ keep only n most recent weeks with respect to values in current df"""
-    cutoff_week = ref_date - pd.Timedelta(weeks=keep_n_weeks)
+    cutoff_week = ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1)
     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
     # return time range 
-    xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks), ref_date]
+    xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1), ref_date]
     return df, xrange
 
 
