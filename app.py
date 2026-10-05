@@ -141,19 +141,19 @@ with st.sidebar:
     
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="Cases by Regions")
-p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ")
+# p1 = st.Page("pages/st_page_01.py", title="Cases by ITZ") # this one is redundant with p0
 p2 = st.Page("pages/st_page_02.py", title="Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="Explore Mov. Avg")
 p5 = st.Page("pages/st_page_05.py", title="Top Risers")
-p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions")
+# p6 = st.Page("pages/st_page_06.py", title="Positivity by Regions") # not show yet, under developments
 p7 = st.Page("pages/st_page_07.py", title="Tabular Explorer")
 p8 = st.Page("pages/st_page_08.py", title="Data recency")
 p9 = st.Page("pages/st_page_09.py", title="Settings")
 p10 = st.Page("pages/st_page_10.py", title="All Risers")
 p_dev = st.Page("pages/st_dev.py", title="Devel")
 
-pg = st.navigation([p5, p10, p8, p0, p1, p6, p2, p3, p4, p7, p9, p_dev], position="top")
+pg = st.navigation([p5, p10, p8, p0, p2, p3, p4, p7, p9, p_dev], position="top")
 pg.run()
 
 
