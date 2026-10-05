@@ -8,7 +8,7 @@ import plotly.express as px
 import streamlit as st
 from src.utils import polyreg_by_country_only, filter_a_data_source
 from src.utils import keep_n_most_recent_weeks, select_top_n_highest_slope
-from src.utils_plots import make_metric_items, make_mini_trace
+from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 # load data to local page 
 df = ss.df_data.copy()
@@ -49,18 +49,18 @@ rowheight = 160
 # nw_slo = 5
 for i, row in df_dat00.iterrows():
     with c1:
-        make_metric_items(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight)
     with c2:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df00, n_slope = ss.nw_slo)
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df00, n_slope = ss.nw_slo)
 
 for i, row in df_dat01.iterrows():
     with c3:
-        make_metric_items(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight)
     with c4:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df01, n_slope = ss.nw_slo)  
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df01, n_slope = ss.nw_slo)  
 
 for i, row in df_dat02.iterrows():
     with c5:
-        make_metric_items(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight)
     with c6:
-        make_mini_trace(row, height_row = rowheight, df_for_trace = df02, n_slope = ss.nw_slo)  
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df02, n_slope = ss.nw_slo)  

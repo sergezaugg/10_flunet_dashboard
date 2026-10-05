@@ -383,7 +383,7 @@ def keep_n_most_recent_weeks(df, keep_n_weeks):
     cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks)
     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
     # slim down 
-    df = df[['COUNTRY', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+    df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     return df
 
 

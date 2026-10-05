@@ -111,7 +111,7 @@ def make_smoothed_curve_plot(df_plot):
 
 
 @st.cache_data
-def make_metric_items(row, height_row):
+def make_metric_items_slope(row, height_row):
     with st.container(border= True, height = height_row):
         st.metric(label=row['COUNTRY'], 
             value=f"{int(row['INF_ALL'])} cases",
@@ -123,12 +123,11 @@ def make_metric_items(row, height_row):
             width = 200, height = int(0.60*height_row))
         st.markdown(
             f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
-            unsafe_allow_html=True,
-        )
+            unsafe_allow_html=True,)
 
 
 @st.cache_data
-def make_mini_trace(row, height_row, df_for_trace, n_slope):
+def make_mini_trace_slope(row, height_row, df_for_trace, n_slope):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
         fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_MA', height = int(0.8*height_row), markers = True)
