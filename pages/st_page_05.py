@@ -6,63 +6,42 @@
 from streamlit import session_state as ss
 import plotly.express as px
 import streamlit as st
-from src.utils import polyreg_by_country_only, filter_a_data_source
-from src.utils import select_top_n_highest_slope, keep_n_most_recent_weeks_2
+from src.utils import filter_a_data_source
+from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
-# load data to local page 
-df = ss.df_data.copy()
 
-df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+trace_x_range = ss.trace_x_range_ma
+# unpack smoothed traces dfs
+df_trace = [filter_a_data_source(ss.df_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+# for metrics boxes (unpack list and take top 10)
+df_metri = [select_top_n_highest_slope(ss.slope_dfs_by_source[a], n=10) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 
-df00 = filter_a_data_source(df, "SENTINEL")
-df00, _ = keep_n_most_recent_weeks_2(df00, ref_date = ss.ts_today, keep_n_weeks = 15)
-df00 = polyreg_by_country_only(df00, bin_size = 4, deg = 1)
 
-df01 = filter_a_data_source(df, "NONSENTINEL")
-df01, _ = keep_n_most_recent_weeks_2(df01, ref_date = ss.ts_today, keep_n_weeks = 15)
-df01 = polyreg_by_country_only(df01, bin_size = 4, deg = 1)
-
-df02 = filter_a_data_source(df, "NOTDEFINED")
-df02, _ = keep_n_most_recent_weeks_2(df02, ref_date = ss.ts_today, keep_n_weeks = 15)
-df02 = polyreg_by_country_only(df02, bin_size = 4, deg = 1)
-
-df_dat00 = ss.slope_dfs_by_source["SENTINEL"]
-df_dat01 = ss.slope_dfs_by_source["NONSENTINEL"]
-df_dat02 = ss.slope_dfs_by_source["NOTDEFINED"]
-
-df_dat00 = select_top_n_highest_slope(df_dat00, n=10)
-df_dat01 = select_top_n_highest_slope(df_dat01, n=10)
-df_dat02 = select_top_n_highest_slope(df_dat02, n=10)
 
 # plot metrics and mini traces 
-c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
-with c1:
-    st.text("SENTINEL")
-with c3:
-    st.text("NONSENTINEL")
-with c5:
-    st.text("NOTDEFINED")
+for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
+    with col:
+        st.text(label)
 
-# plot metrics and mini traces 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
-# nw_slo = 5
-for i, row in df_dat00.iterrows():
+
+for i, row in df_metri[0].iterrows():
     with c1:
         make_metric_items_slope(row, height_row = rowheight)
     with c2:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df00, n_slope = ss.nw_slo)
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[0], n_slope = ss.nw_slo, xrange = trace_x_range)
 
-for i, row in df_dat01.iterrows():
+for i, row in df_metri[1].iterrows():
     with c3:
         make_metric_items_slope(row, height_row = rowheight)
     with c4:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df01, n_slope = ss.nw_slo)  
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[1], n_slope = ss.nw_slo, xrange = trace_x_range)  
 
-for i, row in df_dat02.iterrows():
+for i, row in df_metri[2].iterrows():
     with c5:
         make_metric_items_slope(row, height_row = rowheight)
     with c6:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df02, n_slope = ss.nw_slo)  
+        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[2], n_slope = ss.nw_slo, xrange = trace_x_range)  

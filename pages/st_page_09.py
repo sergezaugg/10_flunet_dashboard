@@ -13,6 +13,5 @@ _ = st.slider("Overall Date Range",
     key = "k_set_01"
     )
 
-
-
-
+# st.text(ss.k_set_01)
+# ss.ts_today = ss.k_set_01[1]

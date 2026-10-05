@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
-from src.utils import polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2
+from src.utils import polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
 from datetime import datetime
 
 pd.set_option('display.max_rows', 500)
@@ -34,28 +34,49 @@ df_latest_data = get_latest_date_per_group(df_data, ts_today = ss.ts_today)
 
 ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 
-# number of weeks to use to compute slope 
-ss.nw_slo = 4
 
+#--------------------------------------
 # advanced pre-processing
+
+ss.nw_ma = 20 # 15
+ss.ma_bin_size = 4
+ss.ma_degree = 1
+ss.nw_slo = 4 # 4
+
+# load data to local page 
+df_ma = df_data.copy()
+df_ma = df_ma[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ss.ts_today, keep_n_weeks = ss.nw_ma)
+df_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
+
+ss.df_ma = df_ma
+ss.trace_x_range_ma = trace_x_range_ma
+
+# regression - advanced pre-processing (used in pages 05 and 10)
 slope_dfs_by_source = {}
 for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
-    df = df_data
-    df = df[df["ORIGIN_SOURCE"] == dasou]
-    df, _ = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = 15)
-    df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
-    df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
-    # nw_slo = 5
-    df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df, ss.latest_week, 
+    df0 = df_ma.copy()
+    df0 = df0[df0["ORIGIN_SOURCE"] == dasou]
+    df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df0, ss.latest_week, 
         slope_thld = 0.1, n_weeks_for_slope = ss.nw_slo)
     slope_dfs_by_source[dasou] = df_slopes_all
+
+ss.slope_dfs_by_source = slope_dfs_by_source
+#--------------------------------------
+
+
+
+
+
+
+
+
+
 
 
 # update data dependent objects
 ss.df_data = df_data
 ss.df_latest_data = df_latest_data
-
-ss.slope_dfs_by_source = slope_dfs_by_source
 
 ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
 ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
@@ -64,7 +85,6 @@ ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEK
 ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
 
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
-
 
 ss.all_iso_week_start_dates = sorted(df_data["ISO_WEEKSTARTDATE"].dropna().unique())
 
@@ -160,15 +180,6 @@ pg = st.navigation([p11, p5, p10, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], posit
 pg.run()
 
 
-# with st.sidebar:
-#     st.divider()
-#     st.markdown("""
-#         🔥 Hot stats  
-#         📈 Overviews    
-#         🔎 Deep dives  
-#         ℹ️ Tabular   
-#         ⚙️ Settings  
-#         """)
 
 
 

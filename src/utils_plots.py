@@ -127,7 +127,7 @@ def make_metric_items_slope(row, height_row):
 
 
 @st.cache_data
-def make_mini_trace_slope(row, height_row, df_for_trace, n_slope):
+def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
         fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_MA', height = int(0.8*height_row), markers = True)
@@ -138,6 +138,8 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope):
             marker=dict(color="orange"), showlegend=False)
         # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"], showarrow=False, xanchor="left", yanchor="top")
         # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
+        fig.update_yaxes(range=[0, None])
+        fig.update_xaxes(range=xrange)
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)

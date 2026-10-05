@@ -94,15 +94,18 @@ def make_mini_trace_baseline(row, height_row, df_for_trace):
 
 
 
-# plot metrics and mini traces 
-c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
-with c1:
-    st.text("SENTINEL")
-with c3:
-    st.text("NONSENTINEL")
-with c5:
-    st.text("NOTDEFINED")
+# # plot metrics and mini traces 
+# c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
+# with c1:
+#     st.text("SENTINEL")
+# with c3:
+#     st.text("NONSENTINEL")
+# with c5:
+#     st.text("NOTDEFINED")
 
+for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
+    with col:
+        st.text(label)
 
 # plot metrics and mini traces 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
