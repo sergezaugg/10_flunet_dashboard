@@ -5,44 +5,41 @@
 
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import get_latest_date_per_group
+import plotly.express as px
+from src.utils_plots import display_df_page_08
 
+# build control items in sidebar
+with st.sidebar:
+    who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_rec_01")
+   
 # load data to local page 
-df_latest_data = ss.df_latest_data.copy()
+df_lat = ss.df_latest_data.copy()
 
+# select based on WHOREGION
+df_lat = df_lat[df_lat["WHOREGION"].isin(who_regions)]
+# drop unused columns 
+df_lat = df_lat.drop(columns = ["ISO_WEEKSTARTDATE", "WHOREGION", "FLUSEASON"])
+# set initial row order
+df_lat = df_lat.sort_values("days_since", ascending = True)
 
-df_latest_data = df_latest_data[["COUNTRY" , "ALL_latest"]]
+# prepare 3 dfs in a list for display
+df_sel = [df_lat[df_lat['ORIGIN_SOURCE'] == a] for a in ['SENTINEL', 'NONSENTINEL', 'NOTDEFINED']]
+df_sel = [a.drop(columns = "ORIGIN_SOURCE") for a in df_sel]
 
-df_latest_data["days_since"] = (ss.ts_today - df_latest_data["ALL_latest"]).dt.days
+# display data frames 
+c1, c2, c3, c4 = st.columns([20,20,20,40])
 
-delays = df_latest_data["days_since"].unique()
-delays.sort()
-ctf = delays[0:3].max()
+with c1:
+    st.text('SENTINEL')
+    display_df_page_08(df_sel[0])
+   
+with c2:
+    st.text('NONSENTINEL')
+    display_df_page_08(df_sel[1])
 
-# an let's hope sorting will remain through next steps ;-)
-df_latest_data = df_latest_data.sort_values("days_since")
-df_latest_data["days_since_cat"] = (df_latest_data["days_since"].astype(str))
-df_latest_data.loc[df_latest_data["days_since"] > ctf, "days_since_cat"] = "older"
-
-
-
-cols = st.columns(6)
-
-# colors = ["#00ff55", "yellow", "orange", "red"]
-
-for i, (col, cat) in enumerate(zip(cols, df_latest_data["days_since_cat"].unique())):
-
-    with col:
-        df_sel = df_latest_data.loc[df_latest_data["days_since_cat"] == cat,["COUNTRY"]]
-    
-        st.markdown(f'<span style="color:{ss.colors_recency[i]}"><b>{cat} days old</b></span>', unsafe_allow_html=True)
-        st.markdown(f"**{len(df_sel)} countries**")
-        st.dataframe(
-            df_sel,
-            hide_index=True,
-            use_container_width=True,
-            height = 2000
-        )
+with c3:
+    st.text('NOTDEFINED')
+    display_df_page_08(df_sel[2])
 
 
 

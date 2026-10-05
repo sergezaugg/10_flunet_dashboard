@@ -143,3 +143,30 @@ def make_mini_trace(row, height_row, df_for_trace, n_slope):
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+@st.cache_data
+def display_df_page_08(df):
+
+    
+    def set_color_in_df(x):
+        """ helper function for formatting df """
+        if x <= 20:
+            return "color: green"
+        elif x > 20:
+            return "color: red"
+        return ""
+
+    st.dataframe(
+        df.style.map(set_color_in_df, subset=["days_since"]),
+        hide_index=True,
+        use_container_width=False,
+        height = 500,
+        column_config={
+            "COUNTRY": st.column_config.TextColumn("Country", width="tiny", alignment="center",),
+            "days_since": st.column_config.NumberColumn("Age (days)", width="small", alignment="center",),
+            "Latest date": st.column_config.DateColumn("Date", width="small", alignment="center",),
+        },
+       
+    )
+

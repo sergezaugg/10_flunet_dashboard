@@ -252,18 +252,18 @@ def get_baseline_count(df, q):
 
 
 @st.cache_data()
-def get_latest_date_per_group(df):
+def get_latest_date_per_group(df, ts_today):
     """
     Get latest date of available data per COUNTRY and ORIGIN_SOURCE
     """
-    df = df[["COUNTRY" , "ORIGIN_SOURCE",  "ISO_WEEKSTARTDATE" , "INF_ALL",]]
+    df = df[["COUNTRY" , "ORIGIN_SOURCE", "WHOREGION", "FLUSEASON", "ISO_WEEKSTARTDATE" , "INF_ALL",]]
     df = df.dropna(subset=["INF_ALL"])
     df = df.loc[df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
     df = df.drop(columns = ["INF_ALL"])
-    df = df.pivot(
-        index="COUNTRY", columns="ORIGIN_SOURCE", values="ISO_WEEKSTARTDATE"
-        ).rename(columns=lambda x: f"{x}_latest").reset_index()
-    df["ALL_latest"] = df[["NONSENTINEL_latest", "NOTDEFINED_latest", "SENTINEL_latest"]].max(axis=1)
+    # derive variable and convert types
+    df["days_since"] = (ts_today - df["ISO_WEEKSTARTDATE"]).dt.days
+    df["Latest date"] = (df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
+
     return df
 
 

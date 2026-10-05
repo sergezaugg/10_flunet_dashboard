@@ -18,6 +18,8 @@ pd.set_option('display.max_rows', 500)
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 
+ss.setdefault("ts_today", datetime.now())
+
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
 df_data_all = preprocess_flunet_data(df = df_dat)
@@ -28,7 +30,7 @@ ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all[
 
 # update global time range
 df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
-df_latest_data = get_latest_date_per_group(df_data)
+df_latest_data = get_latest_date_per_group(df_data, ts_today = ss.ts_today)
 
 ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 
@@ -59,7 +61,7 @@ ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEK
 
 # get top 3 weeks and delay to today 
 ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
-ss.setdefault("ts_today", datetime.now())
+
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
 
 
@@ -91,6 +93,10 @@ ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
+
+# defaults for recency (page 08)
+ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
+ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
 
 # defaults for WHOREGION - positivity (page 06)
 ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
