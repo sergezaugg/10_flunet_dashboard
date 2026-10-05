@@ -323,6 +323,13 @@ def select_top_n_highest_slope(df, n):
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
 
+@st.cache_data
+def select_top_n_highest_val_by_origin(df, n, var):
+    df = (df.dropna(subset=[var])
+      .sort_values(var, ascending=False)
+      .groupby("ORIGIN_SOURCE", group_keys=False)
+      .head(n).reset_index(drop=True))
+    return df
 
 
 @st.cache_data

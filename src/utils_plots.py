@@ -120,7 +120,7 @@ def make_metric_items_slope(row, height_row):
             delta_arrow = "auto", 
             delta_description = "Per Week",
             border  = False, 
-            width = 200, height = int(0.60*height_row))
+            width = 200, height = int(0.55*height_row))
         st.markdown(
             f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
             unsafe_allow_html=True,)
@@ -142,6 +142,16 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope):
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+
+
+# aaaaaaaaaaaaaaaaa
+
+
+
+
+
 
 
 @st.cache_data
