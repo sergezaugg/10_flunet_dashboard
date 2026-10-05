@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
-from src.utils import keep_n_most_recent_weeks, polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope
+from src.utils import polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2
 from datetime import datetime
 
 pd.set_option('display.max_rows', 500)
@@ -42,7 +42,7 @@ slope_dfs_by_source = {}
 for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
     df = df_data
     df = df[df["ORIGIN_SOURCE"] == dasou]
-    df = keep_n_most_recent_weeks(df, keep_n_weeks = 15)
+    df, _ = keep_n_most_recent_weeks_2(df, ref_date = ss.ts_today, keep_n_weeks = 15)
     df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     df = polyreg_by_country_only(df, bin_size = 4, deg = 1)
     # nw_slo = 5

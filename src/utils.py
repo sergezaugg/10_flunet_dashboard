@@ -361,12 +361,12 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     return df_slopes_all
 
 
-@st.cache_data()
-def keep_n_most_recent_weeks(df, keep_n_weeks):
-    """ keep only n most recent weeks with respect to values in current df"""
-    cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks, days=1)
-    df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
-    return df
+# @st.cache_data()
+# def keep_n_most_recent_weeks(df, keep_n_weeks):
+#     """ keep only n most recent weeks with respect to values in current df"""
+#     cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks, days=1)
+#     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
+#     return df
 
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):

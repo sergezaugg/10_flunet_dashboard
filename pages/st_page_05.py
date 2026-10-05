@@ -7,25 +7,24 @@ from streamlit import session_state as ss
 import plotly.express as px
 import streamlit as st
 from src.utils import polyreg_by_country_only, filter_a_data_source
-from src.utils import keep_n_most_recent_weeks, select_top_n_highest_slope
+from src.utils import select_top_n_highest_slope, keep_n_most_recent_weeks_2
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 # load data to local page 
 df = ss.df_data.copy()
 
+df = df[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+
 df00 = filter_a_data_source(df, "SENTINEL")
-df00 = keep_n_most_recent_weeks(df00, keep_n_weeks = 15)
-df00 = df00[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+df00, _ = keep_n_most_recent_weeks_2(df00, ref_date = ss.ts_today, keep_n_weeks = 15)
 df00 = polyreg_by_country_only(df00, bin_size = 4, deg = 1)
 
 df01 = filter_a_data_source(df, "NONSENTINEL")
-df01 = keep_n_most_recent_weeks(df01, keep_n_weeks = 15)
-df01 = df01[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+df01, _ = keep_n_most_recent_weeks_2(df01, ref_date = ss.ts_today, keep_n_weeks = 15)
 df01 = polyreg_by_country_only(df01, bin_size = 4, deg = 1)
 
 df02 = filter_a_data_source(df, "NOTDEFINED")
-df02 = keep_n_most_recent_weeks(df02, keep_n_weeks = 15)
-df02 = df02[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+df02, _ = keep_n_most_recent_weeks_2(df02, ref_date = ss.ts_today, keep_n_weeks = 15)
 df02 = polyreg_by_country_only(df02, bin_size = 4, deg = 1)
 
 df_dat00 = ss.slope_dfs_by_source["SENTINEL"]

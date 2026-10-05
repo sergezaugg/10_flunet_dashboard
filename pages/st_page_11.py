@@ -9,7 +9,7 @@ import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
 from src.utils import get_baseline_count, filter_a_data_source
-from src.utils import select_top_n_highest_val_by_origin, keep_n_most_recent_weeks, keep_n_most_recent_weeks_2
+from src.utils import select_top_n_highest_val_by_origin, keep_n_most_recent_weeks_2
 from src.utils_plots import make_smoothed_curve_plot
 
 quantile_val = 0.65
