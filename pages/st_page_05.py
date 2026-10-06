@@ -12,8 +12,8 @@ from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 
 with st.sidebar:
-    st.markdown(f"""Trace smoothed via moving regression of degree :primary[{ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size}] weeks.
-    Slope then estimated for latest :primary[{int(ss.nw_slo)}] weeks of smoothed curve via linear regression.
+    st.markdown(f"""Trace smoothed via moving regression of :primary[degree {ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size} weeks].
+    Slope then estimated for latest :primary[{int(ss.nw_slo)} weeks] of smoothed curve via linear regression.
     """)
 
 trace_x_range = ss.trace_x_range_ma

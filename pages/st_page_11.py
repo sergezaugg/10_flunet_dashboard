@@ -33,20 +33,23 @@ c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
 
+ss.stats_x_range_bl
+
+
 for i, row in df_metri[0].iterrows():
     with c1:
-        make_metric_items_baseline(row, rowheight, ss.stats_x_range_bl)
+        make_metric_items_baseline(row, rowheight, ss.time_range_stats)
     with c2:
         make_mini_trace_baseline(row, rowheight, df_trace[0], ss.trace_x_range_bl, ss.stats_x_range_bl)
 
 for i, row in df_metri[1].iterrows():
     with c3:
-        make_metric_items_baseline(row, rowheight, ss.stats_x_range_bl)
+        make_metric_items_baseline(row, rowheight, ss.time_range_stats)
     with c4:
         make_mini_trace_baseline(row, rowheight, df_trace[1], ss.trace_x_range_bl, ss.stats_x_range_bl)
 
 for i, row in df_metri[2].iterrows():
     with c5:
-        make_metric_items_baseline(row, rowheight, ss.stats_x_range_bl)
+        make_metric_items_baseline(row, rowheight, ss.time_range_stats)
     with c6:
         make_mini_trace_baseline(row, rowheight, df_trace[2], ss.trace_x_range_bl, ss.stats_x_range_bl)        
