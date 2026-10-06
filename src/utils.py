@@ -383,30 +383,7 @@ def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
 @st.cache_data
 def prepre_for_pages_10_13(df, xvar):
     df = df.dropna(subset=[xvar])
-    df["ISO_WEEKSTARTDATE"] = ("Updated " + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
+    df["ISO_WEEKSTARTDATE_str"] = ("Updated " + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
     df = df.sort_values(xvar, ascending = False)
     return(df)
 
-@st.cache_data
-def make_bar_plot_pages_10_13(df, xvar):
-    fig = px.bar(
-        df,
-        x=xvar,
-        y="COUNTRY",
-        color="ISO_WEEKSTARTDATE",
-        text="ISO_WEEKSTARTDATE",
-        orientation="h",
-        height=150 + len(df)*35,
-        category_orders={"COUNTRY": df["COUNTRY"].tolist()},
-    )
-
-    fig.update_traces(width=0.7)
-
-    fig.update_xaxes(side="top")
-    fig.update_layout(showlegend=False)
-    # fig.update_layout(legend_title_text="Latest data from")
-    fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
-    # fig.update_layout(legend=dict(orientation="h", x=0.5, y=-0.14, xanchor="center", yanchor="bottom"))
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-    return fig

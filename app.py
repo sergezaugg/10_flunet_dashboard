@@ -233,7 +233,7 @@ p13 = st.Page("pages/st_page_13.py", title="💡 All High")
 
 p_dev = st.Page("pages/st_dev.py", title="💀 Dev")
 
-pg = st.navigation([p11, p5, p10, p13, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], position="top")
+pg = st.navigation([p5, p11, p10, p13, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], position="top")
 pg.run()
 
 

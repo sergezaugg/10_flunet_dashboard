@@ -6,6 +6,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+from config import cc
 
 @st.cache_data()
 def make_facet_line_plot(df, n_countr, outcome):
@@ -23,6 +24,7 @@ def make_facet_line_plot(df, n_countr, outcome):
         facet_row_spacing=0.004,
         height= (n_countr * 200),
         markers=True,
+        color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]]
     )
     fig.update_traces(marker=dict(size=5))
     # fig.update_yaxes(title_text="Weekly Infl. Detect.")
@@ -130,12 +132,21 @@ def make_metric_items_slope(row, height_row):
 def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
-        fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_MA', height = int(0.8*height_row), markers = True)
+        fig = px.line(
+            df_subset, 
+            x = 'ISO_WEEKSTARTDATE', 
+            y = 'INF_MA', 
+            height = int(0.8*height_row), 
+            markers = True,
+            color_discrete_sequence=[cc["traces"]["basic"]],
+            )
         # fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
         # plot latest vals in another color 
         dfb = df_subset.tail(n_slope)
-        fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",line=dict(color="orange"),
-            marker=dict(color="orange"), showlegend=False)
+        fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
+            line=dict(color=    cc["traces"]["hot"]),
+            marker=dict(color=  cc["traces"]["hot"]), 
+            showlegend=False)
         # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"], showarrow=False, xanchor="left", yanchor="top")
         # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
         fig.update_yaxes(range=[0, None])
@@ -167,7 +178,14 @@ def make_metric_items_baseline(row, height_row, time_range_stats):
 def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats_x_range):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
-        fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
+        fig = px.line(
+            df_subset, 
+            x = 'ISO_WEEKSTARTDATE', 
+            y = 'INF_ALL', 
+            height = int(0.8*height_row), 
+            markers = True,
+            color_discrete_sequence=[cc["traces"]["basic"]],
+        )
         fig.update_yaxes(range=[0, None])
         fig.update_xaxes(range=trace_x_range)
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
@@ -218,4 +236,29 @@ def display_df_page_08(df):
         },
        
     )
+
+
+@st.cache_data
+def make_bar_plot_pages_10_13(df, xvar, xlabel):
+
+    fig = px.bar(
+        df,
+        x=xvar,
+        y="COUNTRY",
+        # color="ISO_WEEKSTARTDATE",
+        text="ISO_WEEKSTARTDATE_str",
+        orientation="h",
+        height=130 + len(df)*30,
+        category_orders={"COUNTRY": df["COUNTRY"].tolist()},
+        labels={xvar: xlabel},
+    )
+    fig.update_traces(width=0.7)
+    fig.update_xaxes(side="top")
+    fig.update_layout(showlegend=False)
+    fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_traces(marker_color=cc["traces"]["hot"])
+    return fig
+
 

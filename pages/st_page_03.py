@@ -12,6 +12,7 @@ from src.utils import filter_data, filter_a_country, filter_by_date_range
 from src.utils_plots import make_facet_bar_plot
 import pandas as pd
 from plotly.subplots import make_subplots
+from config import cc
 
 df_data = ss.df_data.copy()
 
@@ -61,7 +62,7 @@ fig_line = px.line(
     y="INF_ALL",
     facet_row="COUNTRY",
     template="plotly_dark", 
-    color_discrete_sequence=["rgb(255,240,240)"]
+    color_discrete_sequence=[cc["traces"]["basic"]],
 )
 
 fig_area = px.area(
@@ -70,7 +71,7 @@ fig_area = px.area(
     y="PROP",
     facet_row="COUNTRY",
     color="TYPE",
-    color_discrete_map={"INF_A": "#1f77b4",   "INF_B": "#d62728",   "OTHER": "#2ca02c"},
+    color_discrete_map={"INF_A": cc["types"]["a"],   "INF_B": cc["types"]["b"],   "OTHER": cc["types"]["o"]},
     template="plotly_dark", 
     markers = False,
     line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
