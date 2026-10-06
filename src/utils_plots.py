@@ -151,6 +151,44 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
 # aaaaaaaaaaaaaaaaa
 
 
+@st.cache_data
+def make_metric_items_baseline(row, height_row, time_range_stats):
+    with st.container(border= True, height = height_row):
+        st.metric(label=row['COUNTRY'], 
+            value=f"{int(row['N_ABOVE_BASELINE'])} weeks",
+            border  = False, 
+            delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
+            width = 200, height = int(0.60*height_row))
+        st.markdown(
+            f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
+            unsafe_allow_html=True,)
+
+@st.cache_data
+def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats_x_range):
+     with st.container(border= True, height = height_row):
+        df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
+        fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
+        fig.update_yaxes(range=[0, None])
+        fig.update_xaxes(range=trace_x_range)
+        fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
+        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
+        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+        fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
+        fig.add_hrect(y0=0.0, y1=row['INF_ALL_BASELINE'], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
+        fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
+        fig.add_vrect(x0=trace_x_range[0], x1=stats_x_range[0], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+
+
+
+
+
+
+
+
+
 
 
 

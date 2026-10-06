@@ -10,7 +10,8 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
-from src.utils import polyreg_by_country_only, get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
+from src.utils import get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
+from src.utils import get_baseline_count
 from datetime import datetime
 
 pd.set_option('display.max_rows', 500)
@@ -36,7 +37,7 @@ ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 
 
 #--------------------------------------
-# advanced pre-processing
+# (1) advanced pre-processing (Slope)
 
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
@@ -47,24 +48,78 @@ ss.nw_slo = 4 # 4
 df_ma = df_data.copy()
 df_ma = df_ma[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
 df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ss.ts_today, keep_n_weeks = ss.nw_ma)
-df_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
-
-ss.df_ma = df_ma
-ss.trace_x_range_ma = trace_x_range_ma
+df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
 
 # regression - advanced pre-processing (used in pages 05 and 10)
-slope_dfs_by_source = {}
+df_metri_ma = {}
 for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
-    df0 = df_ma.copy()
+    df0 = df_trace_ma.copy()
     df0 = df0[df0["ORIGIN_SOURCE"] == dasou]
     df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df0, ss.latest_week, 
         slope_thld = 0.1, n_weeks_for_slope = ss.nw_slo)
-    slope_dfs_by_source[dasou] = df_slopes_all
+    df_metri_ma[dasou] = df_slopes_all
 
-ss.slope_dfs_by_source = slope_dfs_by_source
+# save to ss
+ss.df_trace_ma = df_trace_ma
+ss.trace_x_range_ma = trace_x_range_ma
+ss.df_metri_ma = df_metri_ma
+del(df_ma, df0, df_trace_ma, trace_x_range_ma, df_metri_ma)
 #--------------------------------------
 
 
+
+
+
+
+
+
+#--------------------------------------
+# (2) advanced pre-processing (above Baseline)
+
+# define time ranges in weeks 
+ss.time_range_basli = 52*5
+ss.quantile_val = 0.65
+ss.time_range_trace = 24
+ss.time_range_stats = 6
+
+# load data to local page 
+df_bl = df_data.copy()
+
+# keep last 5 years to compute baseline 
+df_bl, _ = keep_n_most_recent_weeks_2(df_bl, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_basli)
+# get flu baseline counts (for all countries)
+bl_thld = get_baseline_count(df_bl, q = ss.quantile_val)
+
+# reduce to fewer recent weeks for trace plots
+df_trace, trace_x_range = keep_n_most_recent_weeks_2(df_bl, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_trace)
+
+# reduce even fewer recent weeks for recent stats (below)
+df00, stats_x_range = keep_n_most_recent_weeks_2(df_trace, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_stats)
+
+# merge-in baseline threshold 
+df00 = df00.merge(bl_thld, on=["COUNTRY", "ORIGIN_SOURCE"], how="left")
+
+# get stats to display in metric boxes
+df_metri = (df00
+    # remove when all-na for "INF_ALL" 
+    .loc[df00.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].transform("count").gt(0)]  
+    .loc[lambda x: x["INF_ALL_BASELINE"] >= 5] # keep where BL enough above 0
+    .assign(ABOVE_BASELINE=lambda x: x["INF_ALL"] >= x["INF_ALL_BASELINE"]) # create boolean for 'above bl'
+    .groupby(["COUNTRY", "ORIGIN_SOURCE"], as_index=False) # extract summaries by group
+    .agg(N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
+        INF_ALL_BASELINE=("INF_ALL_BASELINE", "first"),
+        ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),)
+    .sort_values("N_ABOVE_BASELINE", ascending=False) # sort   
+)
+
+# save to ss
+ss.df_metri_bl = df_metri
+ss.df_trace_bl = df_trace
+ss.trace_x_range_bl = trace_x_range
+ss.stats_x_range_bl = stats_x_range
+# clean-up namespace
+del(df00, df_bl, bl_thld, df_metri, df_trace, trace_x_range, stats_x_range)
+#--------------------------------------
 
 
 
@@ -161,22 +216,24 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p0 = st.Page("pages/st_page_00.py", title="📈 By Regions")
-# p1 = st.Page("pages/st_page_01.py", title="📈 By ITZ") # this one is redundant with p0
+p0 = st.Page("pages/st_page_00.py", title="💡 By Regions")
+# p1 = st.Page("pages/st_page_01.py", title="💡 By ITZ") # this one is redundant with p0
 p2 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="🔎 Explore")
 p5 = st.Page("pages/st_page_05.py", title="🔥 Top Risers")
-# p6 = st.Page("pages/st_page_06.py", title="📈 Positivity by Regions") # not show yet, under developments
-p7 = st.Page("pages/st_page_07.py", title="ℹ️ Tabular")
-p8 = st.Page("pages/st_page_08.py", title="ℹ️ Data age")
+# p6 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
+p7 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
+p8 = st.Page("pages/st_page_08.py", title="🔬 Data age")
 p9 = st.Page("pages/st_page_09.py", title="⚙️ Settings")
-p10 = st.Page("pages/st_page_10.py", title="📈 All Risers")
+p10 = st.Page("pages/st_page_10.py", title="💡 All Risers")
 p11 = st.Page("pages/st_page_11.py", title="🔥 Top High")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info")
+p13 = st.Page("pages/st_page_13.py", title="💡 All High")
+
 p_dev = st.Page("pages/st_dev.py", title="💀 Dev")
 
-pg = st.navigation([p11, p5, p10, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], position="top")
+pg = st.navigation([p11, p5, p10, p13, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], position="top")
 pg.run()
 
 

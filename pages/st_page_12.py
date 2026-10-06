@@ -18,9 +18,9 @@ with c1:
     st.markdown("""
     #### Tabs legend:
     🔥 Recent stats on selected countries  
-    📈 Overview charts on all countries    
+    💡 Overview charts     
     🔎 Deep dives (single country)  
-    ℹ️ Tabular information  
+    🔬 Tabular information  
     ⚙️ Settings  
     """)
 
