@@ -42,7 +42,7 @@ ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
 ss.ma_degree = 1
-ss.nw_slo = 4 # 4
+ss.nw_slo = 5 # 4
 
 # load data to local page 
 df_ma = df_data.copy()
