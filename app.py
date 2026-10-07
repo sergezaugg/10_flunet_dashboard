@@ -14,18 +14,17 @@ from src.utils import get_recency_slope, keep_n_most_recent_weeks_2, polyreg_by_
 from src.utils import get_baseline_count
 from datetime import datetime
 
-pd.set_option('display.max_rows', 500)
-
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
-
-ss.setdefault("ts_today", get_ts_today())
+pd.set_option('display.max_rows', 500)
 
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
-df_latest_data = get_latest_date_per_group(df_data, ts_today = ss.ts_today)
-ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
+
+ss.ts_today = get_ts_today()
+
+
 
 
 #--------------------------------------
@@ -46,7 +45,8 @@ df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = 
 df0 = df_trace_ma.copy()
 df_metri_ma = [(get_recency_slope(
             df0[df0["ORIGIN_SOURCE"] == a], 
-            latest_week = ss.latest_week, 
+            # latest_week = ss.latest_week, 
+            latest_week = ss.ts_today,
             slope_thld = 0.1, 
             n_weeks_for_slope = ss.nw_slo
         )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
@@ -122,17 +122,14 @@ del(df00, df_bl, bl_thld, df_metri, df_trace, trace_x_range, stats_x_range)
 
 # update data dependent objects
 ss.df_data = df_data
-ss.df_latest_data = df_latest_data
-
+ss.df_latest_data = get_latest_date_per_group(df_data, ts_today = ss.ts_today)
 ss.ts_latest_data = df_data['ISO_WEEKSTARTDATE'].max()
 ss.date_range_dt = [df_data["ISO_WEEKSTARTDATE"].min().date(), df_data["ISO_WEEKSTARTDATE"].max().date()]
 
 # get top 3 weeks and delay to today 
 ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
-
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
 
-ss.all_iso_week_start_dates = sorted(df_data["ISO_WEEKSTARTDATE"].dropna().unique())
 
 
 # initialize session state (constant values)
