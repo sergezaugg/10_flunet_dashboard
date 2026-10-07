@@ -136,7 +136,7 @@ p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers")
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
 p08 = st.Page("pages/st_page_08.py", title="🔬 Data age")
-p09 = st.Page("pages/st_page_09.py", title="⚙️ Settings")
+# p09 = st.Page("pages/st_page_09.py", title="⚙️ Settings")
 p10 = st.Page("pages/st_page_10.py", title="💡 All Risers")
 p11 = st.Page("pages/st_page_11.py", title="🔥 Top High")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info")
@@ -144,7 +144,7 @@ p13 = st.Page("pages/st_page_13.py", title="💡 All High")
 
 p_dev = st.Page("pages/st_dev.py", title="💀 Dev")
 
-pg = st.navigation([p05, p11, p10, p13, p00, p02, p03, p04, p07, p08, p09, p12, p_dev], position="top")
+pg = st.navigation([p05, p11, p10, p13, p00, p02, p03, p04, p07, p08, p12, p_dev], position="top")
 pg.run()
 
 
