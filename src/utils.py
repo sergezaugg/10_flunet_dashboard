@@ -275,13 +275,6 @@ def get_latest_date_per_group(df, ts_today):
     return df
 
 
-@st.cache_data()
-def select_global_date_range(df, sta, end):
-    df = df[df["ISO_WEEKSTARTDATE"].between(sta, end)]
-    return df
-
-
-
 @st.cache_data
 def det_regions(x, t):
     """

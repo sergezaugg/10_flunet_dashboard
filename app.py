@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
+from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
 from src.utils import get_recency_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
 from src.utils import get_baseline_count
 from datetime import datetime
@@ -23,16 +23,8 @@ ss.setdefault("ts_today", get_ts_today())
 
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
-df_data_all = preprocess_flunet_data(df = df_dat)
-
-# initialise global dates parameters
-ss.setdefault("date_init", [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
-ss.setdefault("k_set_01",  [df_data_all["ISO_WEEKSTARTDATE"].min(), df_data_all["ISO_WEEKSTARTDATE"].max()])
-
-# update global time range
-df_data = select_global_date_range(df_data_all, sta = ss.k_set_01[0], end = ss.k_set_01[1])
+df_data = preprocess_flunet_data(df = df_dat)
 df_latest_data = get_latest_date_per_group(df_data, ts_today = ss.ts_today)
-
 ss.latest_week = df_data['ISO_WEEKSTARTDATE'].max()
 
 
@@ -215,15 +207,15 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p0 = st.Page("pages/st_page_00.py", title="💡 By Regions")
-p2 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
-p3 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
-p4 = st.Page("pages/st_page_04.py", title="🔎 Explore")
-p5 = st.Page("pages/st_page_05.py", title="🔥 Top Risers")
-# p6 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
-p7 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
-p8 = st.Page("pages/st_page_08.py", title="🔬 Data age")
-p9 = st.Page("pages/st_page_09.py", title="⚙️ Settings")
+p00 = st.Page("pages/st_page_00.py", title="💡 By Regions")
+p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
+p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
+p04 = st.Page("pages/st_page_04.py", title="🔎 Explore")
+p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers")
+# p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
+p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
+p08 = st.Page("pages/st_page_08.py", title="🔬 Data age")
+p09 = st.Page("pages/st_page_09.py", title="⚙️ Settings")
 p10 = st.Page("pages/st_page_10.py", title="💡 All Risers")
 p11 = st.Page("pages/st_page_11.py", title="🔥 Top High")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info")
@@ -231,7 +223,7 @@ p13 = st.Page("pages/st_page_13.py", title="💡 All High")
 
 p_dev = st.Page("pages/st_dev.py", title="💀 Dev")
 
-pg = st.navigation([p5, p11, p10, p13, p0, p2, p3, p4, p7, p8, p9, p12, p_dev], position="top")
+pg = st.navigation([p05, p11, p10, p13, p00, p02, p03, p04, p07, p08, p09, p12, p_dev], position="top")
 pg.run()
 
 
