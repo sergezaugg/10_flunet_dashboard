@@ -4,16 +4,11 @@
 # run locally : streamlit run stmain.py
 #--------------------
 
-import os
-import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
-from src.utils import get_recency_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
-from src.utils import get_baseline_count 
 from src.preprocessing import compute_recent_slope, compute_recent_level
-from datetime import datetime
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
@@ -34,21 +29,22 @@ ss.ma_bin_size = 4
 ss.ma_degree = 1
 ss.nw_slo = 5 # 4
 
-ss.df_trace_ma, ss.trace_x_range_ma, ss.df_metri_ma = compute_recent_slope(
-    df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
+# compute 
+obj = compute_recent_slope(df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
+# unwrap
+ss.df_trace_ma, ss.trace_x_range_ma, ss.df_metri_ma = obj
 
 #--------------------------------------
 # (2) advanced pre-processing (above Baseline)
-# define time ranges in weeks 
 ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
 ss.time_range_trace = 24
 ss.time_range_stats = 6
 
-ss.df_trace_bl, ss.trace_x_range_bl, ss.df_metri_bl, ss.stats_x_range_bl = compute_recent_level(
-    df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
-
-
+# compute 
+obj = compute_recent_level(df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
+# unwrap
+ss.df_trace_bl, ss.trace_x_range_bl, ss.df_metri_bl, ss.stats_x_range_bl = obj
 
 
 

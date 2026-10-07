@@ -41,7 +41,6 @@ def get_ts_today():
     return datetime.now()
 
 
-
 @st.cache_data()
 def preprocess_flunet_data(df):
     """pre-process FluNet dataframe : select variable, rename, convert formats"""
@@ -105,8 +104,6 @@ def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regi
     return(df, n_countries) 
 
 
-
-
 @st.cache_data()
 def filter_data_quality(df, prop_non_na_tol = 0.50, mean_count_tol = 40):
     """
@@ -128,17 +125,11 @@ def filter_data_quality(df, prop_non_na_tol = 0.50, mean_count_tol = 40):
     return(df, n_countries) 
 
 
-
-
-
-
-
 @st.cache_data()
 def filter_several_countries(df, countries):
     df = df[df["COUNTRY"].isin(countries)]
     n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
     return df, n_countries
-
 
 
 @st.cache_data()
@@ -158,105 +149,32 @@ def filter_a_country(df, c):
     df = df[df["COUNTRY"] == c]
     return(df)
 
+
 @st.cache_data()
 def filter_a_data_source(df, c):
     df = df[df["ORIGIN_SOURCE"] == c]
     return(df)
 
+
+
+
+
+
 #-----------------------------------------
 # rolling functions 
-
-# @st.cache_data()
-# def rolling_consecutive(g, bin_size):
-#     d = g["ISO_WEEKSTARTDATE"]
-#     consecutive = d.diff().eq(pd.Timedelta(days=7))
-#     streak = consecutive.groupby((~consecutive).cumsum()).cumsum() + 1
-#     ma = g["INF_ALL"].rolling(bin_size, min_periods=bin_size, center=False).mean()
-#     return ma.where(streak >= bin_size)
-
-def cond_expect_last_polyfit(y, deg=1):
-    """
-    Conditional expectaion at last week from polynomial regression.
-    To be used by polyreg_by_country for curve smoothing 
-    """
-    n = len(y)
-    x = np.arange(n)
-    coef = np.polyfit(x, y, deg)
-    return np.polyval(coef, n - 1)
+# @st.cache_data
+# def polyreg_by_country_only(df, bin_size, deg):
+#     df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
+#     df["INF_MA"] = (
+#         df.groupby("COUNTRY")["INF_ALL"]
+#           .rolling(bin_size, min_periods=bin_size)
+#           .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
+#           .reset_index(level=0, drop=True)
+#     )
+#     return df
 
 
 
-@st.cache_data
-def polyreg_by_country_only(df, bin_size, deg):
-    df = df.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
-    df["INF_MA"] = (
-        df.groupby("COUNTRY")["INF_ALL"]
-          .rolling(bin_size, min_periods=bin_size)
-          .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
-          .reset_index(level=0, drop=True)
-    )
-    return df
-
-
-@st.cache_data
-def polyreg_by_country_source(df, bin_size, deg):
-    df = df.sort_values(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"]).copy()
-    df["INF_MA"] = (
-        df.groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
-          .rolling(bin_size, min_periods=bin_size)
-          .apply(lambda y: cond_expect_last_polyfit(y, deg), raw=True)
-          .reset_index(level=[0, 1], drop=True)
-    )
-    # ad-hoc corrections
-    df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0
-    df["INF_MA"] = df["INF_MA"].fillna(0.0)
-    return df
-
-
-@st.cache_data
-def get_baseline_count(df, q):
-    """
-    fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
-    then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
-    """
-    df = df[["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
-
-    df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"])
-
-    # Ensure one row per source × country × week
-    df = (
-        df.groupby(
-            ["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],
-            as_index=False
-        )["INF_ALL"]
-        .sum(min_count=1)
-    )
-
-    # Add missing weeks and replace NA with 0
-    df = (
-        df.set_index("ISO_WEEKSTARTDATE")
-        .groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
-        .apply(
-            lambda x: x.reindex(
-                pd.date_range(
-                    x.index.min(),
-                    x.index.max(),
-                    freq="W-MON"
-                )
-            ).fillna(0.0)
-        )
-        .rename("INF_ALL")
-        .reset_index()
-    )
-
-    # Quantile baseline
-    baseline_thlds = (
-        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"]
-        .quantile(q)
-        .reset_index(name="INF_ALL_BASELINE")
-    )
-
-    return baseline_thlds
 
 
 @st.cache_data()
@@ -298,6 +216,7 @@ def det_regions(x, t):
     regions = pd.Series(regions, index=x.index)
     return regions
 
+
 @st.cache_data
 def get_start_stop_of_region(regions, time):
     """
@@ -324,6 +243,7 @@ def select_top_n_highest_slope(df, n):
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
 
+
 @st.cache_data
 def select_top_n_highest_val_by_origin(df, n, var):
     df = (df.dropna(subset=[var])
@@ -331,63 +251,6 @@ def select_top_n_highest_val_by_origin(df, n, var):
       .groupby("ORIGIN_SOURCE", group_keys=False)
       .head(n).reset_index(drop=True))
     return df
-
-
-@st.cache_data
-def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
-    """
-    TBD
-    """
-    # take 5 most recent weeks per country  
-    week_0 = latest_week - pd.Timedelta(weeks=5)
-    df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
-    
-    # keep 3 most recent per country
-    df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
-    df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
-
-    # compute slope from linear regression
-    df0["SLOPE"] = (df0.groupby("COUNTRY").apply(
-           lambda g: (
-               np.polyfit((
-                   # x normalize to 1 unit = week
-                   g.loc[g["INF_MA"].notna(), "ISO_WEEKSTARTDATE"] - g["ISO_WEEKSTARTDATE"].min()).dt.days / 7,
-                   # that is y
-                   g.loc[g["INF_MA"].notna(), "INF_MA"],
-                   # degree 1 = linear regression
-                   1
-               )[0] # this is b1 = slope
-               if g["INF_MA"].notna().sum() >= 2
-               else np.nan
-           ),
-           include_groups=False
-       )
-       .reindex(df0["COUNTRY"])
-       .to_numpy()
-    )
-
-    # keep only latest row per country
-    df1 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(1) 
-    df1 = df1.sort_values(["COUNTRY"], ascending=[True])
-
-    # prepare overview df for another use
-    df_slopes_all = df1.copy()
-    df_slopes_all = df_slopes_all[df_slopes_all['SLOPE'] > slope_thld]
-    df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
-    
-    return df_slopes_all
-
-
-
-@st.cache_data()
-def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
-    """ keep only n most recent weeks with respect to values in current df"""
-    cutoff_week = ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1)
-    df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
-    # return time range 
-    xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1), ref_date]
-    return df, xrange
-
 
 
 @st.cache_data
