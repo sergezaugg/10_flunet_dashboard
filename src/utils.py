@@ -47,7 +47,7 @@ def preprocess_flunet_data(df):
     # select only relevant columns 
     columns = [
         "WHOREGION","FLUSEASON", "ITZ", 
-        # "COUNTRY_AREA_TERRITORY",
+        "COUNTRY_AREA_TERRITORY",
         "ORIGIN_SOURCE", 
         "COUNTRY_CODE",
         "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE",
@@ -57,6 +57,7 @@ def preprocess_flunet_data(df):
     df = df[columns].copy()
     # re-name variables 
     df = df.rename(columns={"COUNTRY_CODE": "COUNTRY"})
+    df = df.rename(columns={"COUNTRY_AREA_TERRITORY": "CNTRY"})
     # convert str to datetime 
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"],errors="coerce")
     # shorten lon countrynames to 3 words

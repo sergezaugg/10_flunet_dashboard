@@ -19,7 +19,6 @@ with st.sidebar:
 
 df_metri_ma = ss.df_metri_ma[ss.df_metri_ma["ISO_WEEKSTARTDATE"] >= sel_date]
 
-
 df_dat00 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_dat02 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NOTDEFINED"]

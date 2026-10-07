@@ -255,13 +255,19 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
         df,
         x=xvar,
         y="COUNTRY",
+        custom_data="CNTRY",
         text="ISO_WEEKSTARTDATE_str",
         orientation="h",
         height=130 + len(df)*30,
         category_orders={"COUNTRY": df["COUNTRY"].tolist()},
         labels={xvar: xlabel},
     )
-    fig.update_traces(width=0.7)
+
+    fig.update_traces(width=0.7, marker_color=cc["traces"]["hot"])
+    fig.update_traces(hovertemplate=(
+        "%{customdata[0]}<br>"
+        f"{xlabel}: %{{x}}"  ))
+
     fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
     fig.update_yaxes(title=None)
@@ -269,7 +275,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
     fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_traces(marker_color=cc["traces"]["hot"])
+    # fig.update_traces(marker_color=cc["traces"]["hot"])
     return fig
 
 
