@@ -11,7 +11,8 @@ import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
 from src.utils import get_recency_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
-from src.utils import get_baseline_count
+from src.utils import get_baseline_count 
+from src.preprocessing import compute_recent_slope, compute_recent_level
 from datetime import datetime
 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
@@ -28,90 +29,25 @@ ss.ts_today = get_ts_today()
 
 #--------------------------------------
 # (1) advanced pre-processing (Slope)
-
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
 ss.ma_degree = 1
 ss.nw_slo = 5 # 4
 
-# load data to local page 
-df_ma = df_data.copy()
-df_ma = df_ma[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
-df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ss.ts_today, keep_n_weeks = ss.nw_ma)
-df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
-
-# regression - advanced pre-processing (used in pages 05 and 10)
-df0 = df_trace_ma.copy()
-df_metri_ma = [(get_recency_slope(
-            df0[df0["ORIGIN_SOURCE"] == a], 
-            # latest_week = ss.latest_week, 
-            latest_week = ss.ts_today,
-            slope_thld = 0.1, 
-            n_weeks_for_slope = ss.nw_slo
-        )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-
-df_metri_ma = pd.concat(df_metri_ma, ignore_index=True)
-
-# save to ss
-ss.df_trace_ma = df_trace_ma
-ss.trace_x_range_ma = trace_x_range_ma
-ss.df_metri_ma = df_metri_ma
-del(df_ma, df0, df_trace_ma, trace_x_range_ma, df_metri_ma)
-#--------------------------------------
-
-
-
-
-
-
+ss.df_trace_ma, ss.trace_x_range_ma, ss.df_metri_ma = compute_recent_slope(
+    df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
 
 #--------------------------------------
 # (2) advanced pre-processing (above Baseline)
-
 # define time ranges in weeks 
 ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
 ss.time_range_trace = 24
 ss.time_range_stats = 6
 
-# load data to local page 
-df_bl = df_data.copy()
+ss.df_trace_bl, ss.trace_x_range_bl, ss.df_metri_bl, ss.stats_x_range_bl = compute_recent_level(
+    df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
 
-# keep last 5 years to compute baseline 
-df_bl, _ = keep_n_most_recent_weeks_2(df_bl, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_basli)
-# get flu baseline counts (for all countries)
-bl_thld = get_baseline_count(df_bl, q = ss.quantile_val)
-
-# reduce to fewer recent weeks for trace plots
-df_trace, trace_x_range = keep_n_most_recent_weeks_2(df_bl, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_trace)
-
-# reduce even fewer recent weeks for recent stats (below)
-df00, stats_x_range = keep_n_most_recent_weeks_2(df_trace, ref_date = ss.ts_today, keep_n_weeks = ss.time_range_stats)
-
-# merge-in baseline threshold 
-df00 = df00.merge(bl_thld, on=["COUNTRY", "ORIGIN_SOURCE"], how="left")
-
-# get stats to display in metric boxes
-df_metri = (df00
-    # remove when all-na for "INF_ALL" 
-    .loc[df00.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].transform("count").gt(0)]  
-    .loc[lambda x: x["INF_ALL_BASELINE"] >= 5] # keep where BL enough above 0
-    .assign(ABOVE_BASELINE=lambda x: x["INF_ALL"] >= x["INF_ALL_BASELINE"]) # create boolean for 'above bl'
-    .groupby(["COUNTRY", "ORIGIN_SOURCE"], as_index=False) # extract summaries by group
-    .agg(N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
-        INF_ALL_BASELINE=("INF_ALL_BASELINE", "first"),
-        ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),)
-    .sort_values("N_ABOVE_BASELINE", ascending=False) # sort   
-)
-
-# save to ss
-ss.df_metri_bl = df_metri
-ss.df_trace_bl = df_trace
-ss.trace_x_range_bl = trace_x_range
-ss.stats_x_range_bl = stats_x_range
-# clean-up namespace
-del(df00, df_bl, bl_thld, df_metri, df_trace, trace_x_range, stats_x_range)
-#--------------------------------------
 
 
 
