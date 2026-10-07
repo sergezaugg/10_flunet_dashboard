@@ -11,15 +11,21 @@ from src.utils import prepre_for_pages_10_13
 from src.utils_plots import make_bar_plot_pages_10_13
 
 
-df_dat00 = prepre_for_pages_10_13(ss.df_metri_ma["SENTINEL"],    xvar = "SLOPE")
-df_dat01 = prepre_for_pages_10_13(ss.df_metri_ma["NONSENTINEL"], xvar = "SLOPE")
-df_dat02 = prepre_for_pages_10_13(ss.df_metri_ma["NOTDEFINED"],  xvar = "SLOPE")
+all_recent_dates = pd.Series(ss.df_metri_ma["ISO_WEEKSTARTDATE"].unique()).sort_values()
+
+with st.sidebar:
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
+
+df_metri_ma = ss.df_metri_ma[ss.df_metri_ma["ISO_WEEKSTARTDATE"] >= sel_date]
 
 
+df_dat00 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "SENTINEL"]
+df_dat01 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NONSENTINEL"]
+df_dat02 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NOTDEFINED"]
 
-
-
-
+df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "SLOPE")
+df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "SLOPE")
+df_dat02 = prepre_for_pages_10_13(df_dat02, xvar = "SLOPE")
 
 
 # plot 

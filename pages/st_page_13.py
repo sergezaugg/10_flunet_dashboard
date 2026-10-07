@@ -13,8 +13,6 @@ from src.utils_plots import make_bar_plot_pages_10_13
 
 all_recent_dates = pd.Series(ss.df_metri_bl["ISO_WEEKSTARTDATE"].unique()).sort_values()
 
-
-
 with st.sidebar:
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
 

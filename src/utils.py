@@ -325,7 +325,6 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     """
     TBD
     """
-
     # take 5 most recent weeks per country  
     week_0 = latest_week - pd.Timedelta(weeks=5)
     df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
@@ -333,11 +332,6 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     # keep 3 most recent per country
     df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
     df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
-
-    # compute simple slope from smoothed curve
-    # param_dif = n_weeks_for_slope-1 
-    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_MA"].transform(lambda x: (x - x.shift(-param_dif)) ))
-    # df0["SLOPE"] = (df0.groupby("COUNTRY")["INF_ALL"].transform(lambda x: (x - x.shift(-param_dif)) ))
 
     # compute slope from linear regression
     df0["SLOPE"] = (df0.groupby("COUNTRY").apply(

@@ -51,13 +51,13 @@ df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ss.ts_tod
 df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
 
 # regression - advanced pre-processing (used in pages 05 and 10)
-df_metri_ma = {}
-for dasou in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]:
-    df0 = df_trace_ma.copy()
-    df0 = df0[df0["ORIGIN_SOURCE"] == dasou]
-    df_slopes_all = get_3_dfs_by_recency_for_top_n_slope(df0, ss.latest_week, 
-        slope_thld = 0.1, n_weeks_for_slope = ss.nw_slo)
-    df_metri_ma[dasou] = df_slopes_all
+# new in dev 
+df0 = df_trace_ma.copy()
+df_metri_ma = [(get_3_dfs_by_recency_for_top_n_slope(
+        df0[df0["ORIGIN_SOURCE"] == a], 
+        ss.latest_week, slope_thld = 0.1, n_weeks_for_slope = ss.nw_slo))
+        for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri_ma = pd.concat(df_metri_ma, ignore_index=True)
 
 # save to ss
 ss.df_trace_ma = df_trace_ma
@@ -65,7 +65,6 @@ ss.trace_x_range_ma = trace_x_range_ma
 ss.df_metri_ma = df_metri_ma
 del(df_ma, df0, df_trace_ma, trace_x_range_ma, df_metri_ma)
 #--------------------------------------
-
 
 
 
@@ -120,8 +119,6 @@ ss.stats_x_range_bl = stats_x_range
 # clean-up namespace
 del(df00, df_bl, bl_thld, df_metri, df_trace, trace_x_range, stats_x_range)
 #--------------------------------------
-
-
 
 
 
