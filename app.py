@@ -154,7 +154,6 @@ ss.setdefault("ITZ_levels_EUR", ['EST_EUR', 'NTH_EUR', 'SW_EUR'])
 ss.setdefault("ITZ_levels_OCE", ['OCE_MEL_POL'])
 
 # initialize session state (data dependent values that need initialized once)
-ss.setdefault("ts_download", ts_download)
 ss.setdefault("WHOREGION_levels", df_data["WHOREGION"].unique())
 ss.setdefault("FLUSEASON_levels", df_data["FLUSEASON"].unique())
 ss.setdefault("ITZ_levels", df_data["ITZ"].unique().tolist())
@@ -210,7 +209,7 @@ for key in list(st.session_state.keys()):
 with st.sidebar:
     st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
     Ref date: \t{ss.ts_today.strftime("%Y-%m-%d")}  
-    Downloaded: \t{ts_download.strftime("%Y-%m-%d")}  
+    Downloaded: \t{ts_download}  
     Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
     """)
     st.divider()

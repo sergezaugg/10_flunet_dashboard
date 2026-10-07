@@ -16,15 +16,25 @@ from datetime import datetime
 def download_flunet_data():
     """Download FluNet data"""
     # step-by-step import 
-    response = requests.get(FLUNET_DATA_URL, timeout=60)
-    response.raise_for_status()
-    # Keep downloaded CSV in memory
-    csv_data = BytesIO(response.content)
-    # convert to DataFrame
-    df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
-    # get a timestamp
-    ts = datetime.now()
+    try:
+        response = requests.get(FLUNET_DATA_URL, timeout=60)
+        response.raise_for_status()
+        # Keep downloaded CSV in memory
+        csv_data = BytesIO(response.content)
+        # convert to DataFrame
+        df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
+        # get a timestamp
+        ts = datetime.now().strftime("%Y-%m-%d")
+    except (requests.RequestException, pd.errors.ParserError):
+        # handle if not downloaded
+        df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )
+        ts = "Historical data (could not download)"
+    if df_dat.shape[1] != 53:
+        # handle if download successful but content is shit (FLUNET_DATA_URL sometimes does it)
+        df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )
+        ts = "Historical data (issue with downloaded data)"
     return(df_dat, ts)
+
 
 @st.cache_data(ttl=12*60*60) # refresh every 12 hours 
 def get_ts_today():
