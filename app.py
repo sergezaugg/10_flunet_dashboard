@@ -21,7 +21,6 @@ pd.set_option('display.max_rows', 500)
 # download and pre-process (do once)
 df_dat, ts_download = download_flunet_data()
 df_data = preprocess_flunet_data(df = df_dat)
-
 ss.ts_today = get_ts_today()
 
 
@@ -131,15 +130,8 @@ ss.top3_weeks =  df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(asce
 ss.delays_days = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
 
 
-
 # initialize session state (constant values)
-ss.setdefault("colors_recency", ["#00ff55", "yellow", "orange", "red"])
 ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 20)
-ss.setdefault("ITZ_levels_AFR", ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR'])
-ss.setdefault("ITZ_levels_AMC", ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR'])
-ss.setdefault("ITZ_levels_ASI", ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 'WST_ASIA'])
-ss.setdefault("ITZ_levels_EUR", ['EST_EUR', 'NTH_EUR', 'SW_EUR'])
-ss.setdefault("ITZ_levels_OCE", ['OCE_MEL_POL'])
 
 # initialize session state (data dependent values that need initialized once)
 ss.setdefault("WHOREGION_levels", df_data["WHOREGION"].unique())
