@@ -25,10 +25,6 @@ with st.sidebar:
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
-
-
-
-
 # plot if n countries not too large
 if n_countries[0] > ss.MAX_COUNTRIES_IN_PLOTS:
     country_info.text(f"Too many countries: {n_countries[0]} \n Max allowed: {ss.MAX_COUNTRIES_IN_PLOTS}")

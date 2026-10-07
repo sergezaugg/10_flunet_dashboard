@@ -216,7 +216,6 @@ with st.sidebar:
     
 # make navigation
 p0 = st.Page("pages/st_page_00.py", title="💡 By Regions")
-# p1 = st.Page("pages/st_page_01.py", title="💡 By ITZ") # this one is redundant with p0
 p2 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 p3 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p4 = st.Page("pages/st_page_04.py", title="🔎 Explore")
