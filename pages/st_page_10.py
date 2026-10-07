@@ -33,19 +33,22 @@ for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
     with col:
         st.text(label)
 
-c1, c2, c3 = st.columns([50,50,50])
+c1, c2, c3, c4 = st.columns([50,50,50,50])
 
 with c1:
-    fig = make_bar_plot_pages_10_13(df_dat00, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['SENTINEL'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    if df_dat00.shape[0] > 0:
+        fig = make_bar_plot_pages_10_13(df_dat00, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['SENTINEL'])
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 with c2:
-    fig = make_bar_plot_pages_10_13(df_dat01, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['NONSENTINEL'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    if df_dat01.shape[0] > 0:
+        fig = make_bar_plot_pages_10_13(df_dat01, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['NONSENTINEL'])
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 with c3:
-    fig = make_bar_plot_pages_10_13(df_dat02, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['NOTDEFINED'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    if df_dat02.shape[0] > 0:
+        fig = make_bar_plot_pages_10_13(df_dat02, xvar = "SLOPE", xlabel = "New Cases Per Week", x_max = x_max['NOTDEFINED'])
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 

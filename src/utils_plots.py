@@ -278,4 +278,37 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
     # fig.update_traces(marker_color=cc["traces"]["hot"])
     return fig
 
+# "Viridis"
+# "Plasma"
+# "Turbo"
+# "RdYlGn"
+# "RdBu"
+# "Blues"
+# "Reds"
 
+
+@st.cache_data
+def make_geo_map(df, var, colormap):
+    fig = px.choropleth(
+        df,
+        locations="COUNTRY",
+        color="N_ABOVE_BASELINE",
+        locationmode="ISO-3",
+        projection="natural earth",
+        color_continuous_scale="Viridis", # "RdYlGn_r",
+    )
+
+    fig.update_geos(
+        showframe=True, showcoastlines=True, showcountries=True,
+        showocean=True, oceancolor="#1e5a8a", bgcolor="black",
+        domain=dict(x=[0, 1], y=[0.0, 1]),
+        projection_scale=0.9,   
+    )
+
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        paper_bgcolor="black",
+        plot_bgcolor="black",
+    )
+
+    return fig

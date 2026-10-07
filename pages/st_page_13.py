@@ -8,19 +8,23 @@ import plotly.express as px
 import pandas as pd
 import streamlit as st
 from src.utils import prepre_for_pages_10_13
-from src.utils_plots import make_bar_plot_pages_10_13
+from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
 # store max slope (per_source) to keep plot x axis stable
 x_max = ss.df_metri_bl.groupby('ORIGIN_SOURCE')["N_ABOVE_BASELINE"].max()
 
 with st.sidebar:
+    source_options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED", "MAXCOMBINE"]
+    sel_source = st.selectbox("Choose a source:", options=source_options, placeholder="Type or select ...", key="k_p13_01")
     all_recent_dates = pd.Series(ss.df_metri_bl["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
 
+# prepare 
 df_metri_bl = ss.df_metri_bl[ss.df_metri_bl["ISO_WEEKSTARTDATE"] >= sel_date]
 
-
-
+# take max across 3 sources (resonable for this metric)
+df_max = df_metri_bl.loc[df_metri_bl.groupby(["COUNTRY"])["N_ABOVE_BASELINE"].idxmax()]
+# df_max['COUNTRY'].value_counts()
 
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NONSENTINEL"]
@@ -29,31 +33,38 @@ df_dat02 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NOTDEFINED"]
 df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "N_ABOVE_BASELINE")
 df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "N_ABOVE_BASELINE")
 df_dat02 = prepre_for_pages_10_13(df_dat02, xvar = "N_ABOVE_BASELINE")
+df_max   = prepre_for_pages_10_13(df_max,   xvar = "N_ABOVE_BASELINE")
+
+if sel_source == "SENTINEL":
+    df_dat_map = df_dat00
+if sel_source == "NONSENTINEL":
+    df_dat_map = df_dat01
+if sel_source == "NOTDEFINED":
+    df_dat_map = df_dat02
+if sel_source == "MAXCOMBINE":
+    df_dat_map = df_max
+
+
 
 # quick fix
-df_dat00 = df_dat00[df_dat00["N_ABOVE_BASELINE"] > 0]
-df_dat01 = df_dat01[df_dat01["N_ABOVE_BASELINE"] > 0]
-df_dat02 = df_dat02[df_dat02["N_ABOVE_BASELINE"] > 0]
+df_dat00_bar = df_dat_map[df_dat_map["N_ABOVE_BASELINE"] > 0]
 
+#----------------------------------------------
 
-# plot 
-for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
-    with col:
-        st.text(label)
+fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", "Viridis")
 
-c1, c2, c3 = st.columns([50,50,50])
-
+c0, c1, c2 = st.columns([2.5, 1, 0.4])
+# map 
+with c0:
+    with st.container(border=True):
+        st.plotly_chart(fig, use_container_width=True)
+# barplots
 with c1:
-    fig = make_bar_plot_pages_10_13(df_dat00, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", x_max = x_max['NOTDEFINED'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    with st.container(border=True):
+        if df_dat00_bar.shape[0] > 0:
+            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", x_max = x_max['NOTDEFINED'])
+            st.plotly_chart(figbar, use_container_width=True, config={"displayModeBar": False})
 
-with c2:
-    fig = make_bar_plot_pages_10_13(df_dat01, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", x_max = x_max['NOTDEFINED'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-
-with c3:
-    fig = make_bar_plot_pages_10_13(df_dat02, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", x_max = x_max['NOTDEFINED'])
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 
