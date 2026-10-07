@@ -292,10 +292,10 @@ def make_geo_map(df, var, colormap):
     fig = px.choropleth(
         df,
         locations="COUNTRY",
-        color="N_ABOVE_BASELINE",
+        color=var,
         locationmode="ISO-3",
         projection="natural earth",
-        color_continuous_scale="Viridis", # "RdYlGn_r",
+        color_continuous_scale=colormap, # "RdYlGn_r",
     )
 
     fig.update_geos(

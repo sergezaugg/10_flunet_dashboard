@@ -47,7 +47,7 @@ def polyreg_by_country_source(df, bin_size, deg):
 
 
 @st.cache_data
-def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
+def get_recency_slope(df, latest_week, n_weeks_for_slope = 4):
     """
     TBD
     """
@@ -85,7 +85,6 @@ def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
 
     # prepare overview df for another use
     df_slopes_all = df1.copy()
-    df_slopes_all = df_slopes_all[df_slopes_all['SLOPE'] > slope_thld]
     df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
     
     return df_slopes_all
@@ -158,7 +157,6 @@ def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_dat
     df_metri_ma = [(get_recency_slope(
                 df0[df0["ORIGIN_SOURCE"] == a], 
                 latest_week = ref_date,
-                slope_thld = 0.1, 
                 n_weeks_for_slope = nw_slo
             )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 
