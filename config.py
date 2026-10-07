@@ -25,8 +25,8 @@ cc = {
     },
     "sources": {  
         "sentin": "#8c0463",
-        "nonsen": "#3e2dfb",
-        "notdef": "#8A7C7C",
-        "sumall": "#D1E306",
+        "nonsen": "#2d1ddb",
+        "notdef": "#0E8F48",
+        "sumall": "#E0D503",
     },
 }

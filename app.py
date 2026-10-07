@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group, select_global_date_range
-from src.utils import get_3_dfs_by_recency_for_top_n_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
+from src.utils import get_recency_slope, keep_n_most_recent_weeks_2, polyreg_by_country_source
 from src.utils import get_baseline_count
 from datetime import datetime
 
@@ -51,12 +51,14 @@ df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ss.ts_tod
 df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ss.ma_bin_size, deg = ss.ma_degree)
 
 # regression - advanced pre-processing (used in pages 05 and 10)
-# new in dev 
 df0 = df_trace_ma.copy()
-df_metri_ma = [(get_3_dfs_by_recency_for_top_n_slope(
-        df0[df0["ORIGIN_SOURCE"] == a], 
-        ss.latest_week, slope_thld = 0.1, n_weeks_for_slope = ss.nw_slo))
-        for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri_ma = [(get_recency_slope(
+            df0[df0["ORIGIN_SOURCE"] == a], 
+            latest_week = ss.latest_week, 
+            slope_thld = 0.1, 
+            n_weeks_for_slope = ss.nw_slo
+        )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+
 df_metri_ma = pd.concat(df_metri_ma, ignore_index=True)
 
 # save to ss
@@ -143,7 +145,7 @@ ss.all_iso_week_start_dates = sorted(df_data["ISO_WEEKSTARTDATE"].dropna().uniqu
 
 # initialize session state (constant values)
 ss.setdefault("colors_recency", ["#00ff55", "yellow", "orange", "red"])
-ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 30)
+ss.setdefault("MAX_COUNTRIES_IN_PLOTS", 20)
 ss.setdefault("ITZ_levels_AFR", ['EST_AFR', 'MID_AFR', 'NRT_AFR', 'STH_AFR', 'WST_AFR'])
 ss.setdefault("ITZ_levels_AMC", ['CNT_AMC', 'NRT_AMR', 'TEMP_SAMR', 'TRP_SAMR'])
 ss.setdefault("ITZ_levels_ASI", ['CNT_ASIA', 'EST_ASIA', 'SE_ASIA', 'STH_ASIA', 'WST_ASIA'])
@@ -165,6 +167,7 @@ ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
+ss.setdefault("k_who_06", [])
 
 # defaults for recency (page 08)
 ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())

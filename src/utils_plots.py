@@ -10,34 +10,44 @@ from config import cc
 
 @st.cache_data()
 def make_facet_line_plot(df, n_countr, outcome):
-    " aaa "
+    """ 
+    aaa 
+    """
 
     # handle NAs before plot
     df.loc[df["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
+
+    # pre-compute vertical spacings dependent on n_countr
+    facet_height = 150
+    spacing_px = 60
+    height_b = (n_countr * facet_height + (n_countr - 1) * spacing_px + 200)
+    facet_row_spacing = spacing_px / height_b
 
     fig = px.line(
         df,
         x = "ISO_WEEKSTARTDATE",
         y = outcome,
         color = "ORIGIN_SOURCE",
-        facet_row="COUNTRY",
-        facet_row_spacing=0.004,
-        height= (n_countr * 200),
+        facet_row = "COUNTRY",
+        facet_row_spacing = facet_row_spacing,
+        height= height_b,
         markers=True,
         color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]]
     )
+
     fig.update_traces(marker=dict(size=5))
-    # fig.update_yaxes(title_text="Weekly Infl. Detect.")
-    fig.update_yaxes(matches=None)     # optional: independent y-scales
+    fig.update_yaxes(title_text="WEEKLY  DETECT.")
+    fig.update_yaxes(matches=None,)   
     fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_layout(margin=dict(l=60, r=150, t=100, b=40))
+    fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
+    fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
     fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
+    # fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="center", x=0.5,))
+    fig.update_layout(legend=dict(title=None, bordercolor="white", borderwidth=1,))
     for annotation in fig.layout.annotations:
         annotation.text = annotation.text.replace("COUNTRY=", "")
-        annotation.textangle = 90
+        annotation.textangle = 0
     return(fig)    
 
 
@@ -239,13 +249,12 @@ def display_df_page_08(df):
 
 
 @st.cache_data
-def make_bar_plot_pages_10_13(df, xvar, xlabel):
+def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
 
     fig = px.bar(
         df,
         x=xvar,
         y="COUNTRY",
-        # color="ISO_WEEKSTARTDATE",
         text="ISO_WEEKSTARTDATE_str",
         orientation="h",
         height=130 + len(df)*30,
@@ -253,7 +262,9 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel):
         labels={xvar: xlabel},
     )
     fig.update_traces(width=0.7)
+    fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
+    fig.update_yaxes(title=None)
     fig.update_layout(showlegend=False)
     fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)

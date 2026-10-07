@@ -8,8 +8,7 @@ from streamlit import session_state as ss
 import plotly.express as px
 import numpy as np
 import pandas as pd
-from src.utils import filter_data, filter_a_country, filter_by_date_range
-from src.utils_plots import make_facet_bar_plot
+from src.utils import filter_a_country
 import pandas as pd
 from plotly.subplots import make_subplots
 from config import cc

@@ -20,8 +20,6 @@ trace_x_range = ss.trace_x_range_ma
 # unpack smoothed traces dfs
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 # for metrics boxes (unpack list and take top 10)
-
-# df_metri = [select_top_n_highest_slope(ss.df_metri_ma[a], n=10) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [ ss.df_metri_ma[ss.df_metri_ma['ORIGIN_SOURCE'] == a] for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [select_top_n_highest_slope(a, n=10) for a in df_metri]
 

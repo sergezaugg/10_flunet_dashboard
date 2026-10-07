@@ -84,40 +84,60 @@ def filter_by_date_range(df, date_range):
     return(df) 
 
 
-@st.cache_data()
-def filter_data(df, prop_non_na_tol = 0.50, mean_count_tol = 40, 
-                who_regions = ['EUR'], fse_regions = ['aa'], itz_regions = ['bb']):
+@st.cache_data() # filter_data
+def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regions = ['bb']):
     """
     aaaa 
     """
     df = df.copy()
-    
-    # exclude country with too many missings 
-    df["prop_non_na"] = (df.groupby("COUNTRY")["INF_ALL"].transform(lambda s: s.notna().mean()))
-    df = df[df["prop_non_na"] >= prop_non_na_tol].copy()
-
-    # filter out countries with low mean count
-    df["mean_count_per_country"] = (df.groupby(["COUNTRY"])["INF_ALL"].transform(lambda s: s.mean()))
-    df = df[df["mean_count_per_country"] > mean_count_tol].copy()
-
     # select only countries with sufficient data overall
     country_counts = df["COUNTRY"].value_counts()
     countries = country_counts[country_counts >= 700].index
     df = df[df["COUNTRY"].isin(countries)]
-
     # select based on WHOREGION
     df = df[df["WHOREGION"].isin(who_regions)]
-
     # select based on FLUSEASON
     df = df[df["FLUSEASON"].isin(fse_regions)]
-
     # select based on ITZ
     df = df[df["ITZ"].isin(itz_regions)]
-
     # check
     n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
-
     return(df, n_countries) 
+
+
+
+
+@st.cache_data()
+def filter_data_quality(df, prop_non_na_tol = 0.50, mean_count_tol = 40):
+    """
+    aaaa 
+    """
+    df = df.copy()
+    # exclude country with too many missings 
+    df["prop_non_na"] = (df.groupby("COUNTRY")["INF_ALL"].transform(lambda s: s.notna().mean()))
+    df = df[df["prop_non_na"] >= prop_non_na_tol].copy()
+    # filter out countries with low mean count
+    df["mean_count_per_country"] = (df.groupby(["COUNTRY"])["INF_ALL"].transform(lambda s: s.mean()))
+    df = df[df["mean_count_per_country"] > mean_count_tol].copy()
+    # select only countries with sufficient data overall
+    country_counts = df["COUNTRY"].value_counts()
+    countries = country_counts[country_counts >= 700].index
+    df = df[df["COUNTRY"].isin(countries)]
+    # check
+    n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
+    return(df, n_countries) 
+
+
+
+
+
+
+
+@st.cache_data()
+def filter_several_countries(df, countries):
+    df = df[df["COUNTRY"].isin(countries)]
+    n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
+    return df, n_countries
 
 
 
@@ -321,7 +341,7 @@ def select_top_n_highest_val_by_origin(df, n, var):
 
 
 @st.cache_data
-def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
+def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
     """
     TBD
     """
@@ -365,12 +385,6 @@ def get_3_dfs_by_recency_for_top_n_slope(df, latest_week, slope_thld = 0.0, n_we
     return df_slopes_all
 
 
-# @st.cache_data()
-# def keep_n_most_recent_weeks(df, keep_n_weeks):
-#     """ keep only n most recent weeks with respect to values in current df"""
-#     cutoff_week = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=keep_n_weeks, days=1)
-#     df = df[df["ISO_WEEKSTARTDATE"] > cutoff_week]
-#     return df
 
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
@@ -380,7 +394,6 @@ def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     # return time range 
     xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1), ref_date]
     return df, xrange
-
 
 
 
