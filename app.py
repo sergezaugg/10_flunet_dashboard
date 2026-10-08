@@ -41,6 +41,11 @@ obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.
 ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
 
+# dfbl_temp.head()
+# dfbl_temp.shape
+
+
+
 
 # dev ---- 
 # merge slope and BL dfs
