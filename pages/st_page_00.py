@@ -3,6 +3,7 @@
 # Description : classic time traces 
 #--------------------
 
+import numpy as np
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import filter_data_region, filter_several_countries
@@ -17,6 +18,7 @@ with st.sidebar:
 df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, itz_regions = ss.ITZ_levels)
 country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
 
+
 # filter by country  
 all_countries = df_plot_temp['COUNTRY'].unique()
 with st.sidebar:
@@ -24,6 +26,11 @@ with st.sidebar:
     country_info = st.empty() 
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
+
+
+if len(df_plot) <= 0:
+    country_info.text(f"Please select at least one country")
+    st.stop()
 
 # plot if n countries not too large
 if n_countries[0] > ss.max_countries_in_plots:

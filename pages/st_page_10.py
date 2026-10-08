@@ -44,13 +44,13 @@ if sel_source == "MAXCOMBINE":
 
 fig = make_geo_map(df_dat_map, "PERC_CHANGE", "Viridis" ) # "Viridis"
 
-c0, c1, c2 = st.columns([2.5, 1, 0.4])
+c0, c1 = st.columns([2.5, 0.7])
 # map 
 with c0:
     with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True)
 
-with c1:
+with c0:
     with st.container(border=True):
         if df_dat_map.shape[0] > 0:
             fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "New Cases Per Week")

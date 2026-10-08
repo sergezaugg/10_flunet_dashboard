@@ -15,7 +15,7 @@ FLUNET_META_URL = "https://xmart-api-public.who.int/FLUMART/VIW_FLU_METADATA?$fo
 # define custom colors 
 cc = {
     "traces": {
-        "basic": "#ffffff",
+        "basic": "#d2f4f9",
         "hot": "#fb2d2d",
     },
     "types": {

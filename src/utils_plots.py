@@ -227,14 +227,14 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
 
 
 @st.cache_data
-def display_df_page_08(df):
+def display_df_page_08(df, nw_cutoff):
 
     
     def set_color_in_df(x):
         """ helper function for formatting df """
-        if x <= 20:
+        if x < nw_cutoff:
             return "color: green"
-        elif x > 20:
+        elif x >= nw_cutoff:
             return "color: red"
         return ""
 
@@ -244,7 +244,7 @@ def display_df_page_08(df):
         use_container_width=False,
         height = 500,
         column_config={
-            "COUNTRY": st.column_config.TextColumn("Country", width="tiny", alignment="center",),
+            "COUNTRY": st.column_config.TextColumn("Country", width="small", alignment="center",),
             "days_since": st.column_config.NumberColumn("Age (days)", width="small", alignment="center",),
             "Latest date": st.column_config.DateColumn("Date", width="small", alignment="center",),
         },
@@ -257,24 +257,25 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel):
 
     fig = px.bar(
         df,
-        x=xvar,
-        y="COUNTRY",
+        x="COUNTRY",
+        y=xvar, 
         custom_data="CNTRY",
         text="ISO_WEEKSTARTDATE_str",
-        orientation="h",
-        height=130 + len(df)*30,
+        orientation="v",
+        height=400,
+        width=130 + len(df)*30,
         category_orders={"COUNTRY": df["COUNTRY"].tolist()},
         labels={xvar: xlabel},
     )
 
-    fig.update_traces(width=0.7, marker_color=cc["traces"]["hot"])
+    fig.update_traces(width=0.7, marker_color=cc["traces"]["basic"])
     fig.update_traces(hovertemplate=(
         "%{customdata[0]}<br>"
         f"{xlabel}: %{{x}}"  ))
 
     # fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
-    fig.update_yaxes(title=None)
+    # fig.update_yaxes(title=None)
     fig.update_layout(showlegend=False)
     fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
