@@ -43,8 +43,9 @@ ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today
 
 # new - remove all data that is too old already here 
 mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
-mask = mask[mask['days_since'] <= ss.nw_global*7]
-ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
+# !!!! check this !!!! <<<<<<<<<<<<<<<<<<<<<<<<
+# mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
+# ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
 
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
