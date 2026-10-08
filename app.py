@@ -159,7 +159,7 @@ p04 = st.Page("pages/st_page_04.py", title="🔎 Explore")
 p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers", default=True)
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
-p08 = st.Page("pages/st_page_08.py", title="⚠️ Data age")
+p08 = st.Page("pages/st_page_08.py", title="🦖 Data age")
 p10 = st.Page("pages/st_page_10.py", title="🌍 Geo-map Risers")
 p11 = st.Page("pages/st_page_11.py", title="🔥 Top Elevated")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info")

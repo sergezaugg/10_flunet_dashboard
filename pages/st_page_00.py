@@ -15,7 +15,8 @@ with st.sidebar:
     who_regions = st.multiselect("Pre-select WHO region", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
 # apply user's data filter to data 
-df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, itz_regions = ss.ITZ_levels)
+df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, 
+                                                    itz_regions = ss.ITZ_levels)
 country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
 
 

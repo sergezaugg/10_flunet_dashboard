@@ -90,10 +90,6 @@ def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regi
     aaaa 
     """
     df = df.copy()
-    # select only countries with sufficient data overall
-    country_counts = df["COUNTRY"].value_counts()
-    countries = country_counts[country_counts >= 700].index
-    df = df[df["COUNTRY"].isin(countries)]
     # select based on WHOREGION
     df = df[df["WHOREGION"].isin(who_regions)]
     # select based on FLUSEASON
