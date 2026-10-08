@@ -47,12 +47,12 @@ def polyreg_by_country_source(df, bin_size, deg):
 
 
 @st.cache_data
-def get_recency_slope(df, latest_week, n_weeks_for_slope = 4):
+def get_recency_slope(df):
     """
     TBD
     """
-    # keep most recent per country
-    df0 = df.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
+    # keep most recent per country (legacy - probably not needed)
+    df0 = df # .sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
     df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
     # compute slope from linear regression
     df0["SLOPE"] = (df0.groupby("COUNTRY").apply(
@@ -62,7 +62,7 @@ def get_recency_slope(df, latest_week, n_weeks_for_slope = 4):
                    g.loc[g["INF_MA"].notna(), "INF_MA"], # that is y
                    1 # degree 1 = linear regression
                )[0] # this is b1 = slope
-               if g["INF_MA"].notna().sum() >= 4
+               if g["INF_MA"].notna().sum() >= 3
                else np.nan
            ),
            include_groups=False
@@ -145,14 +145,10 @@ def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_dat
     df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ma_bin_size, deg = ma_degree)
     # regression
     df0 = df_trace_ma.copy()
-    # look carefully, this is a list comprehension
-    df_metri_ma = [(get_recency_slope(
-                df0[df0["ORIGIN_SOURCE"] == a], 
-                latest_week = ref_date,
-                n_weeks_for_slope = nw_slo
-            )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+    df0, stats_x_range = keep_n_most_recent_weeks_2(df0, ref_date = ref_date, keep_n_weeks = nw_slo)
+    df_metri_ma = [get_recency_slope(df0[df0["ORIGIN_SOURCE"] == a]) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
     df_metri_ma = pd.concat(df_metri_ma, ignore_index=True)
-    return df_trace_ma, trace_x_range_ma, df_metri_ma
+    return df_trace_ma, trace_x_range_ma, df_metri_ma, stats_x_range
 
 @st.cache_data
 def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_trace, time_range_stats, ref_date):

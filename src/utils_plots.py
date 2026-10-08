@@ -145,7 +145,7 @@ def make_metric_items_slope(row, height_row, show_percent = False):
 
 
 @st.cache_data
-def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
+def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange, stats_x_range):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
         fig = px.line(
@@ -156,13 +156,10 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
             markers = True,
             color_discrete_sequence=[cc["traces"]["basic"]],
             )
-        # fig = px.line(df_subset, x = 'ISO_WEEKSTARTDATE', y = 'INF_ALL', height = int(0.8*height_row), markers = True)
-        # plot latest vals in another color 
-        dfb = df_subset.tail(n_slope)
+        # plot latest vals (used to compute slope) in another color 
+        dfb = df_subset[df_subset['ISO_WEEKSTARTDATE'] > stats_x_range[0]]
         fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
-            line=dict(color=    cc["traces"]["hot"]),
-            marker=dict(color=  cc["traces"]["hot"]), 
-            showlegend=False)
+            line=dict(color=    cc["traces"]["hot"]), marker=dict(color=  cc["traces"]["hot"]), showlegend=False)
         # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"], showarrow=False, xanchor="left", yanchor="top")
         # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
         fig.update_yaxes(range=[0, None])
@@ -171,6 +168,7 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
         fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
+        fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

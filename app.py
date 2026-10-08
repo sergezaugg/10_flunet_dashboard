@@ -16,7 +16,7 @@ pd.set_option('display.max_rows', 500)
 
 
 # weeks from ref to be used for stats 
-ss.nw_global = 5
+ss.nw_global = 6
 
 #------------------------------
 # initialize session state (constant values)
@@ -48,7 +48,7 @@ ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right"
 
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
-ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp = obj # unwrap
+ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
 # (2) advanced pre-processing (above Baseline)
 obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
@@ -152,7 +152,7 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p00 = st.Page("pages/st_page_00.py", title="💡 By Regions")
+p00 = st.Page("pages/st_page_00.py", title="🔎 By Regions")
 # p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 # p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p04 = st.Page("pages/st_page_04.py", title="🔎 Explore")

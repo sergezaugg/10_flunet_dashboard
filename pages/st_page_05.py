@@ -16,7 +16,6 @@ with st.sidebar:
     Slope then estimated for latest :primary[{int(ss.nw_slo)} weeks] of smoothed curve via linear regression.
     """)
 
-trace_x_range = ss.trace_x_range_ma
 # unpack smoothed traces dfs
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 
@@ -41,16 +40,16 @@ for i, row in df_metri[0].iterrows():
     with c1:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c2:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[0], n_slope = ss.nw_slo, xrange = trace_x_range)
+        make_mini_trace_slope(row, rowheight, df_trace[0], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma) 
 
 for i, row in df_metri[1].iterrows():
     with c3:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c4:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[1], n_slope = ss.nw_slo, xrange = trace_x_range)  
+        make_mini_trace_slope(row, rowheight, df_trace[1], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma)  
 
 for i, row in df_metri[2].iterrows():
     with c5:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c6:
-        make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[2], n_slope = ss.nw_slo, xrange = trace_x_range)  
+        make_mini_trace_slope(row, rowheight, df_trace[2], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma)  
