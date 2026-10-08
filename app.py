@@ -134,8 +134,8 @@ with st.sidebar:
     
 # make navigation
 p00 = st.Page("pages/st_page_00.py", title="💡 By Regions")
-p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
-p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
+# p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
+# p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p04 = st.Page("pages/st_page_04.py", title="🔎 Explore")
 p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers")
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
@@ -148,7 +148,7 @@ p13 = st.Page("pages/st_page_13.py", title="💡 All High")
 
 p_dev = st.Page("pages/st_dev.py", title="💀 Dev")
 
-pg = st.navigation([p05, p11, p10, p13, p00, p02, p03, p04, p07, p08, p12, p_dev], position="top")
+pg = st.navigation([p05, p11, p10, p13, p00, p04, p07, p08, p12, p_dev], position="top")
 pg.run()
 
 
