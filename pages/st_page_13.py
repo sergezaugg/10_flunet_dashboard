@@ -23,8 +23,8 @@ with st.sidebar:
 df_metri_bl = ss.df_metri_bl[ss.df_metri_bl["ISO_WEEKSTARTDATE"] >= sel_date]
 
 # take max across 3 sources (resonable for this metric)
-df_max = df_metri_bl.loc[df_metri_bl.groupby(["COUNTRY"])["N_ABOVE_BASELINE"].idxmax()]
-# df_max['COUNTRY'].value_counts()
+# df_max = df_metri_bl.loc[df_metri_bl.groupby(["COUNTRY"])["N_ABOVE_BASELINE"].idxmax()] # old 
+df_max = df_metri_bl.loc[df_metri_bl.dropna(subset=["N_ABOVE_BASELINE"]).groupby("COUNTRY")["N_ABOVE_BASELINE"].idxmax()]
 
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NONSENTINEL"]

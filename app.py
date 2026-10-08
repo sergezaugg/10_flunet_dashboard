@@ -35,10 +35,35 @@ df_dat, ss.ts_download = download_flunet_data()
 ss.df_data = preprocess_flunet_data(df = df_dat)
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
-ss.df_trace_ma, ss.trace_x_range_ma, ss.df_metri_ma = obj # unwrap
+ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp = obj # unwrap
 # (2) advanced pre-processing (above Baseline)
 obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
-ss.df_trace_bl, ss.trace_x_range_bl, ss.df_metri_bl, ss.stats_x_range_bl = obj # unwrap
+ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
+
+
+
+# dev ---- 
+
+# merge slope and BL dfs
+dfma_temp = dfma_temp.dropna(subset=["SLOPE"])
+dfmerged = dfbl_temp.merge(dfma_temp, on=["COUNTRY", "ORIGIN_SOURCE"], how="outer", suffixes=("_bl", "_slo"))
+# keep only one "latest date" column
+dfmerged["ISO_WEEKSTARTDATE"] = (dfmerged[["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"]].bfill(axis=1).iloc[:, 0])
+dfmerged = dfmerged.drop(columns = ["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"])
+# keep only one country full name column
+dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
+dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
+# assign to ss 
+ss.df_metri_ma = dfmerged
+ss.df_metri_bl = dfmerged
+
+# st.dataframe(dfmerged)
+
+
+
+
+
+
 
 #------------------------------
 # initialize data dependent objects in ss

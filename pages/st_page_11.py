@@ -33,8 +33,6 @@ c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
 
-ss.stats_x_range_bl
-
 
 for i, row in df_metri[0].iterrows():
     with c1:

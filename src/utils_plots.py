@@ -126,11 +126,12 @@ def make_smoothed_curve_plot(df_plot):
 def make_metric_items_slope(row, height_row):
     with st.container(border= True, height = height_row):
         st.metric(label=row['COUNTRY'], 
-            value=f"{int(row['INF_ALL'])} cases",
-            delta=int(row['SLOPE']),
-            delta_color="inverse", 
-            delta_arrow = "auto", 
-            delta_description = "Per Week",
+            # value=f"{int(row['INF_ALL'])} cases",    f"{x:+d}"
+            value=f"{int(row['SLOPE']):+d} / W",
+            # delta=int(row['SLOPE']),
+            # delta_color="inverse", 
+            # delta_arrow = "auto", 
+            delta_description = "*New cases/week",
             border  = False, 
             width = 200, height = int(0.55*height_row))
         st.markdown(
@@ -164,12 +165,9 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange):
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
         fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
         fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+        fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-
-
-
-# aaaaaaaaaaaaaaaaa
 
 
 @st.cache_data
@@ -178,7 +176,8 @@ def make_metric_items_baseline(row, height_row, time_range_stats):
         st.metric(label=row['COUNTRY'], 
             value=f"{int(row['N_ABOVE_BASELINE'])} weeks",
             border  = False, 
-            delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
+            # delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
+            delta_description = f"BL: {int(row['INF_ALL_BASELINE'])}",
             width = 200, height = int(0.60*height_row))
         st.markdown(
             f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',

@@ -185,7 +185,8 @@ def get_latest_date_per_group(df, ts_today):
     """
     df = df[["COUNTRY" , "ORIGIN_SOURCE", "WHOREGION", "FLUSEASON", "ISO_WEEKSTARTDATE" , "INF_ALL",]]
     df = df.dropna(subset=["INF_ALL"])
-    df = df.loc[df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
+    # df = df.loc[df                                     .groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
+    df = df.loc[df.dropna(subset=["ISO_WEEKSTARTDATE"]).groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
     df = df.drop(columns = ["INF_ALL"])
     # derive variable and convert types
     df["days_since"] = (ts_today - df["ISO_WEEKSTARTDATE"]).dt.days
@@ -257,7 +258,7 @@ def select_top_n_highest_val_by_origin(df, n, var):
 @st.cache_data
 def prepre_for_pages_10_13(df, xvar):
     df = df.dropna(subset=[xvar])
-    df["ISO_WEEKSTARTDATE_str"] = ("Updated " + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
+    df["ISO_WEEKSTARTDATE_str"] = ("" + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
     df = df.sort_values(xvar, ascending = False)
     return(df)
 
