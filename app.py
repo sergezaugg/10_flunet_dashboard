@@ -43,7 +43,6 @@ ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwr
 
 
 # dev ---- 
-
 # merge slope and BL dfs
 dfma_temp = dfma_temp.dropna(subset=["SLOPE"])
 dfmerged = dfbl_temp.merge(dfma_temp, on=["COUNTRY", "ORIGIN_SOURCE"], how="outer", suffixes=("_bl", "_slo"))
@@ -53,16 +52,15 @@ dfmerged = dfmerged.drop(columns = ["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_
 # keep only one country full name column
 dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
 dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
+# safeguard - keep where BL enough above 0
+dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] 
+# compute percent change 
+attenuation_term = 4.0
+dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']+attenuation_term))).round(1)
 # assign to ss 
-ss.df_metri_ma = dfmerged
-ss.df_metri_bl = dfmerged
+ss.df_metri_merged = dfmerged
 
 # st.dataframe(dfmerged)
-
-
-
-
-
 
 
 #------------------------------

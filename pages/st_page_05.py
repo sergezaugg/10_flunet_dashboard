@@ -19,14 +19,11 @@ with st.sidebar:
 trace_x_range = ss.trace_x_range_ma
 # unpack smoothed traces dfs
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+
 # for metrics boxes (unpack list and take top 10)
-df_metri = [ ss.df_metri_ma[ss.df_metri_ma['ORIGIN_SOURCE'] == a] for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-df_metri = [select_top_n_highest_slope(a, n=10) for a in df_metri]
-
-
-
-
-
+df_metri = [ ss.df_metri_merged[ss.df_metri_merged['ORIGIN_SOURCE'] == a] for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri = [select_top_n_highest_slope(a, n=10, sorting_var = 'PERC_CHANGE') for a in df_metri]
+# 'SLOPE'
 
 
 # plot metrics and mini traces 
@@ -38,20 +35,22 @@ c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
 
+showperc = True
+
 for i, row in df_metri[0].iterrows():
     with c1:
-        make_metric_items_slope(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c2:
         make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[0], n_slope = ss.nw_slo, xrange = trace_x_range)
 
 for i, row in df_metri[1].iterrows():
     with c3:
-        make_metric_items_slope(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c4:
         make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[1], n_slope = ss.nw_slo, xrange = trace_x_range)  
 
 for i, row in df_metri[2].iterrows():
     with c5:
-        make_metric_items_slope(row, height_row = rowheight)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c6:
         make_mini_trace_slope(row, height_row = rowheight, df_for_trace = df_trace[2], n_slope = ss.nw_slo, xrange = trace_x_range)  

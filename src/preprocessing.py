@@ -62,7 +62,7 @@ def get_recency_slope(df, latest_week, n_weeks_for_slope = 4):
                    g.loc[g["INF_MA"].notna(), "INF_MA"], # that is y
                    1 # degree 1 = linear regression
                )[0] # this is b1 = slope
-               if g["INF_MA"].notna().sum() >= 2
+               if g["INF_MA"].notna().sum() >= 4
                else np.nan
            ),
            include_groups=False
@@ -143,7 +143,7 @@ def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_dat
     df_ma = df_ma[['COUNTRY', 'CNTRY' , 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ref_date, keep_n_weeks = nw_ma)
     df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ma_bin_size, deg = ma_degree)
-    # regression - advanced pre-processing (used in pages 05 and 10)
+    # regression
     df0 = df_trace_ma.copy()
     # look carefully, this is a list comprehension
     df_metri_ma = [(get_recency_slope(
@@ -172,7 +172,6 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_tra
     df_metri = (df00
         # remove when all-na for "INF_ALL" 
         .loc[df00.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].transform("count").gt(0)]  
-        .loc[lambda x: x["INF_ALL_BASELINE"] >= 5] # keep where BL enough above 0
         .assign(ABOVE_BASELINE=lambda x: x["INF_ALL"] >= x["INF_ALL_BASELINE"]) # create boolean for 'above bl'
         .groupby(["COUNTRY", "ORIGIN_SOURCE"], as_index=False) # extract summaries by group
         .agg(N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),

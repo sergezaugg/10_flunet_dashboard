@@ -123,15 +123,20 @@ def make_smoothed_curve_plot(df_plot):
 
 
 @st.cache_data
-def make_metric_items_slope(row, height_row):
+def make_metric_items_slope(row, height_row, show_percent = False):
+    
+    if show_percent:
+        selected_met = f"{int(row['PERC_CHANGE']):+d} % / W"
+        selected_desc = "*Percent change" 
+    else:
+        selected_met = f"{int(row['SLOPE']):+d} / W"   
+        selected_desc = "*New cases/week" 
+
     with st.container(border= True, height = height_row):
-        st.metric(label=row['COUNTRY'], 
-            # value=f"{int(row['INF_ALL'])} cases",    f"{x:+d}"
-            value=f"{int(row['SLOPE']):+d} / W",
-            # delta=int(row['SLOPE']),
-            # delta_color="inverse", 
-            # delta_arrow = "auto", 
-            delta_description = "*New cases/week",
+        st.metric(label=row['COUNTRY'],                  
+            # value=f"{int(row['SLOPE']):+d} / W",
+            value=selected_met,
+            delta_description = selected_desc,
             border  = False, 
             width = 200, height = int(0.55*height_row))
         st.markdown(
@@ -248,7 +253,7 @@ def display_df_page_08(df):
 
 
 @st.cache_data
-def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
+def make_bar_plot_pages_10_13(df, xvar, xlabel):
 
     fig = px.bar(
         df,
@@ -267,7 +272,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, x_max):
         "%{customdata[0]}<br>"
         f"{xlabel}: %{{x}}"  ))
 
-    fig.update_xaxes(range=[0, x_max])
+    # fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
     fig.update_yaxes(title=None)
     fig.update_layout(showlegend=False)

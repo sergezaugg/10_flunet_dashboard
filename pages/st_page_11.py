@@ -19,7 +19,7 @@ with st.sidebar:
     """)
 
 # select top 10 
-df_metri = select_top_n_highest_val_by_origin(ss.df_metri_bl, n = 10, var ="N_ABOVE_BASELINE")
+df_metri = select_top_n_highest_val_by_origin(ss.df_metri_merged, n = 10, var ="N_ABOVE_BASELINE")
 # organize by data source 
 df_metri = [filter_a_data_source(df_metri, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]

@@ -10,20 +10,17 @@ import streamlit as st
 from src.utils import prepre_for_pages_10_13
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
-# store max slope (per_source) to keep plot x axis stable
-x_max = ss.df_metri_bl.groupby('ORIGIN_SOURCE')["N_ABOVE_BASELINE"].max()
 
 with st.sidebar:
-    source_options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED", "MAXCOMBINE"]
+    source_options = ["MAXCOMBINE", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.selectbox("Choose a source:", options=source_options, placeholder="Type or select ...", key="k_p13_01")
-    all_recent_dates = pd.Series(ss.df_metri_bl["ISO_WEEKSTARTDATE"].unique()).sort_values()
+    all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
 
 # prepare 
-df_metri_bl = ss.df_metri_bl[ss.df_metri_bl["ISO_WEEKSTARTDATE"] >= sel_date]
+df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
 
 # take max across 3 sources (resonable for this metric)
-# df_max = df_metri_bl.loc[df_metri_bl.groupby(["COUNTRY"])["N_ABOVE_BASELINE"].idxmax()] # old 
 df_max = df_metri_bl.loc[df_metri_bl.dropna(subset=["N_ABOVE_BASELINE"]).groupby("COUNTRY")["N_ABOVE_BASELINE"].idxmax()]
 
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
@@ -51,7 +48,7 @@ df_dat00_bar = df_dat_map[df_dat_map["N_ABOVE_BASELINE"] > 0]
 
 #----------------------------------------------
 
-fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", "Viridis")
+fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", "Viridis" ) # "Viridis"
 
 c0, c1, c2 = st.columns([2.5, 1, 0.4])
 # map 
@@ -62,7 +59,7 @@ with c0:
 with c1:
     with st.container(border=True):
         if df_dat00_bar.shape[0] > 0:
-            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", x_max = x_max['NOTDEFINED'])
+            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL")
             st.plotly_chart(figbar, use_container_width=True, config={"displayModeBar": False})
 
 
