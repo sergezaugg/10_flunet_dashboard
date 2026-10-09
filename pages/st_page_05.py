@@ -27,6 +27,19 @@ df_metri = [a.query("PERC_CHANGE > 0") for a in df_metri] # keep only positeve '
 
 
 
+
+
+# pre-render plotly 
+
+
+
+
+
+
+
+
+
+
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
     with col:
@@ -36,22 +49,20 @@ c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
 
-showperc = True
-
 for i, row in df_metri[0].iterrows():
     with c1:
-        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c2:
         make_mini_trace_slope(row, rowheight, df_trace[0], ss.trace_x_range_ma, ss.stats_x_range_ma) 
 
 for i, row in df_metri[1].iterrows():
     with c3:
-        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c4:
         make_mini_trace_slope(row, rowheight, df_trace[1], ss.trace_x_range_ma, ss.stats_x_range_ma)  
 
 for i, row in df_metri[2].iterrows():
     with c5:
-        make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
+        make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c6:
         make_mini_trace_slope(row, rowheight, df_trace[2], ss.trace_x_range_ma, ss.stats_x_range_ma)  

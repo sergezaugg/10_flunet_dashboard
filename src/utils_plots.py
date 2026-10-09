@@ -161,13 +161,11 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
         dfb = df_subset[df_subset['ISO_WEEKSTARTDATE'] > stats_x_range[0]]
         fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
             line=dict(color=    cc["traces"]["hot"]), marker=dict(color=  cc["traces"]["hot"]), showlegend=False)
-        fig.update_yaxes(range=[0, None])
-        fig.update_xaxes(range=xrange)
-        fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
-        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
-        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
         fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
         fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
+        fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
+        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, range=xrange)
+        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero",) # range=[0, None])
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
@@ -197,11 +195,9 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
             markers = True,
             color_discrete_sequence=[cc["traces"]["basic"]],
         )
-        fig.update_yaxes(range=[0, None])
-        fig.update_xaxes(range=trace_x_range)
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
-        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, )
-        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, range=trace_x_range)
+        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero",)
         fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
         fig.add_hrect(y0=0.0, y1=row['INF_ALL_BASELINE'], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
         fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
