@@ -147,26 +147,25 @@ def make_metric_items_slope(row, height_row, show_percent = False):
 
 @st.cache_data
 def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
-     with st.container(border= True, height = height_row):
-        df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
-        fig = px.line(
-            df_subset, 
-            x = 'ISO_WEEKSTARTDATE', 
-            y = 'INF_MA', 
-            height = int(0.8*height_row), 
-            markers = True,
-            color_discrete_sequence=[cc["traces"]["basic"]],
-            )
-        # plot latest vals (used to compute slope) in another color 
-        dfb = df_subset[df_subset['ISO_WEEKSTARTDATE'] > stats_x_range[0]]
-        fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
-            line=dict(color=    cc["traces"]["hot"]), marker=dict(color=  cc["traces"]["hot"]), showlegend=False)
-        fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
-        fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
-        fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
-        fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, range=xrange)
-        fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero",) # range=[0, None])
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
+    fig = px.line(
+        df_subset, 
+        x = 'ISO_WEEKSTARTDATE', 
+        y = 'INF_MA', 
+        height = int(0.8*height_row), 
+        markers = True,
+        color_discrete_sequence=[cc["traces"]["basic"]],
+        )
+    # # plot latest vals (used to compute slope) in another color 
+    dfb = df_subset[df_subset['ISO_WEEKSTARTDATE'] > stats_x_range[0]]
+    fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
+        line=dict(color=    cc["traces"]["hot"]), marker=dict(color=  cc["traces"]["hot"]), showlegend=False)
+    fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
+    fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
+    fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, range=xrange)
+    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero",) # range=[0, None])
+    return fig
 
 
 

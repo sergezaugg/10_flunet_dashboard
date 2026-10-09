@@ -29,15 +29,18 @@ df_metri = [a.query("PERC_CHANGE > 0") for a in df_metri] # keep only positeve '
 
 
 
-# pre-render plotly 
+# pre-render plotly (but it does not really speed rendering on screen  :-(  
 
+rowheight = 160
 
+@st.cache_data(show_spinner="Rendering mini-traces")
+def pre_render_mintraces(df_tra, df_met):
+    a = [make_mini_trace_slope(row, rowheight, df_tra[0], ss.trace_x_range_ma, ss.stats_x_range_ma) for _, row in df_met[0].iterrows()]
+    b = [make_mini_trace_slope(row, rowheight, df_tra[1], ss.trace_x_range_ma, ss.stats_x_range_ma) for _, row in df_met[1].iterrows()]
+    c = [make_mini_trace_slope(row, rowheight, df_tra[2], ss.trace_x_range_ma, ss.stats_x_range_ma) for _, row in df_met[2].iterrows()]
+    return a, b, c
 
-
-
-
-
-
+prerend1, prerend2, prerend3 = pre_render_mintraces(df_tra = df_trace, df_met = df_metri)
 
 
 # plot metrics and mini traces 
@@ -47,22 +50,25 @@ for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
-rowheight = 160
+
 
 for i, row in df_metri[0].iterrows():
     with c1:
         make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c2:
-        make_mini_trace_slope(row, rowheight, df_trace[0], ss.trace_x_range_ma, ss.stats_x_range_ma) 
+        with st.container(border= True, height = rowheight):
+            st.plotly_chart(prerend1[i], use_container_width=True, config={"displayModeBar": False})
 
 for i, row in df_metri[1].iterrows():
     with c3:
         make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c4:
-        make_mini_trace_slope(row, rowheight, df_trace[1], ss.trace_x_range_ma, ss.stats_x_range_ma)  
+        with st.container(border= True, height = rowheight):
+            st.plotly_chart(prerend2[i], use_container_width=True, config={"displayModeBar": False})
 
 for i, row in df_metri[2].iterrows():
     with c5:
         make_metric_items_slope(row, height_row = rowheight, show_percent = True)
     with c6:
-        make_mini_trace_slope(row, rowheight, df_trace[2], ss.trace_x_range_ma, ss.stats_x_range_ma)  
+        with st.container(border= True, height = rowheight):
+            st.plotly_chart(prerend3[i], use_container_width=True, config={"displayModeBar": False})
