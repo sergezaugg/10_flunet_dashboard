@@ -46,7 +46,7 @@ prerend1, prerend2, prerend3 = pre_render_mintraces(df_tra = df_trace, df_met = 
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
     with col:
-        st.text(label)
+        st.subheader(label)
 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 

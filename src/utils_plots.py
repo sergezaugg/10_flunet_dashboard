@@ -39,7 +39,7 @@ def make_facet_line_plot(df, n_countr, outcome):
     fig.update_yaxes(title_text="WEEKLY  DETECT.")
     fig.update_yaxes(matches=None,)   
     fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=100, b=40))
+    fig.update_layout(margin=dict(l=60, r=150, t=50, b=40))
     fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
     fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
     fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))

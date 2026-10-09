@@ -123,7 +123,7 @@ ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
-ss.setdefault("k_who_06", [])
+ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
 # defaults for recency (page 08)
 ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
@@ -169,16 +169,24 @@ p00 = st.Page("pages/st_page_00.py", title="🔎 By Regions")
 # p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 # p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p04 = st.Page("pages/st_page_04.py", title="🔎 Methods")
-p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers", default=True)
+p05 = st.Page("pages/st_page_05.py", title="🔥 Top Trend", default=True)
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
-p08 = st.Page("pages/st_page_08.py", title="🦖 Data age")
+p08 = st.Page("pages/st_page_08.py", title="🔥 Data age")
 p10 = st.Page("pages/st_page_10.py", title="🌍 Map Trend")
-p11 = st.Page("pages/st_page_11.py", title="🔥 Top Elevated")
+p11 = st.Page("pages/st_page_11.py", title="🔥 Top Burden")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info & Disclaimer")
 p13 = st.Page("pages/st_page_13.py", title="🌍 Map Burden")
 # p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
 # p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
+
+# reduce vertical space between navig and items(content
+st.markdown("""
+    <style> [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} </style>
+    """, unsafe_allow_html=True
+)
+
+
 
 pg = st.navigation([p08, p05, p11, p10, p13, p00, p04, p07, p12], position="top")
 pg.run()

@@ -30,7 +30,7 @@ df_metri = [a.query("N_ABOVE_BASELINE > 0") for a in df_metri] # keep only posit
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
     with col:
-        st.text(label)
+        st.subheader(label)
 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 

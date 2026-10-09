@@ -23,7 +23,7 @@ country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
 # filter by country  
 all_countries = df_plot_temp['COUNTRY'].unique()
 with st.sidebar:
-    sel_countries = st.multiselect("Countries", options=sorted(all_countries), default=[], placeholder="Select countries", key="k_who_06")
+    sel_countries = st.multiselect("Countries", options=sorted(all_countries), placeholder="Select countries", key="k_who_06")
     country_info = st.empty() 
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
