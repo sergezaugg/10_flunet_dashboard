@@ -53,13 +53,13 @@ fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", "Viridis" ) # "Viridis"
 c0, c1 = st.columns([2.5, 0.7])
 # map 
 with c0:
-    with st.container(border=True):
+    with st.container(border=True, height = 500):
         st.plotly_chart(fig, use_container_width=True)
 # barplots
 with c0:
-    with st.container(border=True):
+    with st.container(border=True, height = 350):
         if df_dat00_bar.shape[0] > 0:
-            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL")
+            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300)
             st.plotly_chart(figbar, use_container_width=True, config={"displayModeBar": False})
 
 

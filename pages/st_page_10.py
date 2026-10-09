@@ -47,13 +47,13 @@ fig = make_geo_map(df_dat_map, "PERC_CHANGE", "Viridis" ) # "Viridis"
 c0, c1 = st.columns([2.5, 0.7])
 # map 
 with c0:
-    with st.container(border=True):
+    with st.container(border=True, height = 500):
         st.plotly_chart(fig, use_container_width=True)
 
 with c0:
-    with st.container(border=True):
+    with st.container(border=True, height = 350):
         if df_dat_map.shape[0] > 0:
-            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "New Cases Per Week")
+            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "New Cases Per Week", height = 300)
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

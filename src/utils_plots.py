@@ -245,16 +245,16 @@ def display_df_page_08(df, nw_cutoff, height):
 
 
 @st.cache_data
-def make_bar_plot_pages_10_13(df, xvar, xlabel):
+def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
 
     fig = px.bar(
         df,
         x="COUNTRY",
         y=xvar, 
         custom_data="CNTRY",
-        text="ISO_WEEKSTARTDATE_str",
+        # text="ISO_WEEKSTARTDATE_str",
         orientation="v",
-        height=400,
+        height=height,
         width=130 + len(df)*30,
         category_orders={"COUNTRY": df["COUNTRY"].tolist()},
         labels={xvar: xlabel},
@@ -267,9 +267,9 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel):
 
     # fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
-    # fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     fig.update_layout(showlegend=False)
-    fig.update_layout(margin=dict(l=60, r=60, t=80, b=40))
+    fig.update_layout(margin=dict(l=60, r=60, t=20, b=20))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     # fig.update_traces(marker_color=cc["traces"]["hot"])
