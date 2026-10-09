@@ -172,12 +172,10 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p00 = st.Page("pages/st_page_00.py", title="🔎 By Regions")
-
+p00 = st.Page("pages/st_page_00.py", title="🔎 Traces")
 p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p04 = st.Page("pages/st_page_04.py", title="🔎 Methods")
 p05 = st.Page("pages/st_page_05.py", title="🔥 Flu Trend", default=True)
-# p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular Data")
 p08 = st.Page("pages/st_page_08.py", title="🔥 Data Age")
 p10 = st.Page("pages/st_page_10.py", title="🌍 Flu Trend")
@@ -197,7 +195,7 @@ st.markdown("""
 
 
 
-pg = st.navigation([p08, p05, p11, p10, p13, p00, p03, p04, p07, p12], position="top")
+pg = st.navigation([p08, p05, p11, p10, p13, p00, p03, p04, p07, p12, ], position="top")
 pg.run()
 
 
