@@ -17,6 +17,7 @@ pd.set_option('display.max_rows', 500)
 
 # weeks from ref to be used for stats 
 ss.nw_global = 6
+ss.top_n = 5 # how much to show in 'top' pages
 
 #------------------------------
 # initialize session state (constant values)
@@ -41,11 +42,22 @@ ss.df_data = preprocess_flunet_data(df = df_dat)
 # initialize data dependent objects in ss
 ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
 
+
 # new - remove all data that is too old already here 
 mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
-# !!!! check this !!!! <<<<<<<<<<<<<<<<<<<<<<<<
-# mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
-# ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
+mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
+ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
+
+
+
+
+
+
+
+
+
+
+
 
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
@@ -156,20 +168,19 @@ with st.sidebar:
 p00 = st.Page("pages/st_page_00.py", title="🔎 By Regions")
 # p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 # p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
-p04 = st.Page("pages/st_page_04.py", title="🔎 Explore")
+p04 = st.Page("pages/st_page_04.py", title="🔎 Methods")
 p05 = st.Page("pages/st_page_05.py", title="🔥 Top Risers", default=True)
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
 p08 = st.Page("pages/st_page_08.py", title="🦖 Data age")
-p10 = st.Page("pages/st_page_10.py", title="🌍 Geo-map Risers")
+p10 = st.Page("pages/st_page_10.py", title="🌍 Map Trend")
 p11 = st.Page("pages/st_page_11.py", title="🔥 Top Elevated")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info")
-p13 = st.Page("pages/st_page_13.py", title="🌍 Geo-map Elevated")
-p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
+p13 = st.Page("pages/st_page_13.py", title="🌍 Map Burden")
+# p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
+# p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
 
-p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
-
-pg = st.navigation([p08, p05, p11, p10, p13, p00, p04, p07, p12, p14, p_dev], position="top")
+pg = st.navigation([p08, p05, p11, p10, p13, p00, p04, p07, p12], position="top")
 pg.run()
 
 

@@ -9,7 +9,7 @@ import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
 from src.utils import filter_a_data_source
-from src.utils import select_top_n_highest_val_by_origin
+from src.utils import select_top_n_highest_val_by_origin, select_top_n_highest_slope
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 
 with st.sidebar:
@@ -18,11 +18,14 @@ with st.sidebar:
     Stats from latest :primary[{int(ss.time_range_stats)} weeks.]    
     """)
 
-# select top 10 
-df_metri = select_top_n_highest_val_by_origin(ss.df_metri_merged, n = 10, var ="N_ABOVE_BASELINE")
-# organize by data source 
-df_metri = [filter_a_data_source(df_metri, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+
+# select top 10 
+df_metri = [filter_a_data_source(ss.df_metri_merged, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'N_ABOVE_BASELINE') for a in df_metri]
+df_metri = [a.query("N_ABOVE_BASELINE > 0") for a in df_metri] # keep only positeve 'N_ABOVE_BASELINE' 
+
 
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
@@ -32,7 +35,6 @@ for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
 
 rowheight = 160
-
 
 for i, row in df_metri[0].iterrows():
     with c1:

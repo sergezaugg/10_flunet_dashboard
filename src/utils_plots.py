@@ -143,9 +143,10 @@ def make_metric_items_slope(row, height_row, show_percent = False):
             f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
             unsafe_allow_html=True,)
 
+#--------------------------------------------------
 
 @st.cache_data
-def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange, stats_x_range):
+def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
      with st.container(border= True, height = height_row):
         df_subset = df_for_trace[df_for_trace["COUNTRY"] == row['COUNTRY']]
         fig = px.line(
@@ -160,8 +161,6 @@ def make_mini_trace_slope(row, height_row, df_for_trace, n_slope, xrange, stats_
         dfb = df_subset[df_subset['ISO_WEEKSTARTDATE'] > stats_x_range[0]]
         fig.add_scatter(x=dfb["ISO_WEEKSTARTDATE"],y=dfb["INF_MA"],mode="lines+markers",
             line=dict(color=    cc["traces"]["hot"]), marker=dict(color=  cc["traces"]["hot"]), showlegend=False)
-        # fig.add_annotation(x=0.01,y=0.98,xref="paper",yref="paper",text=row["COUNTRY"], showarrow=False, xanchor="left", yanchor="top")
-        # fig.update_xaxes(tickvals=df_subset['ISO_WEEKSTARTDATE'])
         fig.update_yaxes(range=[0, None])
         fig.update_xaxes(range=xrange)
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)

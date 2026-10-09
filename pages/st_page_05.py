@@ -11,6 +11,7 @@ from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 
+
 with st.sidebar:
     st.markdown(f"""Trace smoothed via moving regression of :primary[degree {ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size} weeks].
     Slope then estimated for latest :primary[{int(ss.nw_slo)} weeks] of smoothed curve via linear regression.
@@ -20,9 +21,10 @@ with st.sidebar:
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 
 # for metrics boxes (unpack list and take top 10)
-df_metri = [ ss.df_metri_merged[ss.df_metri_merged['ORIGIN_SOURCE'] == a] for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-df_metri = [select_top_n_highest_slope(a, n=10, sorting_var = 'PERC_CHANGE') for a in df_metri]
-# 'SLOPE'
+df_metri = [filter_a_data_source(ss.df_metri_merged, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'PERC_CHANGE') for a in df_metri]
+df_metri = [a.query("PERC_CHANGE > 0") for a in df_metri] # keep only positeve 'SLOPE' or "PERC_CHANGE"
+
 
 
 # plot metrics and mini traces 
@@ -40,16 +42,16 @@ for i, row in df_metri[0].iterrows():
     with c1:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c2:
-        make_mini_trace_slope(row, rowheight, df_trace[0], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma) 
+        make_mini_trace_slope(row, rowheight, df_trace[0], ss.trace_x_range_ma, ss.stats_x_range_ma) 
 
 for i, row in df_metri[1].iterrows():
     with c3:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c4:
-        make_mini_trace_slope(row, rowheight, df_trace[1], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma)  
+        make_mini_trace_slope(row, rowheight, df_trace[1], ss.trace_x_range_ma, ss.stats_x_range_ma)  
 
 for i, row in df_metri[2].iterrows():
     with c5:
         make_metric_items_slope(row, height_row = rowheight, show_percent = showperc)
     with c6:
-        make_mini_trace_slope(row, rowheight, df_trace[2], ss.nw_slo, ss.trace_x_range_ma, ss.stats_x_range_ma)  
+        make_mini_trace_slope(row, rowheight, df_trace[2], ss.trace_x_range_ma, ss.stats_x_range_ma)  

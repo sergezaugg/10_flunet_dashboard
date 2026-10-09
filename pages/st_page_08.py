@@ -3,11 +3,11 @@
 # Description : 
 #--------------------
 
-import pandas as pd
+# import pandas as pd
 import numpy as np 
 from streamlit import session_state as ss
 import streamlit as st
-import plotly.express as px
+# import plotly.express as px
 from src.utils_plots import display_df_page_08
 
 # load data to local page 
@@ -21,21 +21,11 @@ with st.sidebar:
 with st.sidebar:
     who_regions = st.multiselect("WHO region", options = ss.WHOREGION_levels, key="k_rec_01")
    
-
-
-
-
-
-
-
-
 #-------------------------------------------------------------
 # data processing  
 
 # select based on WHOREGION
 df_lat = df_lat[df_lat["WHOREGION"].isin(who_regions)]
-# # drop unused columns 
-# df_lat = df_lat.drop(columns = ["ISO_WEEKSTARTDATE", "WHOREGION", "FLUSEASON"])
 # set initial row order
 df_lat = df_lat.sort_values("days_since", ascending = True)
 
@@ -44,6 +34,10 @@ df_lat["stale_data"] = np.where(df_lat["days_since"] > ss.nw_global*7, "Stale", 
 table = (df_lat.groupby(["ORIGIN_SOURCE", "stale_data"]).size().reset_index(name="count"))
 table = table.sort_values(['stale_data', 'ORIGIN_SOURCE'], ascending= [True, False])
 
+# get overview counts
+n_countries_all = df_lat.loc[ :,["COUNTRY"]].drop_duplicates().shape[0]
+n_countries_remain = df_lat.loc[df_lat["stale_data"] == "Fresh"  , ["COUNTRY", "stale_data"]].drop_duplicates().shape[0]
+
 # drop unused columns 
 df_lat = df_lat.drop(columns = ["ISO_WEEKSTARTDATE", "WHOREGION", "FLUSEASON", "stale_data"])
 
@@ -51,13 +45,18 @@ df_lat = df_lat.drop(columns = ["ISO_WEEKSTARTDATE", "WHOREGION", "FLUSEASON", "
 df_sel = [df_lat[df_lat['ORIGIN_SOURCE'] == a] for a in ['SENTINEL', 'NONSENTINEL', 'NOTDEFINED']]
 df_sel = [a.drop(columns = "ORIGIN_SOURCE") for a in df_sel]
 
-
 #-------------------------------------------------------------
 # display 
 
 # quick overview of stale and fresh data 
 c1, c2, c3, c4 = st.columns([20,20,20,10])
 with c1:
+    st.metric(label = "Nb countries", 
+        value = f"N={int(n_countries_remain)} fresh", 
+        icon=None, border=True, width = 200, height="content", 
+        delta_description = f"From N={int(n_countries_all)} total (incl.stale)",
+    )
+with c2:
     st.dataframe(table, hide_index  = True,
         column_config={
             "ORIGIN_SOURCE": st.column_config.TextColumn("Data Source", width="small", alignment="center",),
@@ -65,9 +64,7 @@ with c1:
             "count": st.column_config.NumberColumn("Nb Countries", width="small", alignment="center",),
         },)
 
-
-
-# display data frames 
+# display detes
 c1, c2, c3, c4 = st.columns([20,20,20,40])
 with c1:
     st.text('SENTINEL')
@@ -80,12 +77,3 @@ with c2:
 with c3:
     st.text('NOTDEFINED')
     display_df_page_08(df_sel[2], nw_cutoff = ss.nw_global*7)
-
-
-
-
-
-
-
-
-

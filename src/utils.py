@@ -12,7 +12,7 @@ import requests
 from io import BytesIO
 from datetime import datetime
 
-@st.cache_data(ttl=12*60*60) # refresh every 12 hours 
+@st.cache_data(ttl=12*60*60, show_spinner="Downloading FluNet data...") # refresh every 12 hours 
 def download_flunet_data():
     """Download FluNet data"""
     # step-by-step import 
@@ -41,7 +41,7 @@ def get_ts_today():
     return datetime.now()
 
 
-@st.cache_data()
+@st.cache_data(show_spinner="Preprocessing FluNet data...")
 def preprocess_flunet_data(df):
     """pre-process FluNet dataframe : select variable, rename, convert formats"""
     # select only relevant columns 
