@@ -46,26 +46,29 @@ df_sel = [a.drop(columns = "ORIGIN_SOURCE") for a in df_sel]
 # quick overview of stale and fresh data 
 c1, c2, c3 = st.columns([30,30,20])
 with c1:
-    with st.container(border= True, height = 260):
-
-        st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
-        older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
+    with st.container(border= True, height = 280):
 
         x1, x2 = st.columns([30,30])
         with x1:
             st.text("Countries with >=1 series fresh")
             st.markdown(f"<p style='color:green; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
                 unsafe_allow_html=True)
+            
         with x2:
             st.text("Countries with all series stale")
             st.markdown(f"<p style='color:red; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
                 unsafe_allow_html=True)
 
         st.text("Selected Regions: " + " · ".join(who_regions))
+
+        st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
+            older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
         
 with c2:
-    # with st.container(border= True, height = 250):
-        st.dataframe(table, hide_index  = True, height = 260, 
+    with st.container(border= True, height = 280):
+        st.dataframe(table, hide_index  = True, 
+                    #  height = 260, 
+                     height="content",
             column_config={
                 "ORIGIN_SOURCE": st.column_config.TextColumn("Data Source", width="auto", alignment="left",),
                 "stale_data": st.column_config.TextColumn("Data Status", width="auto", alignment="center",),

@@ -267,6 +267,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
 
     # fig.update_xaxes(range=[0, x_max])
     fig.update_xaxes(side="top")
+    fig.update_xaxes(tickangle=90)
     fig.update_xaxes(title=None)
     fig.update_layout(showlegend=False)
     fig.update_layout(margin=dict(l=60, r=60, t=20, b=20))
@@ -275,17 +276,11 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
     # fig.update_traces(marker_color=cc["traces"]["hot"])
     return fig
 
-# "Viridis"
-# "Plasma"
-# "Turbo"
-# "RdYlGn"
-# "RdBu"
-# "Blues"
-# "Reds"
+
 
 
 @st.cache_data
-def make_geo_map(df, var, colormap):
+def make_geo_map(df, var, colormap, height, range_color):
     fig = px.choropleth(
         df,
         locations="COUNTRY",
@@ -293,6 +288,8 @@ def make_geo_map(df, var, colormap):
         locationmode="ISO-3",
         projection="natural earth",
         color_continuous_scale=colormap, # "RdYlGn_r",
+        range_color=range_color, 
+        height=height
     )
 
     fig.update_geos(

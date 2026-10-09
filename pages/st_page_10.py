@@ -15,6 +15,10 @@ with st.sidebar:
     sel_source = st.selectbox("Choose a source:", options=source_options, placeholder="Type or select ...", key="k_p10_01")
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
+    # colormaps 
+    li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
+    sel_colormap = st.radio(label = "Colormap", options = li_colormaps, key="k_p10_03")
+
 
 # prepare 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
@@ -42,12 +46,21 @@ if sel_source == "MAXCOMBINE":
     df_dat_map = df_max
 
 
-fig = make_geo_map(df_dat_map, "PERC_CHANGE", "Viridis" ) # "Viridis"
+fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55] ) 
 
-c0, c1 = st.columns([2.5, 0.7])
+
+
+# import plotly.express as px
+# import streamlit as st
+# fig = px.colors.diverging.swatches_continuous()
+# st.plotly_chart(fig, use_container_width=True)
+
+
+
+c0, c1 = st.columns([2.5, 1.1])
 # map 
 with c0:
-    with st.container(border=True, height = 500):
+    with st.container(border=True, height = 400):
         st.plotly_chart(fig, use_container_width=True)
 
 with c0:

@@ -150,6 +150,13 @@ ss.setdefault("k_tre_02", 5)
 ss.setdefault("k_tre_03", 1)
 ss.setdefault("k_tre_04", 1)
 ss.setdefault("k_tre_05", 0.66)
+# defaults (page 10)
+ss.setdefault("k_p10_01", "MAXCOMBINE")
+ss.setdefault("k_p10_03", "Bluered")
+# defaults (page 13)
+ss.setdefault("k_p13_01", "MAXCOMBINE")
+ss.setdefault("k_p13_03", "Viridis")
+
 
 # Protects every key from being deleted (for multi-page consistency across clicks)
 for key in list(st.session_state.keys()):
