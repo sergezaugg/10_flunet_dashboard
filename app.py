@@ -173,17 +173,19 @@ with st.sidebar:
     
 # make navigation
 p00 = st.Page("pages/st_page_00.py", title="🔎 By Regions")
-# p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
-# p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
+
+p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
 p04 = st.Page("pages/st_page_04.py", title="🔎 Methods")
-p05 = st.Page("pages/st_page_05.py", title="🔥 Top Trend", default=True)
+p05 = st.Page("pages/st_page_05.py", title="🔥 Flu Trend", default=True)
 # p06 = st.Page("pages/st_page_06.py", title="💡 Positivity by Regions") # not show yet, under developments
-p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular")
-p08 = st.Page("pages/st_page_08.py", title="🔥 Data age")
-p10 = st.Page("pages/st_page_10.py", title="🌍 Map Trend")
-p11 = st.Page("pages/st_page_11.py", title="🔥 Top Burden")
+p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular Data")
+p08 = st.Page("pages/st_page_08.py", title="🔥 Data Age")
+p10 = st.Page("pages/st_page_10.py", title="🌍 Flu Trend")
+p11 = st.Page("pages/st_page_11.py", title="🔥 Flu Burden")
 p12 = st.Page("pages/st_page_12.py", title="📋 Info & Disclaimer")
-p13 = st.Page("pages/st_page_13.py", title="🌍 Map Burden")
+p13 = st.Page("pages/st_page_13.py", title="🌍 Flu Burden")
+
+# p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
 # p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
 # p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
 
@@ -195,7 +197,7 @@ st.markdown("""
 
 
 
-pg = st.navigation([p08, p05, p11, p10, p13, p00, p04, p07, p12], position="top")
+pg = st.navigation([p08, p05, p11, p10, p13, p00, p03, p04, p07, p12], position="top")
 pg.run()
 
 

@@ -14,8 +14,8 @@ def make_facet_line_plot(df, n_countr, outcome):
     aaa 
     """
 
-    # handle NAs before plot
-    df.loc[df["INF_ALL"].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
+    # handle NAs before plot (Why did i do this ???)
+    # df.loc[df[outcome].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
 
     # pre-compute vertical spacings dependent on n_countr
     facet_height = 150
@@ -36,7 +36,7 @@ def make_facet_line_plot(df, n_countr, outcome):
     )
 
     fig.update_traces(marker=dict(size=5))
-    fig.update_yaxes(title_text="WEEKLY  DETECT.")
+    # fig.update_yaxes(title_text="WEEKLY  DETECT.")
     fig.update_yaxes(matches=None,)   
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=60, r=150, t=50, b=40))

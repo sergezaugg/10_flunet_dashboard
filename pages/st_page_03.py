@@ -36,19 +36,14 @@ df_prop_long = df_prop_ab.melt(
     value_name="PROP"
 )
 
-
 # build control items in sidebar
 with st.sidebar:
     selected_country = st.selectbox("Choose a country:", options=all_countries, placeholder="Type or select a country...", index=indx, key="k_ab_01")
-    plot_height = st.slider("Plot height", min_value=300, max_value=2000, step=100, key="k_ab_02") 
+    # plot_height = st.slider("Plot height", min_value=300, max_value=2000, step=100, key="k_ab_02") 
     area_cutoff = st.slider("Area cutoff", min_value=0,   max_value=1000, step=10, key="k_ab_03") 
 
 
-
-
 df_plot = filter_a_country(df_prop_long, selected_country)
-
-
 
 # make function from here 
 # apply thld
@@ -90,7 +85,7 @@ for trace in fig_area.data:
 for annotation in fig.layout.annotations:
     annotation.y += 0.025
 
-fig.update_layout(height=plot_height)
+fig.update_layout(height=600)
 fig.update_xaxes(matches="x")
 fig.update_layout(hovermode="x unified")
 fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)

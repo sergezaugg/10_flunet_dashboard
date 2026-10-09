@@ -15,10 +15,8 @@ with st.sidebar:
     who_regions = st.multiselect("Pre-select WHO region", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
 # apply user's data filter to data 
-df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, 
-                                                    itz_regions = ss.ITZ_levels)
+df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, itz_regions = ss.ITZ_levels)
 country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
-
 
 # filter by country  
 all_countries = df_plot_temp['COUNTRY'].unique()
@@ -29,7 +27,18 @@ with st.sidebar:
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
 
-if len(df_plot) <= 0:
+with st.sidebar:
+    st.divider()
+    outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0)
+# outcome_var = "INF_ALL"
+# outcome_var = "POSITIVITY"
+
+# exclude all from "ORIGIN_SOURCE" level if too few non-na
+df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)
+
+
+
+if len(df_plot) <= 10:
     country_info.text(f"Please select at least one country")
     st.stop()
 
@@ -40,5 +49,6 @@ if n_countries[0] > ss.max_countries_in_plots:
 country_info.text(f"N Countries = {n_countries[0]}")
 
 # plot 
-fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
+# fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
+fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = outcome_var)
 st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
