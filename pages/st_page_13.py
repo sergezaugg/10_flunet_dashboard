@@ -51,7 +51,7 @@ df_dat00_bar = df_dat_map[df_dat_map["N_ABOVE_BASELINE"] > 0]
 
 #----------------------------------------------
 
-fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", sel_colormap, height = 370, range_color = [0,5]) 
+fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", sel_colormap, height = 370, range_color = [0,5], legend_title = "Nb weeks above BL") 
 
 c0, c1 = st.columns([2.5, 1.1])
 # map 

@@ -46,16 +46,7 @@ if sel_source == "MAXCOMBINE":
     df_dat_map = df_max
 
 
-fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55] ) 
-
-
-
-# import plotly.express as px
-# import streamlit as st
-# fig = px.colors.diverging.swatches_continuous()
-# st.plotly_chart(fig, use_container_width=True)
-
-
+fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
 
 c0, c1 = st.columns([2.5, 1.1])
 # map 
@@ -66,7 +57,7 @@ with c0:
 with c0:
     with st.container(border=True, height = 350):
         if df_dat_map.shape[0] > 0:
-            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "New Cases Per Week", height = 300)
+            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300)
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

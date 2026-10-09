@@ -280,11 +280,12 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
 
 
 @st.cache_data
-def make_geo_map(df, var, colormap, height, range_color):
+def make_geo_map(df, var, colormap, height, range_color, legend_title):
     fig = px.choropleth(
         df,
         locations="COUNTRY",
         color=var,
+        labels={var: legend_title},
         locationmode="ISO-3",
         projection="natural earth",
         color_continuous_scale=colormap, # "RdYlGn_r",
