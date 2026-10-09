@@ -219,7 +219,7 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
 
 
 @st.cache_data
-def display_df_page_08(df, nw_cutoff):
+def display_df_page_08(df, nw_cutoff, height):
 
     
     def set_color_in_df(x):
@@ -234,11 +234,11 @@ def display_df_page_08(df, nw_cutoff):
         df.style.map(set_color_in_df, subset=["days_since"]),
         hide_index=True,
         use_container_width=False,
-        height = 500,
+        height = height,
         column_config={
-            "COUNTRY": st.column_config.TextColumn("Country", width="small", alignment="center",),
-            "days_since": st.column_config.NumberColumn("Age (days)", width="small", alignment="center",),
-            "Latest date": st.column_config.DateColumn("Date", width="small", alignment="center",),
+            "COUNTRY": st.column_config.TextColumn("Country", width="auto", alignment="center",),
+            "days_since": st.column_config.NumberColumn("Age (days)", width="auto", alignment="center",),
+            "Latest date": st.column_config.DateColumn("Date", width="auto", alignment="center",),
         },
        
     )
