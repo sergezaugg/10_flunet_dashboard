@@ -17,9 +17,10 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a Country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", index=indx,                              key="k_ab_01")
-    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0)
-    area_cutoff = st.slider("Detection Cutoff for Area", min_value=0,   max_value=1000, step=10, key="k_ab_03") 
+    selected_country = st.selectbox("Choose a Country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
+                                    index=indx, key="k_ab_01")
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_ab_02")
+    area_cutoff = st.slider("Detection Cutoff for Area", min_value=0, max_value=1000, step=10, key="k_ab_03") 
     c1,c2,_ = st.columns(3)
     col_a = c1.color_picker("A color", value="#1f21d0",)
     col_b = c2.color_picker("B color", value="#27c32c",)
