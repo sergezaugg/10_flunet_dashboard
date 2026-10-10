@@ -1,8 +1,9 @@
-
-
+#--------------------             
+# Author : Serge Zaugg
+# Description : overall page styles (affects all pages) 
+#--------------------
 
 import streamlit as st
-
 
 def apply_global_styles():
     """Apply global CSS styles to the Streamlit app."""
@@ -22,6 +23,44 @@ def apply_global_styles():
             [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} 
         </style>
         """, unsafe_allow_html=True)
+
+    # change color of navigation bar background and tabs          
+    st.markdown("""
+        <style>
+        /* Header background */
+        .stAppHeader {background-color: #0E1117;}
+
+        /* Default tab background */
+        .stAppHeader a {background-color: #2f2f2f !important;}
+
+        /* Hover state */
+        .stAppHeader a:hover {background-color: #3b4d63 !important;}
+
+        /* click state */
+        .stAppHeader a:active {background-color: #dddddd !important; }
+
+        /* Active page */
+        .stAppHeader a[aria-current="page"] {background-color: #fb2d2d !important;}
+
+        </style>
+    """, unsafe_allow_html=True)
+
+    # All navigation tabs: same fixed width
+    st.markdown("""
+    <style>
+        .stAppHeader a {
+            width: 90px !important;
+            min-width: 90px !important;
+            max-width: 90px !important;
+            box-sizing: border-box !important;
+            justify-content: center !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+
 
 
 
