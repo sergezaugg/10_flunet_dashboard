@@ -308,7 +308,7 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title):
 
 
 @st.cache_data
-def make_a_b_area_plot(df_plot, area_cutoff):
+def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
         
     # apply thld
     df_plot.loc[df_plot["INF_ALL"] < area_cutoff, "PROP"] = np.nan
@@ -329,7 +329,8 @@ def make_a_b_area_plot(df_plot, area_cutoff):
         y="PROP",
         facet_row="COUNTRY",
         color="TYPE",
-        color_discrete_map={"INF_A": cc["types"]["a"],   "INF_B": cc["types"]["b"],   "OTHER": cc["types"]["o"]},
+        # color_discrete_map={"INF_A": cc["types"]["a"],   "INF_B": cc["types"]["b"],   "OTHER": cc["types"]["o"]},
+        color_discrete_map={"INF_A": col_a,   "INF_B": col_b,   "OTHER": cc["types"]["o"]},
         template="plotly_dark", 
         markers = False,
         line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
@@ -341,11 +342,12 @@ def make_a_b_area_plot(df_plot, area_cutoff):
 
     # wrap as two subplots 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.16, 
-                        subplot_titles=("Proportion of A/B Types", "Weekly Influenza Detections"))
+                        subplot_titles=("Weekly Influenza Detections", "Proportion of A/B Types"))
     for trace in fig_line.data:
-        fig.add_trace(trace, row=2, col=1)
-    for trace in fig_area.data:
         fig.add_trace(trace, row=1, col=1)
+    for trace in fig_area.data:
+        fig.add_trace(trace, row=2, col=1)
+
     # move subplot title a bit higher 
     for annotation in fig.layout.annotations:
         annotation.y += 0.025
@@ -359,7 +361,7 @@ def make_a_b_area_plot(df_plot, area_cutoff):
     fig.update_layout(hovermode="x unified")
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_yaxes(range=[0.0, 1.02], row=1, col=1)
+    fig.update_yaxes(range=[0.0, 1.02], row=2, col=1)
 
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
 
