@@ -8,16 +8,15 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
-from src.preprocessing import compute_recent_slope, compute_recent_level
+from src.preprocessing import compute_recent_slope, compute_recent_level, combine_bl_and_slope_summaries
 from src.styles import apply_global_styles
 
-
+#------------------------------
 # prepare app 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 apply_global_styles() # apply custom CSS styles 
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
-
 
 #------------------------------
 # initialize session state (constant values)
@@ -44,43 +43,27 @@ ss.df_data = preprocess_flunet_data(df = df_dat)
 # initialize data dependent objects in ss
 ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
 
-# (0) remove all data that is too old already here 
+# remove all data that is too old already here 
 mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
 mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
 ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
+
+#------------------------------
+# advanced pre-processing
 
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
 ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
-# (2) advanced pre-processing (above Baseline)
+# (2) advanced pre-processing (Flu Burden above Baseline)
 obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
 ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
+# (3) combine bl and slope summaries
+ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
+
 # temp for p14
 ss.dfbl_temp = dfbl_temp
-
-
-
-
-
-# dev ---- 
-# merge slope and BL dfs
-dfma_temp = dfma_temp.dropna(subset=["SLOPE"])
-dfmerged = dfbl_temp.merge(dfma_temp, on=["COUNTRY", "ORIGIN_SOURCE"], how="outer", suffixes=("_bl", "_slo"))
-# keep only one "latest date" column
-dfmerged["ISO_WEEKSTARTDATE"] = (dfmerged[["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"]].bfill(axis=1).iloc[:, 0])
-dfmerged = dfmerged.drop(columns = ["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"])
-# keep only one country full name column
-dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
-dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
-# safeguard - keep where BL enough above 0
-dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] 
-# compute percent change 
-attenuation_term = 4.0
-dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']+attenuation_term))).round(1)
-# assign to ss 
-ss.df_metri_merged = dfmerged
 
 
 #------------------------------
@@ -102,7 +85,8 @@ if "ALL_COUNTRIES" not in ss:
     ss.ALL_COUNTRIES    = ss.df_data['COUNTRY'].unique()
 
 #------------------------------
-# widget defaults
+# set widget defaults
+
 # defaults for WHOREGION 
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
@@ -142,10 +126,12 @@ ss.setdefault("k_p10_03", "Bluered")
 ss.setdefault("k_p13_01", "MAXCOMBINE")
 ss.setdefault("k_p13_03", "Viridis")
 
-
 # Protects every key from being deleted (for multi-page consistency across clicks)
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
+
+#------------------------------
+# build app's visible  frontend 
 
 # build sidebar
 with st.sidebar:
@@ -172,16 +158,6 @@ pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10,], position
 pg.run()
 
 with st.sidebar:
-    # st.divider()
     st.markdown(f""":gray[v0.5.0 (Beta)]  
     """)
     
-
-
-
-
-
-
-
-
-
