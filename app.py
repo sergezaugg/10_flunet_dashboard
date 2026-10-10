@@ -219,7 +219,11 @@ pg.run()
 
 
 
-
+with st.sidebar:
+    st.divider()
+    st.markdown(f""":gray[v0.5.0 (Beta)]  
+    """)
+    
 
 
 
