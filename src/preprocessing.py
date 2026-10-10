@@ -8,7 +8,6 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     """ keep only n most recent weeks with respect to values in current df"""
@@ -17,7 +16,6 @@ def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     # return time range 
     xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1), ref_date]
     return df, xrange
-
 
 @st.cache_data
 def cond_expect_last_polyfit(y, deg=1):
@@ -29,7 +27,6 @@ def cond_expect_last_polyfit(y, deg=1):
     x = np.arange(n)
     coef = np.polyfit(x, y, deg)
     return np.polyval(coef, n - 1)
-
 
 @st.cache_data
 def polyreg_by_country_source(df, bin_size, deg):
@@ -44,7 +41,6 @@ def polyreg_by_country_source(df, bin_size, deg):
     df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0 # replace neg val by 0.0
     # df["INF_MA"] = df["INF_MA"].fillna(0.0) # replace NAs by 0.0 (probably bad idea)
     return df
-
 
 @st.cache_data
 def get_recency_slope(df):
@@ -79,7 +75,6 @@ def get_recency_slope(df):
     df_slopes_all = df1.sort_values("SLOPE", ascending=False)
     
     return df_slopes_all
-
 
 @st.cache_data
 def get_baseline_count(df, q):
