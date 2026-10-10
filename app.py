@@ -28,9 +28,6 @@ st.markdown("""
 
 
 
-
-
-
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)

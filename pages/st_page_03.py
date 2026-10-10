@@ -51,7 +51,7 @@ df_plot = filter_a_country(df_prop_long, selected_country)
 
 fig =  make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b)
 
-c1,c2 = st.columns([30,5])
+c1,c2 = st.columns([30,1])
 with c1:
     with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

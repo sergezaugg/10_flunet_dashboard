@@ -28,7 +28,6 @@ with st.sidebar:
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
-
 with st.sidebar:
     st.divider()
     outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0)
@@ -37,8 +36,6 @@ with st.sidebar:
 
 # exclude all from "ORIGIN_SOURCE" level if too few non-na
 df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)
-
-
 
 if len(df_plot) <= 10:
     country_info.text(f"Please select at least one country")
@@ -53,7 +50,7 @@ country_info.text(f"N Countries = {n_countries[0]}")
 # plot 
 # fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
 fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = outcome_var)
-c1,c2 = st.columns([30,5])
+c1,c2 = st.columns([30,1])
 with c1:
     with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
