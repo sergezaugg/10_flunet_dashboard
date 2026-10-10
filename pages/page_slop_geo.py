@@ -15,10 +15,10 @@ with st.sidebar:
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p10_01")
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
-    # colormaps 
     li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
-    # sel_colormap =     st.radio("Colormap", options = li_colormaps, key="k_p10_03")
     sel_colormap = st.selectbox("Colormap", options = li_colormaps, key="k_p10_03", placeholder="select ...")
+    st.divider()
+    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of changes in flu activity.""")
 
 
 # prepare 

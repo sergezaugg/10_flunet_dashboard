@@ -24,6 +24,8 @@ with st.sidebar:
     c1,c2,_ = st.columns(3)
     col_a = c1.color_picker("A color", value="#1f21d0",)
     col_b = c2.color_picker("B color", value="#27c32c",)
+    st.divider()
+    st.markdown(f""":primary[Summary:] Analyze temporal patterns in Influenza A/B ratio across countries.""")
 
 
 df_data = df_data[df_data["ORIGIN_SOURCE"] == sel_data_source]

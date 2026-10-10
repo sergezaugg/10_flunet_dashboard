@@ -23,6 +23,7 @@ pd.set_option('display.max_rows', 500)
 ss.max_countries_in_plots = 20
 ss.nw_global = 6 # weeks from ref to be used for stats 
 ss.top_n = 5 # how much to show in 'top' pages
+ss.nw_for_demo = 52*5
 # (1) advanced pre-processing (slope/percent change)
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
@@ -33,6 +34,9 @@ ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
 ss.time_range_trace = 24
 ss.time_range_stats = ss.nw_global
+
+df_dat, ss.ts_download = download_flunet_data()
+ss.df_data = preprocess_flunet_data(df=df_dat)
 
 #------------------------------
 # download and pre-process (do once)
@@ -135,29 +139,32 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
+    st.markdown(f"""# :primary[**FluNet Explorer**] """)
+
+    st.markdown(f"""
     Ref date: \t{ss.ts_today.strftime("%Y-%m-%d")}  
     Downloaded: \t{ss.ts_download}  
     Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
     """)
+
     st.divider()
     
 # make navigation
-p01 = st.Page("pages/page_age.py", title="🔥 Data Age")
-p02 = st.Page("pages/page_slop_metric.py", title="🔥 Flu Trend", default=True)
-p03 = st.Page("pages/page_burd_metric.py", title="🔥 Flu Burden")
-p04 = st.Page("pages/page_slop_geo.py", title="🌍 Flu Trend")
-p05 = st.Page("pages/page_burd_geo.py", title="🌍 Flu Burden")
-p06 = st.Page("pages/page_traces.py", title="🔎 Traces")
-p07 = st.Page("pages/page_ab_type.py", title="🔎 Type A vs B")
-p08 = st.Page("pages/page_method.py", title="🔎 Illustrate Methods")
-p09 = st.Page("pages/page_data.py", title="🔬 Data")
-p10 = st.Page("pages/page_info.py", title="📋 Info & Disclaimer")
+p01 = st.Page("pages/page_age.py", title="Data Age")
+p02 = st.Page("pages/page_slop_metric.py", title="Top Trend", default=True)
+p03 = st.Page("pages/page_burd_metric.py", title="Top Burden")
+p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
+p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
+p06 = st.Page("pages/page_traces.py", title="Traces")
+p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
+p08 = st.Page("pages/page_method.py", title="Methods")
+p09 = st.Page("pages/page_data.py", title="Data")
+p10 = st.Page("pages/page_info.py", title="Info")
+p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
+p12 = st.Page("pages/page_refresh.py", title="Setting")
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10,], position="top")
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12], position="top")
 pg.run()
 
-with st.sidebar:
-    st.markdown(f""":gray[v0.5.0 (Beta)]  
-    """)
+
     

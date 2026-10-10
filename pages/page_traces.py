@@ -14,6 +14,7 @@ with st.sidebar:
     # fse_regions = st.multiselect("Pre-select Flu Region", options = ss.FLUSEASON_levels, key="k_who_02")
     who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
+
 # apply user's data filter to data 
 df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, 
                                                     fse_regions = ss.FLUSEASON_levels.tolist(), 
@@ -29,10 +30,10 @@ with st.sidebar:
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
 with st.sidebar:
-    st.divider()
     outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0)
-# outcome_var = "INF_ALL"
-# outcome_var = "POSITIVITY"
+    st.divider()
+    st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
+
 
 # exclude all from "ORIGIN_SOURCE" level if too few non-na
 df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)
