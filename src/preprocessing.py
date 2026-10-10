@@ -8,7 +8,6 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     """ keep only n most recent weeks with respect to values in current df"""
@@ -17,7 +16,6 @@ def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
     # return time range 
     xrange = [ref_date - pd.Timedelta(weeks=keep_n_weeks, days=1), ref_date]
     return df, xrange
-
 
 @st.cache_data
 def cond_expect_last_polyfit(y, deg=1):
@@ -29,7 +27,6 @@ def cond_expect_last_polyfit(y, deg=1):
     x = np.arange(n)
     coef = np.polyfit(x, y, deg)
     return np.polyval(coef, n - 1)
-
 
 @st.cache_data
 def polyreg_by_country_source(df, bin_size, deg):
@@ -44,7 +41,6 @@ def polyreg_by_country_source(df, bin_size, deg):
     df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0 # replace neg val by 0.0
     # df["INF_MA"] = df["INF_MA"].fillna(0.0) # replace NAs by 0.0 (probably bad idea)
     return df
-
 
 @st.cache_data
 def get_recency_slope(df):
@@ -79,7 +75,6 @@ def get_recency_slope(df):
     df_slopes_all = df1.sort_values("SLOPE", ascending=False)
     
     return df_slopes_all
-
 
 @st.cache_data
 def get_baseline_count(df, q):
@@ -126,15 +121,8 @@ def get_baseline_count(df, q):
 
     return baseline_thlds
 
-
-
-
-
-
-
-
-
-#  main functions 
+#-----------------------------
+# main functions 
 
 @st.cache_data
 def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_date):
@@ -179,6 +167,20 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_tra
     )
     return(df_trace, trace_x_range, df_metri, stats_x_range)
 
-
-
+@st.cache_data
+def combine_bl_and_slope_summaries(dfma_temp, dfbl_temp):
+    dfma_temp = dfma_temp.dropna(subset=["SLOPE"])
+    dfmerged = dfbl_temp.merge(dfma_temp, on=["COUNTRY", "ORIGIN_SOURCE"], how="outer", suffixes=("_bl", "_slo"))
+    # keep only one "latest date" column
+    dfmerged["ISO_WEEKSTARTDATE"] = (dfmerged[["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"]].bfill(axis=1).iloc[:, 0])
+    dfmerged = dfmerged.drop(columns = ["ISO_WEEKSTARTDATE_slo", "ISO_WEEKSTARTDATE_bl"])
+    # remove redundant columns
+    dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
+    dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
+    # safeguard - keep where BL-threshold enough above 0
+    dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] 
+    # compute percent change 
+    attenuation_term = 4.0
+    dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']+attenuation_term))).round(1)
+    return dfmerged
 

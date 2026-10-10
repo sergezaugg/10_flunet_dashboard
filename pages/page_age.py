@@ -44,11 +44,11 @@ df_sel = [a.drop(columns = "ORIGIN_SOURCE") for a in df_sel]
 # display 
 
 # quick overview of stale and fresh data 
-c1, c2, c3 = st.columns([30,30,20])
+c1, c2, c3 = st.columns([30,30,2])
 with c1:
     with st.container(border= True, height = 280):
 
-        x1, x2 = st.columns([30,30])
+        x1, x2 = st.columns([1,1])
         with x1:
             st.text("Countries with >=1 series fresh")
             st.markdown(f"<p style='color:green; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
@@ -76,7 +76,7 @@ with c2:
             },)
 
 # display detes
-c01, c02, = st.columns([60, 20])
+c01, c02, = st.columns([60, 2])
 with c01:
     with st.container(border= True, height = 500):
         c1, c2, c3 = st.columns([20,20,20])

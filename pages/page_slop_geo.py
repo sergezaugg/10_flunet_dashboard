@@ -49,7 +49,7 @@ if sel_source == "MAXCOMBINE":
 
 fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
 
-c0, c1 = st.columns([2.5, 1.1])
+c0, c1 = st.columns([30, 1])
 # map 
 with c0:
     with st.container(border=True, height = 400):

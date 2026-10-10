@@ -6,7 +6,7 @@
 from streamlit import session_state as ss
 import streamlit as st
 
-c1, c2, c3 = st.columns([40, 50, 20])
+c1, c2, c3 = st.columns([30, 30, 2])
 with c1:
 
     with st.container(border=True, height = 250):

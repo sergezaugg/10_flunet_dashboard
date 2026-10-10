@@ -21,8 +21,12 @@ with st.sidebar:
 df = ss.df_data.copy()
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 df_display = filter_a_country(df, selected_country)
-st.text(" ")
-st.dataframe(df_display, height = 600, hide_index=True)
+
+
+c1, c2 = st.columns([30, 1])
+with c1:
+    st.text(" ")
+    st.dataframe(df_display, height = 600, hide_index=True)
 
 
 
