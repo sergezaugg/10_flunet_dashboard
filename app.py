@@ -61,21 +61,10 @@ ss.df_data = preprocess_flunet_data(df = df_dat)
 ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
 
 
-# new - remove all data that is too old already here 
+# (0) remove all data that is too old already here 
 mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
 mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
 ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
-
-
-
-
-
-
-
-
-
-
-
 
 # (1) advanced pre-processing (Slope)
 obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
@@ -128,42 +117,42 @@ if "ALL_COUNTRIES" not in ss:
 
 #------------------------------
 # widget defaults
-# defaults for WHOREGION (page 00)
+# defaults for WHOREGION 
 ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_04", 0.80)
 ss.setdefault("k_who_05", 30)
 ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
-# defaults for recency (page 08)
+# defaults for recency 
 ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
-# defaults for WHOREGION - positivity (page 06)
+# defaults for WHOREGION - positivity 
 ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
 ss.setdefault("k_who_pos_02", ss.FLUSEASON_levels.tolist())
 ss.setdefault("k_who_pos_04", 0.80)
 ss.setdefault("k_who_pos_05", 30)
-# defaults for ITZ (page 01)
+# defaults for ITZ 
 ss.setdefault("k_itz_04", 0.30)
 ss.setdefault("k_itz_05", 10)
-# defaults for wave onset (page 02)
+# defaults for wave onset 
 ss.setdefault("k_wave_01", 10)
 ss.setdefault("k_wave_02", ss.date_range_dt)
 ss.setdefault("k_wave_03", True)
 ss.setdefault("k_wave_04", True)
 ss.setdefault("k_wave_05", 125)
-# defaults for A vs B (page 03)
+# defaults for A vs B 
 ss.setdefault("k_ab_01", 10)
 ss.setdefault("k_ab_02", "SENTINEL")
 ss.setdefault("k_ab_03", 50)
-# defaults for moving average explorer (page 04)
+# defaults for moving average explorer 
 ss.setdefault("k_tre_02", 5)
 ss.setdefault("k_tre_03", 1)
 ss.setdefault("k_tre_04", 1)
 ss.setdefault("k_tre_05", 0.66)
-# defaults (page 10)
+# defaults slop geo
 ss.setdefault("k_p10_01", "MAXCOMBINE")
 ss.setdefault("k_p10_03", "Bluered")
-# defaults (page 13)
+# defaults burden geo
 ss.setdefault("k_p13_01", "MAXCOMBINE")
 ss.setdefault("k_p13_03", "Viridis")
 
