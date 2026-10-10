@@ -3,20 +3,18 @@
 # Description : functions that render display items
 #--------------------
 
+import numpy as np
 import streamlit as st
 import plotly.express as px
 import pandas as pd
 from config import cc
+from plotly.subplots import make_subplots
 
 @st.cache_data()
 def make_facet_line_plot(df, n_countr, outcome):
     """ 
     aaa 
     """
-
-    # handle NAs before plot (Why did i do this ???)
-    # df.loc[df[outcome].isna(), "ISO_WEEKSTARTDATE"] = pd.NaT
-
     # pre-compute vertical spacings dependent on n_countr
     facet_height = 150
     spacing_px = 60
@@ -34,7 +32,6 @@ def make_facet_line_plot(df, n_countr, outcome):
         markers=True,
         color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]]
     )
-
     fig.update_traces(marker=dict(size=5))
     # fig.update_yaxes(title_text="WEEKLY  DETECT.")
     fig.update_yaxes(matches=None,)   
@@ -43,8 +40,8 @@ def make_facet_line_plot(df, n_countr, outcome):
     fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
     fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
     fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
-    # fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="center", x=0.5,))
     fig.update_layout(legend=dict(title=None, bordercolor="white", borderwidth=1,))
+    fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.015+1.03*facet_row_spacing, yanchor="top",))
     for annotation in fig.layout.annotations:
         annotation.text = annotation.text.replace("COUNTRY=", "")
         annotation.textangle = 0
@@ -307,3 +304,68 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title):
     )
 
     return fig
+
+
+
+@st.cache_data
+def make_a_b_area_plot(df_plot, area_cutoff):
+        
+    # apply thld
+    df_plot.loc[df_plot["INF_ALL"] < area_cutoff, "PROP"] = np.nan
+    df_line_plot = df_plot[df_plot["TYPE"] == "INF_A"]
+
+    fig_line = px.line(
+        df_line_plot,
+        x="ISO_WEEKSTARTDATE",
+        y="INF_ALL",
+        facet_row="COUNTRY",
+        template="plotly_dark", 
+        color_discrete_sequence=[cc["traces"]["basic"]],
+    )
+
+    fig_area = px.area(
+        df_plot,
+        x="ISO_WEEKSTARTDATE",
+        y="PROP",
+        facet_row="COUNTRY",
+        color="TYPE",
+        color_discrete_map={"INF_A": cc["types"]["a"],   "INF_B": cc["types"]["b"],   "OTHER": cc["types"]["o"]},
+        template="plotly_dark", 
+        markers = False,
+        line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
+    )
+    fig_area.update_traces(line=dict(width=0))
+
+    # make fill color more intense (no transparency)
+    fig_area.for_each_trace(lambda trace: trace.update(fillcolor=trace.line.color.replace('rgb', 'rgba').replace(')', ', 0.3)')))
+
+    # wrap as two subplots 
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.16, 
+                        subplot_titles=("Proportion of A/B Types", "Weekly Influenza Detections"))
+    for trace in fig_line.data:
+        fig.add_trace(trace, row=2, col=1)
+    for trace in fig_area.data:
+        fig.add_trace(trace, row=1, col=1)
+    # move subplot title a bit higher 
+    for annotation in fig.layout.annotations:
+        annotation.y += 0.025
+
+    fig.update_layout(
+        margin=dict(l=40, r=20, t=20, b=40)
+    )
+
+    fig.update_layout(height=600)
+    fig.update_xaxes(matches="x")
+    fig.update_layout(hovermode="x unified")
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_yaxes(range=[0.0, 1.02], row=1, col=1)
+
+    fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
+
+    return fig
+
+
+
+
+

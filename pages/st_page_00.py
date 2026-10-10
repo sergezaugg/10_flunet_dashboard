@@ -11,17 +11,19 @@ from src.utils_plots import make_facet_line_plot
 
 # filter by region
 with st.sidebar:
-    fse_regions = st.multiselect("Pre-select Flu Region", options = ss.FLUSEASON_levels, key="k_who_02")
-    who_regions = st.multiselect("Pre-select WHO region", options = ss.WHOREGION_levels, key="k_who_01")
+    # fse_regions = st.multiselect("Pre-select Flu Region", options = ss.FLUSEASON_levels, key="k_who_02")
+    who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
 # apply user's data filter to data 
-df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, fse_regions = fse_regions, itz_regions = ss.ITZ_levels)
+df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, 
+                                                    fse_regions = ss.FLUSEASON_levels.tolist(), 
+                                                    itz_regions = ss.ITZ_levels)
 country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
 
 # filter by country  
 all_countries = df_plot_temp['COUNTRY'].unique()
 with st.sidebar:
-    sel_countries = st.multiselect("Countries", options=sorted(all_countries), placeholder="Select countries", key="k_who_06")
+    sel_countries = st.multiselect("Select Countries", options=sorted(all_countries), placeholder="Select countries", key="k_who_06")
     country_info = st.empty() 
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
@@ -51,4 +53,7 @@ country_info.text(f"N Countries = {n_countries[0]}")
 # plot 
 # fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
 fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = outcome_var)
-st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+c1,c2 = st.columns([30,5])
+with c1:
+    with st.container(border=True):
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

@@ -10,6 +10,27 @@ from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
 from src.preprocessing import compute_recent_slope, compute_recent_level
 
+# Reduce spacing around st.divider() 
+st.markdown("""
+    <style>
+        div[data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] hr) {
+            margin-top: -1.5rem !important;
+            margin-bottom: -0.8rem !important;}
+    </style>
+    """, unsafe_allow_html=True)
+
+# reduce vertical space between navig and items(content
+st.markdown("""
+    <style> 
+        [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} 
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
+
+
+
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
@@ -187,11 +208,7 @@ p13 = st.Page("pages/st_page_13.py", title="🌍 Flu Burden")
 # p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
 # p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
 
-# reduce vertical space between navig and items(content
-st.markdown("""
-    <style> [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} </style>
-    """, unsafe_allow_html=True
-)
+
 
 
 

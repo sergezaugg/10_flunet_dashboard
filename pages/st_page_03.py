@@ -5,13 +5,10 @@
 
 import streamlit as st
 from streamlit import session_state as ss
-import plotly.express as px
 import numpy as np
-import pandas as pd
 from src.utils import filter_a_country
-import pandas as pd
-from plotly.subplots import make_subplots
 from config import cc
+from src.utils_plots import make_a_b_area_plot
 
 df_data = ss.df_data.copy()
 
@@ -42,57 +39,14 @@ with st.sidebar:
     # plot_height = st.slider("Plot height", min_value=300, max_value=2000, step=100, key="k_ab_02") 
     area_cutoff = st.slider("Area cutoff", min_value=0,   max_value=1000, step=10, key="k_ab_03") 
 
-
 df_plot = filter_a_country(df_prop_long, selected_country)
 
-# make function from here 
-# apply thld
-df_plot.loc[df_plot["INF_ALL"] < area_cutoff, "PROP"] = np.nan
-df_line_plot = df_plot[df_plot["TYPE"] == "INF_A"]
+fig =  make_a_b_area_plot(df_plot, area_cutoff)
 
-fig_line = px.line(
-    df_line_plot,
-    x="ISO_WEEKSTARTDATE",
-    y="INF_ALL",
-    facet_row="COUNTRY",
-    template="plotly_dark", 
-    color_discrete_sequence=[cc["traces"]["basic"]],
-)
-
-fig_area = px.area(
-    df_plot,
-    x="ISO_WEEKSTARTDATE",
-    y="PROP",
-    facet_row="COUNTRY",
-    color="TYPE",
-    color_discrete_map={"INF_A": cc["types"]["a"],   "INF_B": cc["types"]["b"],   "OTHER": cc["types"]["o"]},
-    template="plotly_dark", 
-    markers = False,
-    line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
-)
-fig_area.update_traces(line=dict(width=0))
-# make fill color more intense (no transparency)
-fig_area.for_each_trace(lambda trace: trace.update(fillcolor=trace.line.color.replace('rgb', 'rgba').replace(')', ', 0.3)')))
-
-# wrap as two subplots 
-fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.16, 
-                    subplot_titles=("Proportion of A/B Types", "Weekly Influenza Detections"))
-for trace in fig_line.data:
-    fig.add_trace(trace, row=2, col=1)
-for trace in fig_area.data:
-    fig.add_trace(trace, row=1, col=1)
-# move subplot title a bit higher 
-for annotation in fig.layout.annotations:
-    annotation.y += 0.025
-
-fig.update_layout(height=600)
-fig.update_xaxes(matches="x")
-fig.update_layout(hovermode="x unified")
-fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-fig.update_yaxes(range=[0.0, 1.02], row=1, col=1)
-
-st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+c1,c2 = st.columns([30,5])
+with c1:
+    with st.container(border=True):
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 

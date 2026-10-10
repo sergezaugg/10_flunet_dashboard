@@ -25,13 +25,14 @@ with c1:
         🔬 Tabular information  
         """)
 
-    with st.container(border=True, height = 100):
+    with st.container(border=True, height = 200):
         st.markdown('''
-        #### Author:
-        Serge Zaugg ( 
-        [LinkedIn](https://www.linkedin.com/in/dkifh34rtn345eb5fhrthdbgf45/), 
-        [GitHub](https://github.com/sergezaugg))
+        #### Planned:
+        -  compare countries for type A/B proportion
+        -  include metrics boxes and geo map for positivity
+       
         ''')
+
 
 with c2:
     with st.container(border=True, height = 250):
@@ -47,11 +48,20 @@ with c2:
     with st.container(border=True, height = 200):
         st.markdown("""
         #### Data source:  
-        Data is dowmloaded from the WHO API  
+        Data is downloaded from the WHO API  
         `https://xmart-api-public.who.int/FLUMART/VIW_FNT?$format=csv`
         """)
 
-
+    with st.container(border=True, height = 200):
+        st.markdown('''
+        #### Author:
+        Serge Zaugg ( 
+        [LinkedIn](https://www.linkedin.com/in/dkifh34rtn345eb5fhrthdbgf45/), 
+        [GitHub](https://github.com/sergezaugg))
+        ''')
    
+
+
+
 
 # country codes 
