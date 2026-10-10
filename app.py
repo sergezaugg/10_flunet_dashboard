@@ -9,43 +9,27 @@ import streamlit as st
 from streamlit import session_state as ss
 from src.utils import download_flunet_data, get_ts_today, preprocess_flunet_data, get_latest_date_per_group
 from src.preprocessing import compute_recent_slope, compute_recent_level
-
-# Reduce spacing around st.divider() 
-st.markdown("""
-    <style>
-        div[data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] hr) {
-            margin-top: -1.5rem !important;
-            margin-bottom: -0.8rem !important;}
-    </style>
-    """, unsafe_allow_html=True)
-
-# reduce vertical space between navig and items(content
-st.markdown("""
-    <style> 
-        [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} 
-    </style>
-    """, unsafe_allow_html=True)
+from src.styles import apply_global_styles
 
 
-
+# prepare app 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
+apply_global_styles() # apply custom CSS styles 
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
 
 
-# weeks from ref to be used for stats 
-ss.nw_global = 6
-ss.top_n = 5 # how much to show in 'top' pages
-
 #------------------------------
 # initialize session state (constant values)
 ss.max_countries_in_plots = 20
-# (1) advanced pre-processing (Slope)
+ss.nw_global = 6 # weeks from ref to be used for stats 
+ss.top_n = 5 # how much to show in 'top' pages
+# (1) advanced pre-processing (slope/percent change)
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
 ss.ma_degree = 1
 ss.nw_slo = ss.nw_global 
-# (2) advanced pre-processing (above Baseline)
+# (2) advanced pre-processing (burden / above Baseline)
 ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
 ss.time_range_trace = 24
@@ -59,7 +43,6 @@ ss.df_data = preprocess_flunet_data(df = df_dat)
 
 # initialize data dependent objects in ss
 ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
-
 
 # (0) remove all data that is too old already here 
 mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
@@ -76,6 +59,9 @@ ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwr
 
 # temp for p14
 ss.dfbl_temp = dfbl_temp
+
+
+
 
 
 # dev ---- 
