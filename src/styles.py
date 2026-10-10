@@ -20,7 +20,7 @@ def apply_global_styles():
     # reduce vertical space between navig and items(content
     st.markdown("""
         <style> 
-            [data-testid="stMainBlockContainer"] {padding-top: 4rem; padding-left: 3rem;} 
+            [data-testid="stMainBlockContainer"] {padding-top: 1rem; padding-left: 3rem;} 
         </style>
         """, unsafe_allow_html=True)
 

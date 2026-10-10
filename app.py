@@ -18,12 +18,6 @@ apply_global_styles() # apply custom CSS styles
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
 
-
-
-
-
-
-
 #------------------------------
 # initialize session state (constant values)
 ss.max_countries_in_plots = 20
@@ -39,6 +33,9 @@ ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
 ss.time_range_trace = 24
 ss.time_range_stats = ss.nw_global
+
+df_dat, ss.ts_download = download_flunet_data()
+ss.df_data = preprocess_flunet_data(df=df_dat)
 
 #------------------------------
 # download and pre-process (do once)
@@ -160,8 +157,9 @@ p08 = st.Page("pages/page_method.py", title="Methods")
 p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
+p12 = st.Page("pages/page_refresh.py", title="Setting")
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11], position="top")
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12], position="top")
 pg.run()
 
 

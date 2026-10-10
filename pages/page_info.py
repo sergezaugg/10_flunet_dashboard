@@ -5,6 +5,7 @@
 
 from streamlit import session_state as ss
 import streamlit as st
+from src.utils import download_flunet_data, preprocess_flunet_data
 
 c1, c2, c3 = st.columns([30, 30, 2])
 with c1:
