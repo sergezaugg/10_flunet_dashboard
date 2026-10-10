@@ -112,10 +112,11 @@ def make_smoothed_curve_plot(df_plot):
     fig.update_traces(marker=dict(size=5))
     fig.update_yaxes(title_text="Weekly Infl. Detect.")
     fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
+    fig.update_layout(margin=dict(l=40, r=20, t=20, b=40))
+    fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_layout(legend_title_text="")
     return(fig)
 
 
@@ -351,18 +352,13 @@ def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
     # move subplot title a bit higher 
     for annotation in fig.layout.annotations:
         annotation.y += 0.025
-
-    fig.update_layout(
-        margin=dict(l=40, r=20, t=20, b=40)
-    )
-
+    fig.update_layout(margin=dict(l=40, r=20, t=20, b=40))
     fig.update_layout(height=600)
     fig.update_xaxes(matches="x")
     fig.update_layout(hovermode="x unified")
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(range=[0.0, 1.02], row=2, col=1)
-
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
 
     return fig

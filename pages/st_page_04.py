@@ -55,12 +55,25 @@ sta, end = get_start_stop_of_region(df_plot['set_reg'], df_plot['ISO_WEEKSTARTDA
 
 #-----------------------
 # plot 
-fig = make_smoothed_curve_plot(df_plot)
-# overlay threshold 
-fig.add_hline(y=thld, line_width=2, line_dash="dash", line_color="green")
-# overlay epidemic periods 
-for start, end in zip(sta, end):
-    fig.add_vrect(x0=start, x1=end, fillcolor="pink", opacity=0.10, line_width=0, layer="below")
-st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+c1,c2 = st.columns([30,1])
+with c1:
+    with st.container(border=True):
+                
+        fig = make_smoothed_curve_plot(df_plot)
+
+        # overlay threshold 
+        fig.add_hline(y=thld, line_width=2, line_dash="dash", line_color="green")
+        
+        # overlay epidemic periods 
+        for start, end in zip(sta, end):
+            fig.add_vrect(x0=start, x1=end, fillcolor="pink", opacity=0.10, line_width=0, layer="below")
+
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+
+
+
 
 

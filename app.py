@@ -89,9 +89,6 @@ ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwr
 ss.dfbl_temp = dfbl_temp
 
 
-
-
-
 # dev ---- 
 # merge slope and BL dfs
 dfma_temp = dfma_temp.dropna(subset=["SLOPE"])
@@ -109,11 +106,6 @@ attenuation_term = 4.0
 dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']+attenuation_term))).round(1)
 # assign to ss 
 ss.df_metri_merged = dfmerged
-
-# st.dataframe(dfmerged)
-
-
-
 
 
 #------------------------------
@@ -192,7 +184,7 @@ with st.sidebar:
 # make navigation
 p00 = st.Page("pages/st_page_00.py", title="🔎 Traces")
 p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
-p04 = st.Page("pages/st_page_04.py", title="🔎 Methods")
+p04 = st.Page("pages/st_page_04.py", title="🔎 Illustrate Methods")
 p05 = st.Page("pages/st_page_05.py", title="🔥 Flu Trend", default=True)
 p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular Data")
 p08 = st.Page("pages/st_page_08.py", title="🔥 Data Age")
@@ -205,19 +197,11 @@ p13 = st.Page("pages/st_page_13.py", title="🌍 Flu Burden")
 # p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
 # p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
 
-
-
-
-
 pg = st.navigation([p08, p05, p11, p10, p13, p00, p03, p04, p07, p12, ], position="top")
 pg.run()
 
-
-
-
-
 with st.sidebar:
-    st.divider()
+    # st.divider()
     st.markdown(f""":gray[v0.5.0 (Beta)]  
     """)
     
