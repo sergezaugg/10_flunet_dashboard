@@ -18,6 +18,12 @@ apply_global_styles() # apply custom CSS styles
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
 
+
+
+
+
+
+
 #------------------------------
 # initialize session state (constant values)
 ss.max_countries_in_plots = 20
@@ -155,11 +161,8 @@ p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 
-
 pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11], position="top")
 pg.run()
 
-with st.sidebar:
-    st.markdown(f""":gray[v0.5.0 (Beta)]  
-    """)
+
     

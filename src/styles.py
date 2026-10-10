@@ -60,9 +60,20 @@ def apply_global_styles():
     </style>
     """, unsafe_allow_html=True)
 
-
-
-
+    st.markdown("""
+    <style>
+        .app-label {
+            position: fixed;
+            top:  17px;
+            left: 55px;
+            color: #9CA3AF;
+            font-size: 15px;
+            z-index: 999999;
+            pointer-events: none;
+        }
+    </style>
+    <div class="app-label">FluNet Explorer v0.5.X-β</div>
+    """, unsafe_allow_html=True)
 
 
     
