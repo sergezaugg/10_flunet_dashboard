@@ -72,7 +72,7 @@ def apply_global_styles():
             pointer-events: none;
         }
     </style>
-    <div class="app-label">FluNet Explorer v0.5.X-β</div>
+    <div class="app-label">FluNet Explorer v0.5.2-β</div>
     """, unsafe_allow_html=True)
 
 
