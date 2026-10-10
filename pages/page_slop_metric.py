@@ -13,9 +13,12 @@ from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 
 with st.sidebar:
-    st.markdown(f"""Trace smoothed via moving regression of :primary[degree {ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size} weeks].
+    st.markdown(f""":primary[Methods:] Trace smoothed via moving regression of :primary[degree {ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size} weeks].
     Slope then estimated for latest :primary[{int(ss.nw_slo)} weeks] of smoothed curve via linear regression.
-    """)
+    Only top :primary[{int(ss.top_n)}] per data source is shown here.""")
+    st.divider()
+    st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.""")
+
 
 # unpack smoothed traces dfs
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]

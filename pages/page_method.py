@@ -19,16 +19,20 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 with st.sidebar:
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
-    st.divider()
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
     ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
     ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
+
+    st.divider()
+    st.markdown(f""":primary[Summary:] This is a Didactic page.
+    Play with some parameters used in the data-preparation module.
+    Only latest :primary[{int(ss.nw_for_demo)}] weeks shown here for demonstration.""")
 
 # load data to local page 
 df = ss.df_data.copy()
 
 # keep only n most recent weeks 
-week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=300)
+week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=ss.nw_for_demo)
 df = df[df["ISO_WEEKSTARTDATE"] > week_limit]
 
 # apply moving regression (for all countries)

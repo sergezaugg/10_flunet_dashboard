@@ -13,10 +13,12 @@ from src.utils import select_top_n_highest_val_by_origin, select_top_n_highest_s
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 
 with st.sidebar:
-    st.markdown(f""" BL from :primary[{ss.quantile_val} quantile] taken over :primary[{int(ss.time_range_basli)} weeks.]
+    st.markdown(f""":primary[Methods:] BL from :primary[{ss.quantile_val} quantile] taken over :primary[{int(ss.time_range_basli)} weeks.]
     Traces show latest :primary[{int(ss.time_range_trace)} weeks.]
-    Stats from latest :primary[{int(ss.time_range_stats)} weeks.]    
-    """)
+    Stats from latest :primary[{int(ss.time_range_stats)} weeks.]
+    Only top :primary[{int(ss.top_n)}] per data source is shown here.""")
+    st.divider()
+    st.markdown(f""":primary[Summary:] Identify countries with unusually high flu activity.""")
 
 
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]

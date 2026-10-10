@@ -23,6 +23,7 @@ pd.set_option('display.max_rows', 500)
 ss.max_countries_in_plots = 20
 ss.nw_global = 6 # weeks from ref to be used for stats 
 ss.top_n = 5 # how much to show in 'top' pages
+ss.nw_for_demo = 52*5
 # (1) advanced pre-processing (slope/percent change)
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
@@ -138,11 +139,14 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f""":primary[**Interactive Exploration of FluNet data**]  
+    st.markdown(f"""# :primary[**FluNet Explorer**] """)
+
+    st.markdown(f"""
     Ref date: \t{ss.ts_today.strftime("%Y-%m-%d")}  
     Downloaded: \t{ss.ts_download}  
     Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
     """)
+
     st.divider()
     
 # make navigation

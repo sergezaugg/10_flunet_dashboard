@@ -11,13 +11,13 @@ import streamlit as st
 
 # st.write("code:", st.secrets['refreshcode'])
 
-c1, c2 = st.columns([20, 50])
+c1, c2 = st.columns([15, 50])
 with c1:
-    dev_mode = st.text_input("enter code", value="") == st.secrets['refreshcode']
+    dev_mode = st.text_input("☠️ For the Devs only: enter code ☠️", value="", type="password") == st.secrets['refreshcode']
     if dev_mode:
-        with st.container(border=True, height = 300):
+        with st.container(border=True, height = 400):
             st.markdown("""
-            Here you can trigger the re-download of data from WHO.  
+            Here you can trigger the re-download of data from WHO.
             The data at country level are updated weekly 
             """)
 
