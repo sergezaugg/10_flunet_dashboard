@@ -182,22 +182,18 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p00 = st.Page("pages/st_page_00.py", title="🔎 Traces")
-p03 = st.Page("pages/st_page_03.py", title="🔎 Type A vs B")
-p04 = st.Page("pages/st_page_04.py", title="🔎 Illustrate Methods")
-p05 = st.Page("pages/st_page_05.py", title="🔥 Flu Trend", default=True)
-p07 = st.Page("pages/st_page_07.py", title="🔬 Tabular Data")
-p08 = st.Page("pages/st_page_08.py", title="🔥 Data Age")
-p10 = st.Page("pages/st_page_10.py", title="🌍 Flu Trend")
-p11 = st.Page("pages/st_page_11.py", title="🔥 Flu Burden")
-p12 = st.Page("pages/st_page_12.py", title="📋 Info & Disclaimer")
-p13 = st.Page("pages/st_page_13.py", title="🌍 Flu Burden")
+p01 = st.Page("pages/page_age.py", title="🔥 Data Age")
+p02 = st.Page("pages/page_slop_metric.py", title="🔥 Flu Trend", default=True)
+p03 = st.Page("pages/page_burd_metric.py", title="🔥 Flu Burden")
+p04 = st.Page("pages/page_slop_geo.py", title="🌍 Flu Trend")
+p05 = st.Page("pages/page_burd_geo.py", title="🌍 Flu Burden")
+p06 = st.Page("pages/page_traces.py", title="🔎 Traces")
+p07 = st.Page("pages/page_ab_type.py", title="🔎 Type A vs B")
+p08 = st.Page("pages/page_method.py", title="🔎 Illustrate Methods")
+p09 = st.Page("pages/page_data.py", title="🔬 Data")
+p10 = st.Page("pages/page_info.py", title="📋 Info & Disclaimer")
 
-# p02 = st.Page("pages/st_page_02.py", title="🔎 Wave Onset")
-# p14 = st.Page("pages/st_page_14.py", title="☠️ Dev I")
-# p_dev = st.Page("pages/st_dev.py", title="💀 Dev II")
-
-pg = st.navigation([p08, p05, p11, p10, p13, p00, p03, p04, p07, p12, ], position="top")
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10,], position="top")
 pg.run()
 
 with st.sidebar:
