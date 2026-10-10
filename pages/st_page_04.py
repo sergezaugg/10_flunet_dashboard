@@ -17,8 +17,7 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", 
-                                    index=indx, key="k_tre_01")
+    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
     st.divider()
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
@@ -32,13 +31,11 @@ df = ss.df_data.copy()
 week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=300)
 df = df[df["ISO_WEEKSTARTDATE"] > week_limit]
 
-# sel_data_source = "SENTINEL"
-# sel_data_source = "NOTDEFINED"
-
 # apply moving regression (for all countries)
-df_ma = polyreg_by_country_source(df, bin_size = ma_bin_size, deg = ma_degree)
-df_plot = filter_a_data_source(df_ma, sel_data_source)
-df_plot = filter_a_country(df_plot, selected_country)
+df_sel1 = filter_a_country(df, selected_country)
+df_sel2 = filter_a_data_source(df_sel1, sel_data_source)
+df_plot = polyreg_by_country_source(df_sel2, bin_size = ma_bin_size, deg = ma_degree)
+
 
 # plot if any reasonable data 
 if len(df_plot) < 10:

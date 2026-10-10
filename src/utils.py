@@ -12,7 +12,7 @@ import requests
 from io import BytesIO
 from datetime import datetime
 
-@st.cache_data(ttl=12*60*60) # refresh every 12 hours 
+@st.cache_data(ttl=12*60*60, show_spinner="Downloading FluNet data...") # refresh every 12 hours 
 def download_flunet_data():
     """Download FluNet data"""
     # step-by-step import 
@@ -41,13 +41,13 @@ def get_ts_today():
     return datetime.now()
 
 
-@st.cache_data()
+@st.cache_data(show_spinner="Preprocessing FluNet data...")
 def preprocess_flunet_data(df):
     """pre-process FluNet dataframe : select variable, rename, convert formats"""
     # select only relevant columns 
     columns = [
         "WHOREGION","FLUSEASON", "ITZ", 
-        # "COUNTRY_AREA_TERRITORY",
+        "COUNTRY_AREA_TERRITORY",
         "ORIGIN_SOURCE", 
         "COUNTRY_CODE",
         "ISO_YEAR", "ISO_WEEK", "ISO_WEEKSTARTDATE",
@@ -57,6 +57,7 @@ def preprocess_flunet_data(df):
     df = df[columns].copy()
     # re-name variables 
     df = df.rename(columns={"COUNTRY_CODE": "COUNTRY"})
+    df = df.rename(columns={"COUNTRY_AREA_TERRITORY": "CNTRY"})
     # convert str to datetime 
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"],errors="coerce")
     # shorten lon countrynames to 3 words
@@ -89,10 +90,6 @@ def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regi
     aaaa 
     """
     df = df.copy()
-    # select only countries with sufficient data overall
-    country_counts = df["COUNTRY"].value_counts()
-    countries = country_counts[country_counts >= 700].index
-    df = df[df["COUNTRY"].isin(countries)]
     # select based on WHOREGION
     df = df[df["WHOREGION"].isin(who_regions)]
     # select based on FLUSEASON
@@ -184,7 +181,8 @@ def get_latest_date_per_group(df, ts_today):
     """
     df = df[["COUNTRY" , "ORIGIN_SOURCE", "WHOREGION", "FLUSEASON", "ISO_WEEKSTARTDATE" , "INF_ALL",]]
     df = df.dropna(subset=["INF_ALL"])
-    df = df.loc[df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
+    # df = df.loc[df                                     .groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
+    df = df.loc[df.dropna(subset=["ISO_WEEKSTARTDATE"]).groupby(["COUNTRY", "ORIGIN_SOURCE"])["ISO_WEEKSTARTDATE"].idxmax()]
     df = df.drop(columns = ["INF_ALL"])
     # derive variable and convert types
     df["days_since"] = (ts_today - df["ISO_WEEKSTARTDATE"]).dt.days
@@ -236,10 +234,10 @@ def get_start_stop_of_region(regions, time):
 
 
 @st.cache_data
-def select_top_n_highest_slope(df, n): 
+def select_top_n_highest_slope(df, n, sorting_var): 
     """ select top-n with highest slope in df """
-    df = df.sort_values('SLOPE', ascending=False)
-    df = df.dropna(subset=['SLOPE'])
+    df = df.sort_values(sorting_var, ascending=False)
+    df = df.dropna(subset=[sorting_var])
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
 
@@ -256,7 +254,7 @@ def select_top_n_highest_val_by_origin(df, n, var):
 @st.cache_data
 def prepre_for_pages_10_13(df, xvar):
     df = df.dropna(subset=[xvar])
-    df["ISO_WEEKSTARTDATE_str"] = ("Updated " + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
+    df["ISO_WEEKSTARTDATE_str"] = ("" + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
     df = df.sort_values(xvar, ascending = False)
     return(df)
 

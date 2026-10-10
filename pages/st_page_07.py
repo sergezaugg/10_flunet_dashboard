@@ -19,11 +19,10 @@ with st.sidebar:
 
 # load data to local page 
 df = ss.df_data.copy()
-
 df = df[df["ORIGIN_SOURCE"] == sel_data_source]
 df_display = filter_a_country(df, selected_country)
-
-st.dataframe(df_display, height = 800)
+st.text(" ")
+st.dataframe(df_display, height = 600, hide_index=True)
 
 
 

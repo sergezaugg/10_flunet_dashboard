@@ -41,36 +41,28 @@ def polyreg_by_country_source(df, bin_size, deg):
           .reset_index(level=[0, 1], drop=True)
     )
     # ad-hoc corrections
-    df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0
-    df["INF_MA"] = df["INF_MA"].fillna(0.0)
+    df.loc[df["INF_MA"] < 0.0, "INF_MA"] = 0.0 # replace neg val by 0.0
+    # df["INF_MA"] = df["INF_MA"].fillna(0.0) # replace NAs by 0.0 (probably bad idea)
     return df
 
 
 @st.cache_data
-def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
+def get_recency_slope(df):
     """
     TBD
     """
-    # take 5 most recent weeks per country  
-    week_0 = latest_week - pd.Timedelta(weeks=5)
-    df0 = df[df['ISO_WEEKSTARTDATE'] >= week_0]
-    
-    # keep 3 most recent per country
-    df0 = df0.sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
+    # keep most recent per country (legacy - probably not needed)
+    df0 = df # .sort_values("ISO_WEEKSTARTDATE", ascending=False).groupby("COUNTRY").head(n_weeks_for_slope) 
     df0 = df0.sort_values(["COUNTRY", "ISO_WEEKSTARTDATE"], ascending=[True, False])
-
     # compute slope from linear regression
     df0["SLOPE"] = (df0.groupby("COUNTRY").apply(
            lambda g: (
                np.polyfit((
-                   # x normalize to 1 unit = week
-                   g.loc[g["INF_MA"].notna(), "ISO_WEEKSTARTDATE"] - g["ISO_WEEKSTARTDATE"].min()).dt.days / 7,
-                   # that is y
-                   g.loc[g["INF_MA"].notna(), "INF_MA"],
-                   # degree 1 = linear regression
-                   1
+                   g.loc[g["INF_MA"].notna(), "ISO_WEEKSTARTDATE"] - g["ISO_WEEKSTARTDATE"].min()).dt.days / 7, # x normalize to 1 unit = week
+                   g.loc[g["INF_MA"].notna(), "INF_MA"], # that is y
+                   1 # degree 1 = linear regression
                )[0] # this is b1 = slope
-               if g["INF_MA"].notna().sum() >= 2
+               if g["INF_MA"].notna().sum() >= 3
                else np.nan
            ),
            include_groups=False
@@ -84,9 +76,7 @@ def get_recency_slope(df, latest_week, slope_thld = 0.0, n_weeks_for_slope = 4):
     df1 = df1.sort_values(["COUNTRY"], ascending=[True])
 
     # prepare overview df for another use
-    df_slopes_all = df1.copy()
-    df_slopes_all = df_slopes_all[df_slopes_all['SLOPE'] > slope_thld]
-    df_slopes_all = df_slopes_all.sort_values("SLOPE", ascending=False)
+    df_slopes_all = df1.sort_values("SLOPE", ascending=False)
     
     return df_slopes_all
 
@@ -97,7 +87,7 @@ def get_baseline_count(df, q):
     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
     """
-    df = df[["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
+    df = df[["ORIGIN_SOURCE", "COUNTRY", "CNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
 
     df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"])
 
@@ -150,20 +140,15 @@ def get_baseline_count(df, q):
 def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_date):
     """ advanced pre-processing (Slope) """
     df_ma = df_data # .copy()
-    df_ma = df_ma[['COUNTRY', 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
+    df_ma = df_ma[['COUNTRY', 'CNTRY' , 'ORIGIN_SOURCE', 'ISO_WEEKSTARTDATE', 'INF_ALL']]
     df_ma, trace_x_range_ma = keep_n_most_recent_weeks_2(df_ma, ref_date = ref_date, keep_n_weeks = nw_ma)
     df_trace_ma = polyreg_by_country_source(df_ma, bin_size = ma_bin_size, deg = ma_degree)
-    # regression - advanced pre-processing (used in pages 05 and 10)
+    # regression
     df0 = df_trace_ma.copy()
-    df_metri_ma = [(get_recency_slope(
-                df0[df0["ORIGIN_SOURCE"] == a], 
-                latest_week = ref_date,
-                slope_thld = 0.1, 
-                n_weeks_for_slope = nw_slo
-            )) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-
+    df0, stats_x_range = keep_n_most_recent_weeks_2(df0, ref_date = ref_date, keep_n_weeks = nw_slo)
+    df_metri_ma = [get_recency_slope(df0[df0["ORIGIN_SOURCE"] == a]) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
     df_metri_ma = pd.concat(df_metri_ma, ignore_index=True)
-    return df_trace_ma, trace_x_range_ma, df_metri_ma
+    return df_trace_ma, trace_x_range_ma, df_metri_ma, stats_x_range
 
 @st.cache_data
 def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_trace, time_range_stats, ref_date):
@@ -183,12 +168,13 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_tra
     df_metri = (df00
         # remove when all-na for "INF_ALL" 
         .loc[df00.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].transform("count").gt(0)]  
-        .loc[lambda x: x["INF_ALL_BASELINE"] >= 5] # keep where BL enough above 0
         .assign(ABOVE_BASELINE=lambda x: x["INF_ALL"] >= x["INF_ALL_BASELINE"]) # create boolean for 'above bl'
         .groupby(["COUNTRY", "ORIGIN_SOURCE"], as_index=False) # extract summaries by group
         .agg(N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
             INF_ALL_BASELINE=("INF_ALL_BASELINE", "first"),
-            ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),)
+            ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),
+            CNTRY=("CNTRY", "first"),
+            )
         .sort_values("N_ABOVE_BASELINE", ascending=False) # sort   
     )
     return(df_trace, trace_x_range, df_metri, stats_x_range)
