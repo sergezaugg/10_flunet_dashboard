@@ -9,7 +9,7 @@ import plotly.express as px
 from streamlit import session_state as ss
 import streamlit as st
 from src.utils import filter_a_data_source
-from src.utils import select_top_n_highest_val_by_origin, select_top_n_highest_slope
+from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 
 with st.sidebar:

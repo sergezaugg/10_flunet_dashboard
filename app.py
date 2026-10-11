@@ -24,7 +24,7 @@ ss.max_countries_in_plots = 20
 ss.nw_global = 6 # weeks from ref to be used for stats 
 ss.top_n = 5 # how much to show in 'top' pages
 ss.nw_for_demo = 52*5
-# (1) advanced pre-processing (slope/percent change)
+# (1) advanced pre-processing (slope / percent change)
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
 ss.ma_degree = 1
@@ -32,11 +32,13 @@ ss.nw_slo = ss.nw_global
 # (2) advanced pre-processing (burden / above Baseline)
 ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
+ss.tol_thld = 3.0
 ss.time_range_trace = 24
 ss.time_range_stats = ss.nw_global
 
 df_dat, ss.ts_download = download_flunet_data()
 ss.df_data = preprocess_flunet_data(df=df_dat)
+
 
 #------------------------------
 # download and pre-process (do once)
@@ -60,7 +62,7 @@ obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, s
 ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
 # (2) advanced pre-processing (Flu Burden above Baseline)
-obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
+obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
 ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
 # (3) combine bl and slope summaries
@@ -68,6 +70,9 @@ ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
 # temp for p14
 ss.dfbl_temp = dfbl_temp
+# dfbl_temp['INF_ALL_BASELINE'].min()
+
+
 
 
 #------------------------------

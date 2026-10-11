@@ -9,7 +9,7 @@ from streamlit import session_state as ss
 import streamlit as st
 from src.utils import filter_a_country, filter_a_data_source
 from src.utils import det_regions, get_start_stop_of_region
-from src.preprocessing import polyreg_by_country_source, get_baseline_count
+from src.preprocessing import polyreg_by_country_source, get_baseline_threshold
 from src.utils_plots import make_smoothed_curve_plot
 
 # # Choose index of starting country
@@ -47,7 +47,7 @@ if len(df_plot) < 10:
     st.stop()
 
 # get baseline of flu counts (for all countries)
-bthld = get_baseline_count(df, q = quantile_val)
+bthld = get_baseline_threshold(df, q = quantile_val, tol_thld = ss.tol_thld)
 # select values for chosen country and ORIGIN_SOURCE
 thld = bthld.loc[bthld['COUNTRY']==selected_country]
 thld = thld.loc[thld['ORIGIN_SOURCE']==sel_data_source]
