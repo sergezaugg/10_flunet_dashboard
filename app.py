@@ -13,7 +13,7 @@ from src.styles import apply_global_styles
 
 #------------------------------
 # prepare app 
-st.set_page_config(layout = "wide", initial_sidebar_state = "expanded")
+st.set_page_config(layout = "wide", initial_sidebar_state = "expanded", page_icon='pics/z_logo_red.png')
 apply_global_styles() # apply custom CSS styles 
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
