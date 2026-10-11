@@ -11,10 +11,14 @@ from config import cc
 from plotly.subplots import make_subplots
 
 @st.cache_data()
-def make_facet_line_plot(df, n_countr, outcome):
+def make_facet_line_plot(df, n_countr, outcome, label_dict):
     """ 
     aaa 
     """
+
+    # handle labels of multiple y variable
+    y_label = label_dict[outcome]
+
     # pre-compute vertical spacings dependent on n_countr
     facet_height = 150
     spacing_px = 60
@@ -30,18 +34,26 @@ def make_facet_line_plot(df, n_countr, outcome):
         facet_row_spacing = facet_row_spacing,
         height= height_b,
         markers=True,
-        color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]]
+        color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]],
+        labels={
+            "ISO_WEEKSTARTDATE": "Date",
+            outcome: y_label,
+        },
     )
-    fig.update_traces(marker=dict(size=5))
-    # fig.update_yaxes(title_text="WEEKLY  DETECT.")
-    fig.update_yaxes(matches=None,)   
+    fig.update_traces(marker=dict(size=5))   
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=60, r=150, t=50, b=40))
-    fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
-    fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
-    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
     fig.update_layout(legend=dict(title=None, bordercolor="white", borderwidth=1,))
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.015+1.03*facet_row_spacing, yanchor="top",))
+    fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
+    fig.update_xaxes(title_font=dict(size=14))
+    fig.update_yaxes(matches=None,)  
+    fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
+    fig.update_yaxes(title_font=dict(size=16))
+    fig.update_yaxes(range=[0.0, None]) 
+    if outcome == "POSITIVITY":
+        fig.update_yaxes(range=[0.0, 100.0]) 
+    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
     for annotation in fig.layout.annotations:
         annotation.text = annotation.text.replace("COUNTRY=", "")
         annotation.textangle = 0

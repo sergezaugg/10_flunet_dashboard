@@ -29,11 +29,15 @@ with st.sidebar:
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
+# labels used in widgets and plots 
+outcome_labels = {
+        "INF_ALL":    "Flu detections [count]",
+        "POSITIVITY": "Flu positivity [%]"}
+
 with st.sidebar:
-    outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0)
+    outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0, format_func=lambda x: outcome_labels[x],)
     st.divider()
     st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
-
 
 # exclude all from "ORIGIN_SOURCE" level if too few non-na
 df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)
@@ -41,7 +45,6 @@ df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna
 if len(df_plot) <= 10:
     country_info.text(f"Please select at least one country")
     st.stop()
-
 # plot if n countries not too large
 if n_countries[0] > ss.max_countries_in_plots:
     country_info.text(f"Too many countries: {n_countries[0]} \n Max allowed: {ss.max_countries_in_plots}")
@@ -50,7 +53,7 @@ country_info.text(f"N Countries = {n_countries[0]}")
 
 # plot 
 # fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = "INF_ALL")
-fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = outcome_var)
+fig = make_facet_line_plot(df = df_plot, n_countr = n_countries[0], outcome = outcome_var, label_dict = outcome_labels)
 c1,c2 = st.columns([30,1])
 with c1:
     with st.container(border=True):
