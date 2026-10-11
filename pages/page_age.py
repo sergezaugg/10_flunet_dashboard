@@ -85,7 +85,7 @@ with c2:
 # display detes
 c01, c02, = st.columns([60, 2])
 with c01:
-    with st.container(border= True, height = 500):
+    with st.expander("detes", expanded=False):
         c1, c2, c3 = st.columns([20,20,20])
         with c1:
             st.text('SENTINEL')

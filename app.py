@@ -23,14 +23,14 @@ pd.set_option('display.max_rows', 500)
 ss.max_countries_in_plots = 20
 ss.nw_global = 6 # weeks from ref to be used for stats 
 ss.top_n = 5 # how much to show in 'top' pages
-ss.nw_for_demo = 52*5
+ss.nw_for_demo = 52*4
 # (1) advanced pre-processing (slope / percent change)
 ss.nw_ma = 20 # 15
 ss.ma_bin_size = 4
 ss.ma_degree = 1
 ss.nw_slo = ss.nw_global 
 # (2) advanced pre-processing (burden / above Baseline)
-ss.time_range_basli = 52*5
+ss.time_range_basli = 52*4
 ss.quantile_val = 0.65
 ss.tol_thld = 10
 ss.time_range_trace = 24
