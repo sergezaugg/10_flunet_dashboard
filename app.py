@@ -32,7 +32,7 @@ ss.nw_slo = ss.nw_global
 # (2) advanced pre-processing (burden / above Baseline)
 ss.time_range_basli = 52*5
 ss.quantile_val = 0.65
-ss.tol_thld = 3.0
+ss.tol_thld = 10
 ss.time_range_trace = 24
 ss.time_range_stats = ss.nw_global
 
@@ -124,10 +124,10 @@ ss.setdefault("k_ab_01", 10)
 ss.setdefault("k_ab_02", "SENTINEL")
 ss.setdefault("k_ab_03", 50)
 # defaults for moving average explorer 
-ss.setdefault("k_tre_02", 5)
-ss.setdefault("k_tre_03", 1)
+ss.setdefault("k_tre_02", ss.ma_bin_size)
+ss.setdefault("k_tre_03", ss.ma_degree)
 ss.setdefault("k_tre_04", 1)
-ss.setdefault("k_tre_05", 0.66)
+ss.setdefault("k_tre_05", ss.quantile_val)
 # defaults slop geo
 ss.setdefault("k_p10_01", "MAXCOMBINE")
 ss.setdefault("k_p10_03", "Bluered")
