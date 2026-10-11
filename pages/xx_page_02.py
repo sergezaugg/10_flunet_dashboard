@@ -34,10 +34,10 @@ df_data = filter_by_date_range(df = df_data, date_range = date_range)
 df_data = filter_a_country(df_data, selected_country)
 n_years = pd.Series(df_data["SEASON_YEAR"].unique()).value_counts().shape
 
-# plot 
-fig = make_facet_bar_plot(df = df_data, n_years = n_years[0], inverse_year = curr_year_first, indep_y_scale = not indep_y_scales,
-                          plot_height = plot_height )
-st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+# # plot 
+# fig = make_facet_bar_plot(df = df_data, n_years = n_years[0], inverse_year = curr_year_first, indep_y_scale = not indep_y_scales,
+#                           plot_height = plot_height )
+# st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 
