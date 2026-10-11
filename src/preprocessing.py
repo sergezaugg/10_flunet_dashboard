@@ -77,48 +77,37 @@ def get_recency_slope(df):
     return df_slopes_all
 
 @st.cache_data
-def get_baseline_count(df, q):
+def get_baseline_threshold(df, q, tol_thld):
     """
     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
+    tol_thld : float > 0, minimal tolerated threshold
     """
     df = df[["ORIGIN_SOURCE", "COUNTRY", "CNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
 
-    df["ISO_WEEKSTARTDATE"] = pd.to_datetime(df["ISO_WEEKSTARTDATE"])
-
     # Ensure one row per source × country × week
-    df = (
-        df.groupby(
-            ["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],
-            as_index=False
-        )["INF_ALL"]
-        .sum(min_count=1)
-    )
+    df = (df.groupby(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],as_index=False)["INF_ALL"]
+        .sum(min_count=1))
 
-    # Add missing weeks and replace NA with 0
+    # Add missing weeks in ISO_WEEKSTARTDATE and replace NA with 0
     df = (
         df.set_index("ISO_WEEKSTARTDATE")
         .groupby(["ORIGIN_SOURCE", "COUNTRY"])["INF_ALL"]
         .apply(
             lambda x: x.reindex(
-                pd.date_range(
-                    x.index.min(),
-                    x.index.max(),
-                    freq="W-MON"
-                )
+                pd.date_range(x.index.min(), x.index.max(), freq="W-MON")
             ).fillna(0.0)
         )
         .rename("INF_ALL")
         .reset_index()
     )
 
-    # Quantile baseline
+    # get quantile-base thresholds
     baseline_thlds = (
-        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"]
-        .quantile(q)
-        .reset_index(name="INF_ALL_BASELINE")
-    )
-
+        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(q).reset_index(name="INF_ALL_BASELINE"))
+    # apply tolerance, to have all thlds above zero
+    baseline_thlds.loc[baseline_thlds["INF_ALL_BASELINE"] < tol_thld, "INF_ALL_BASELINE"] = tol_thld
+    # return 
     return baseline_thlds
 
 #-----------------------------
@@ -139,13 +128,13 @@ def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_dat
     return df_trace_ma, trace_x_range_ma, df_metri_ma, stats_x_range
 
 @st.cache_data
-def compute_recent_level(df_data, time_range_basli, quantile_val, time_range_trace, time_range_stats, ref_date):
+def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, time_range_trace, time_range_stats, ref_date):
     """ """
     df_bl = df_data # .copy()
-    # keep last 5 years to compute baseline 
+    # keep last years to compute baseline 
     df_bl, _ = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_basli)
     # get flu baseline counts (for all countries)
-    bl_thld = get_baseline_count(df_bl, q = quantile_val)
+    bl_thld = get_baseline_threshold(df_bl, quantile_val, tol_thld)
     # reduce to fewer recent weeks for trace plots
     df_trace, trace_x_range = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_trace)
     # reduce even fewer recent weeks for recent stats (below)
@@ -178,9 +167,8 @@ def combine_bl_and_slope_summaries(dfma_temp, dfbl_temp):
     dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
     dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
     # safeguard - keep where BL-threshold enough above 0
-    dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] 
+    # dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] # now handled in get_baseline_threshold()
     # compute percent change 
-    attenuation_term = 4.0
-    dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']+attenuation_term))).round(1)
+    dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']))).round(1)
     return dfmerged
 

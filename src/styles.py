@@ -20,7 +20,7 @@ def apply_global_styles():
     # reduce vertical space between navig and items(content
     st.markdown("""
         <style> 
-            [data-testid="stMainBlockContainer"] {padding-top: 1rem; padding-left: 3rem;} 
+            [data-testid="stMainBlockContainer"] {padding-top: 0rem; padding-left: 1.8rem;} 
         </style>
         """, unsafe_allow_html=True)
 
@@ -60,19 +60,33 @@ def apply_global_styles():
     </style>
     """, unsafe_allow_html=True)
 
+
+
+    # text right to logo 
     st.markdown("""
     <style>
         .app-label {
             position: fixed;
             top:  17px;
-            left: 55px;
+            left: 60px;
             color: #9CA3AF;
             font-size: 15px;
             z-index: 999999;
             pointer-events: none;
         }
     </style>
-    <div class="app-label">FluNet Explorer v0.5.2-β</div>
+    <div class="app-label">FluNet Explorer v0.9.0-β</div>
+    """, unsafe_allow_html=True)
+
+
+    # reduce height of nav bar 
+    st.markdown("""
+    <style>
+        [data-testid="stHeader"] {
+            height: 4rem;
+            min-height: 4rem;
+            }
+    </style>
     """, unsafe_allow_html=True)
 
 

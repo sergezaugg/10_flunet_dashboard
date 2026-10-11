@@ -13,11 +13,14 @@ from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
 
 
 with st.sidebar:
-    st.markdown(f""":primary[Methods:] Trace smoothed via moving regression of :primary[degree {ss.ma_degree}] with bin size of :primary[{ss.ma_bin_size} weeks].
-    Slope then estimated for latest :primary[{int(ss.nw_slo)} weeks] of smoothed curve via linear regression.
-    Only top :primary[{int(ss.top_n)}] per data source is shown here.""")
+    st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.
+    Only top :primary[{int(ss.top_n)}] per data source are shown here.""")
     st.divider()
-    st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.""")
+    st.markdown(f""":primary[Methods:] Traces are first smoothed with moving regression of degree :primary[{ss.ma_degree}]
+    with bin size of :primary[{ss.ma_bin_size}] weeks.
+    Then, the average change per week (slope) is estimated from the latest :primary[{int(ss.nw_slo)}] weeks via linear regression
+    and normalized to percent change via historical baseline threshold (green line).
+    """)
 
 
 # unpack smoothed traces dfs

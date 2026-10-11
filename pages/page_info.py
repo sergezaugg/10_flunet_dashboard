@@ -5,12 +5,11 @@
 
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import download_flunet_data, preprocess_flunet_data
 
 c1, c2, c3 = st.columns([30, 30, 2])
 with c1:
 
-    with st.container(border=True, height = 300):
+    with st.container(border=True):
         st.markdown("""
         #### About the dashboard:  
         FluNet Explorer provides an interactive overview of global influenza virus detections using data from the WHO FluNet surveillance system.
@@ -22,14 +21,14 @@ with c1:
         This dashboard is an exploratory data analysis tool, not a substitute for official public health assessments.
         """)
 
-    with st.container(border=True, height = 200):
+    with st.container(border=True):
         st.markdown("""
         #### Data source:  
         Data is downloaded from the WHO API  
         `https://xmart-api-public.who.int/FLUMART/VIW_FNT?$format=csv`
         """)
 
-    with st.container(border=True, height = 200):
+    with st.container(border=True):
         st.markdown('''
         #### Author:
         Serge Zaugg ( 

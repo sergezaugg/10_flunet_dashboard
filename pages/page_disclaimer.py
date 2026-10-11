@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : info 
+# Description : Disclaimer 
 #--------------------
 
 from streamlit import session_state as ss
@@ -8,7 +8,7 @@ import streamlit as st
 
 c1, c2, c3 = st.columns([30, 30, 2])
 with c1:
-    with st.container(border=True, height = 250):
+    with st.container(border=True):
         st.markdown("""
         #### Disclaimer:  
         This dashboard provides visualizations and analyses based on influenza surveillance data from **WHO FluNet**.
