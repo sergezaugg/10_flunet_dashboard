@@ -122,7 +122,7 @@ def make_smoothed_curve_plot(df_plot, height):
         color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
     )
     fig.update_traces(marker=dict(size=5))
-    fig.update_yaxes(title_text="Weekly Infl. Detect.")
+    fig.update_yaxes(title_text="Flu detections [count]")
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=40, r=20, t=20, b=40))
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
