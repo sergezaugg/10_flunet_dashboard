@@ -23,10 +23,7 @@ with st.sidebar:
     ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
     ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
 
-    st.divider()
-    st.markdown(f""":primary[Summary:] This is a Didactic page.
-    Play with some parameters used in the data-preparation module.
-    Only latest :primary[{int(ss.nw_for_demo)}] weeks shown here for demonstration.""")
+
 
 # load data to local page 
 df = ss.df_data.copy()
@@ -64,7 +61,7 @@ c1,c2 = st.columns([30,1])
 with c1:
     with st.container(border=True):
                 
-        fig = make_smoothed_curve_plot(df_plot)
+        fig = make_smoothed_curve_plot(df_plot, height = 330)
 
         # overlay threshold 
         fig.add_hline(y=thld, line_width=2, line_dash="dash", line_color="green")
@@ -75,9 +72,41 @@ with c1:
 
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-
-
-
+   
+    c01,c02,c03 = st.columns([15,20,20])
+    height_all = 320
+    with c01:
+        with st.container(border=True, height = height_all):
+            st.markdown(f""":primary[Summary:] This is a Didactic page where you can
+            play with some parameters used in the data-preparation module.
+            Only the latest {int(ss.nw_for_demo)} weeks are used to derive the Historical Baseline and shown here.  
+            :primary[Automatic Flu Season Detection:] Candidate Flu seasons are automatically detected (transparent rectangles) based on 
+            smoothed trace and Threshold using a simple hysteresis method (like a thermostat).
+            This is not yet used elsewhere in this app.
+            
+            """)
+    with c02:
+        with st.container(border=True, height = height_all):
+            st.markdown(f""":primary[Historical Baseline Threshold:] 
+            Missing weeks are padded with zeros (Only adequate for countries
+            that fail to report out-of-season when count can be assume low, but not for all countries)
+            Then, a historical baseline threshold (green line) is computed per-county and data source from {ss.quantile_val} 
+            quantile taken over {int(ss.time_range_basli)} weeks.
+            Lastly, the threshold is floored at {int(ss.tol_thld)} to avoid unrealistically low baselines in 
+            countries with sparse detections.  
+            :primary[Limitation:] Same quantile is applied to all countries and data sources, 
+            regardless of differences in seasonal patterns and reporting practices. 
+            While this works well for many countries, it may fail for some.
+            """)  
+    with c03:
+        with st.container(border=True, height = height_all):
+            st.markdown(f""":primary[BL-Normalized Change:] Traces (blue line) are first smoothed with moving regression of degree {ss.ma_degree}
+            with bin size of {ss.ma_bin_size} weeks (red line). Trailing moving regression is used here (=right-aligned).
+            The average change per week (slope) is then estimated from the latest {int(ss.nw_slo)} weeks via linear regression.
+            Finally, the slope is normalized by the historical baseline threshold and expressed as a percentage.  
+            :primary[Limitation:] Normalization by the historical baseline improves comparability
+            but does not account for differences differences in seasonal patterns and reporting practices across countries and data sources.
+            """)
 
 
 

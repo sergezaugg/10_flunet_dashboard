@@ -88,7 +88,7 @@ def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False
 
 
 @st.cache_data
-def make_smoothed_curve_plot(df_plot):
+def make_smoothed_curve_plot(df_plot, height):
     """
     TBD
     """
@@ -105,7 +105,7 @@ def make_smoothed_curve_plot(df_plot):
         x="ISO_WEEKSTARTDATE",
         y="INF_VALUE",
         color="TYPE",
-        height=500,
+        height=height,
         markers=True,
         color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
     )
