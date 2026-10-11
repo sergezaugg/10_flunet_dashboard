@@ -350,7 +350,8 @@ def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
         line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
     )
     fig_area.update_traces(line=dict(width=0))
-
+    # adjut labels of the legend 
+    fig_area.for_each_trace(lambda t: t.update(name={"INF_A": "Type A Influenza", "INF_B": "Type B Influenza"}[t.name]))
     # make fill color more intense (no transparency)
     fig_area.for_each_trace(lambda trace: trace.update(fillcolor=trace.line.color.replace('rgb', 'rgba').replace(')', ', 0.3)')))
 
