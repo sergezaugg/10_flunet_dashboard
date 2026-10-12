@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : trend from past few weeks 
+# Description : flu burden from past few weeks 
 #--------------------
 
 import numpy as np
@@ -28,11 +28,9 @@ with st.sidebar:
 
 # apply user's choice 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
-
 # make traces list
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-
-# select top 10 
+# select top N 
 df_metri = [filter_a_data_source(df_metri_bl, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'N_ABOVE_BASELINE') for a in df_metri]
 df_metri = [a.query("N_ABOVE_BASELINE > 0") for a in df_metri] # keep only positeve 'N_ABOVE_BASELINE' 

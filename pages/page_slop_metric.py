@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : trend from past few weeks 
+# Description : trend (slope) from past few weeks 
 #--------------------
 
 from streamlit import session_state as ss
@@ -23,14 +23,10 @@ with st.sidebar:
     See **Methods** page for details.
     """)
 
-
-
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
-
 # make traces list
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-
 # for metrics boxes (unpack list and take top 10)
 df_metri = [filter_a_data_source(df_metri_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'PERC_CHANGE') for a in df_metri]
@@ -38,10 +34,7 @@ df_metri = [a.query("PERC_CHANGE > 0") for a in df_metri] # keep only positeve '
 
 
 
-
-
 # pre-render plotly (but it does not really speed rendering on screen  :-(  
-
 rowheight = 160
 
 @st.cache_data(show_spinner="Rendering mini-traces")
@@ -53,15 +46,12 @@ def pre_render_mintraces(df_tra, df_met):
 
 prerend1, prerend2, prerend3 = pre_render_mintraces(df_tra = df_trace, df_met = df_metri)
 
-
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):
     with col:
         st.subheader(label)
 
 c1, c2, c3, c4, c5, c6 = st.columns([50, 90, 50 , 90, 50, 90])
-
-
 
 for i, row in df_metri[0].iterrows():
     with c1:
