@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : trend from past few weeks 
+# Description : flu burden from past few weeks 
 #--------------------
 
 import numpy as np
@@ -13,21 +13,25 @@ from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Identify countries with unusually high flu activity.
-    Only top :primary[{int(ss.top_n)}] per data source is shown here.
-    """)
+    all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
     st.divider()
-    st.markdown(f""":primary[Methods:] Historical baseline threshold (green line) is computed per-county and source from :primary[{ss.quantile_val}] 
-    quantile taken over :primary[{int(ss.time_range_basli)}] weeks (+a few sanity checks, see Methods Tab).
-    Traces show latest :primary[{int(ss.time_range_trace)}] weeks.
-    Stats (Nb weeks above baseline threshold) derived from latest :primary[{int(ss.time_range_stats)}] weeks.
+    st.markdown(f""":primary[Summary:] Identify countries with unusually high flu activity.
+    Only :primary[top {int(ss.top_n)}] per data source is shown here.
+    """)
+    st.markdown(f""":primary[Methods:] Historical baseline threshold (green line) computed per-county and source.
+    Traces show latest {int(ss.time_range_trace)} weeks.
+    Nb weeks above threshold derived from latest {int(ss.time_range_stats)} weeks.
+    See **Methods** page for details.
     """)
 
 
+# apply user's choice 
+df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+# make traces list
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-
-# select top 10 
-df_metri = [filter_a_data_source(ss.df_metri_merged, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+# select top N 
+df_metri = [filter_a_data_source(df_metri_bl, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'N_ABOVE_BASELINE') for a in df_metri]
 df_metri = [a.query("N_ABOVE_BASELINE > 0") for a in df_metri] # keep only positeve 'N_ABOVE_BASELINE' 
 

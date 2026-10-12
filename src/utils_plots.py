@@ -11,10 +11,14 @@ from config import cc
 from plotly.subplots import make_subplots
 
 @st.cache_data()
-def make_facet_line_plot(df, n_countr, outcome):
+def make_facet_line_plot(df, n_countr, outcome, label_dict):
     """ 
     aaa 
     """
+
+    # handle labels of multiple y variable
+    y_label = label_dict[outcome]
+
     # pre-compute vertical spacings dependent on n_countr
     facet_height = 150
     spacing_px = 60
@@ -30,61 +34,30 @@ def make_facet_line_plot(df, n_countr, outcome):
         facet_row_spacing = facet_row_spacing,
         height= height_b,
         markers=True,
-        color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]]
+        color_discrete_sequence=[cc["sources"]["nonsen"], cc["sources"]["notdef"], cc["sources"]["sentin"], cc["sources"]["sumall"]],
+        labels={
+            "ISO_WEEKSTARTDATE": "Date",
+            outcome: y_label,
+        },
     )
-    fig.update_traces(marker=dict(size=5))
-    # fig.update_yaxes(title_text="WEEKLY  DETECT.")
-    fig.update_yaxes(matches=None,)   
+    fig.update_traces(marker=dict(size=5))   
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=60, r=150, t=50, b=40))
-    fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
-    fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
-    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
     fig.update_layout(legend=dict(title=None, bordercolor="white", borderwidth=1,))
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.015+1.03*facet_row_spacing, yanchor="top",))
+    fig.update_xaxes(showline = True, linewidth=1.8, mirror=True, showticklabels=True, ticks="inside",)
+    fig.update_xaxes(title_font=dict(size=14))
+    fig.update_yaxes(matches=None,)  
+    fig.update_yaxes(showline = True, linewidth=1.8, mirror=True)
+    fig.update_yaxes(title_font=dict(size=16))
+    fig.update_yaxes(range=[0.0, None]) 
+    if outcome == "POSITIVITY":
+        fig.update_yaxes(range=[0.0, 100.0]) 
+    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
     for annotation in fig.layout.annotations:
         annotation.text = annotation.text.replace("COUNTRY=", "")
         annotation.textangle = 0
     return(fig)    
-
-
-@st.cache_data()
-def make_facet_bar_plot(df, n_years, inverse_year = False, indep_y_scale = False, plot_height = 150):
-
-    # handle reverse plotting 
-    years = sorted(df["SEASON_YEAR"].unique(), reverse=False)
-    if inverse_year:    
-        years = sorted(df["SEASON_YEAR"].unique(), reverse=True)
-
-    row_spac = 0.005
-
-    fig = px.bar(
-        df,
-        x="SEASON_WEEK",
-        y="INF_ALL",
-        facet_row="SEASON_YEAR",
-        category_orders={"SEASON_YEAR": years},
-        facet_row_spacing = row_spac,
-        height= (n_years * (plot_height))
-        )
-    
-    fig.update_yaxes(title_text="Weekly Infl. Detect.")
-    fig.add_vline(x=0, line_dash="dash", line_color="green", line_width=2)
-    fig.update_layout(showlegend=True)
-    fig.update_layout(margin=dict(l=60, r=150, t=40, b=40))
-    fig.update_layout(legend=dict(x=1.20, y=1, xanchor="left", yanchor="top"))
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
-    fig.for_each_annotation(lambda a: a.update(x=1.015,font=dict(size=18)))
-    for annotation in fig.layout.annotations:
-        annotation.text = annotation.text.replace("SEASON_YEAR=", "")
-        annotation.textangle = 0
-
-    # optional: independent y-scales
-    if indep_y_scale == True:
-        fig.update_yaxes(matches=None) 
-
-    return(fig)
 
 
 @st.cache_data
@@ -110,7 +83,7 @@ def make_smoothed_curve_plot(df_plot, height):
         color_discrete_map={"INF_ALL": "#1f77b4", "INF_MA": "#d62728", "OTHER": "#2ca02c"},
     )
     fig.update_traces(marker=dict(size=5))
-    fig.update_yaxes(title_text="Weekly Infl. Detect.")
+    fig.update_yaxes(title_text="Flu detections [count]")
     fig.update_layout(showlegend=True)
     fig.update_layout(margin=dict(l=40, r=20, t=20, b=40))
     fig.update_layout(legend=dict(orientation="h", x=0, xanchor="left", y=1.2, yanchor="top",))
@@ -338,13 +311,14 @@ def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
         line_shape = 'hvh', # 'hvh',#'spline', One of 'linear', 'spline', 'hv', 'vh', 'hvh', or 'vhv'
     )
     fig_area.update_traces(line=dict(width=0))
-
+    # adjut labels of the legend 
+    fig_area.for_each_trace(lambda t: t.update(name={"INF_A": "Type A Influenza", "INF_B": "Type B Influenza"}[t.name]))
     # make fill color more intense (no transparency)
     fig_area.for_each_trace(lambda trace: trace.update(fillcolor=trace.line.color.replace('rgb', 'rgba').replace(')', ', 0.3)')))
 
     # wrap as two subplots 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.16, 
-                        subplot_titles=("Weekly Influenza Detections", "Proportion of A/B Types"))
+                        subplot_titles=("Flu detections [count]", "Proportion of A/B Types"))
     for trace in fig_line.data:
         fig.add_trace(trace, row=1, col=1)
     for trace in fig_area.data:
