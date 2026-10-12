@@ -24,7 +24,8 @@ def download_flunet_data():
         # convert to DataFrame
         df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
         # get a timestamp
-        ts = datetime.now().strftime("%Y-%m-%d")
+        # ts = datetime.now().strftime("%Y-%m-%d")
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     except (requests.RequestException, pd.errors.ParserError):
         # handle if not downloaded
         df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )

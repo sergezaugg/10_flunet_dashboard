@@ -6,7 +6,7 @@
 import numpy as np 
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils_plots import display_df_page_08
+from src.utils_plots import display_df_page_08, make_geo_map
 
 # load data to local page 
 df_lat = ss.df_latest_data.copy()
@@ -82,6 +82,22 @@ with c2:
                 "count": st.column_config.NumberColumn("Nb Countries", width="auto", alignment="center",),
             },)
 
+
+
+#----------------------------------------------
+# map of data age 
+dft = ss.df_latest_data
+df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
+
+fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7], legend_title = "Data age [Days]")
+c0, c1 = st.columns([30, 1])
+with c0:
+    with st.container(border=True, height = 400):
+        st.plotly_chart(fig, use_container_width=True)
+
+
+
+#----------------------------------------------
 # display detes
 c01, c02, = st.columns([60, 2])
 with c01:

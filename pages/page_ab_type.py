@@ -29,7 +29,7 @@ with st.sidebar:
 
 
 df_data = df_data[df_data["ORIGIN_SOURCE"] == sel_data_source]
-# df_data = df_data[df_data["ORIGIN_SOURCE"] == "NONSENTINEL"]
+
 
 
 
@@ -47,9 +47,12 @@ df_prop_long = df_prop_ab.melt(
     value_name="PROP"
 )
 
-
-
 df_plot = filter_a_country(df_prop_long, selected_country)
+
+# do not plot if not enough data 
+if len(df_plot) <= 10:
+    st.text(f"No data for this country and data source")
+    st.stop()
 
 fig =  make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b)
 
