@@ -109,9 +109,9 @@ def make_metric_items_slope(row, height_row, show_percent = False):
             value=selected_met,
             delta_description = selected_desc,
             border  = False, 
-            width = 200, height = int(0.55*height_row))
+            width = 210, height = int(0.55*height_row))
         st.markdown(
-            f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
+            f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
             unsafe_allow_html=True,)
 
 #--------------------------------------------------
@@ -149,9 +149,9 @@ def make_metric_items_baseline(row, height_row, time_range_stats):
             # delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
             delta_description = f"Elevated",
             # delta_description = f"BL: {int(row['INF_ALL_BASELINE'])}",
-            width = 200, height = int(0.60*height_row))
+            width = 210, height = int(0.60*height_row))
         st.markdown(
-            f'<span style="font-size: 12px;">Updated {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
+            f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
             unsafe_allow_html=True,)
 
 @st.cache_data

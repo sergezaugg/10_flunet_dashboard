@@ -147,10 +147,11 @@ with st.sidebar:
     st.markdown(f"""# :primary[**FluNet Explorer**] """)
 
     st.markdown(f"""
-    Ref date: \t{ss.ts_today.strftime("%Y-%m-%d")}  
-    Downloaded: \t{ss.ts_download}  
-    Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
+    Ref. day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
+    Download: \t{ss.ts_download}  
     """)
+
+    # Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
 
     st.divider()
     
