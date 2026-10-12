@@ -252,7 +252,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
 
 
 @st.cache_data
-def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "natural earth"):
+def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide"): # mollweide , orthographic , natural earth
     fig = px.choropleth(
         df,
         locations="COUNTRY",

@@ -92,8 +92,8 @@ dft = ss.df_latest_data
 df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
 
 fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, 
-                   range_color = [0, 20+ss.nw_global*7], legend_title = "Data age [Days]",
-                   proj = "mollweide")  # mollweide    orthographic  natural earth
+                   range_color = [0, 20+ss.nw_global*7], legend_title = "Data age [Days]")
+                #    proj = "mollweide")  # mollweide    orthographic  natural earth
 
 c0, c1 = st.columns([30, 1])
 # map 
