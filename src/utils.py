@@ -75,15 +75,6 @@ def preprocess_flunet_data(df):
     return(df)
 
 
-# @st.cache_data()
-# def filter_by_date_range(df, date_range):
-#     """ aaaa """
-#     df = df.copy()
-#     # select date 
-#     df = df[df["ISO_WEEKSTARTDATE"].between(pd.Timestamp(date_range[0]), pd.Timestamp(date_range[1]))]
-#     return(df) 
-
-
 @st.cache_data() # filter_data
 def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regions = ['bb']):
     """
@@ -101,44 +92,11 @@ def filter_data_region(df, who_regions = ['EUR'], fse_regions = ['aa'], itz_regi
     return(df, n_countries) 
 
 
-# @st.cache_data()
-# def filter_data_quality(df, prop_non_na_tol = 0.50, mean_count_tol = 40):
-#     """
-#     aaaa 
-#     """
-#     df = df.copy()
-#     # exclude country with too many missings 
-#     df["prop_non_na"] = (df.groupby("COUNTRY")["INF_ALL"].transform(lambda s: s.notna().mean()))
-#     df = df[df["prop_non_na"] >= prop_non_na_tol].copy()
-#     # filter out countries with low mean count
-#     df["mean_count_per_country"] = (df.groupby(["COUNTRY"])["INF_ALL"].transform(lambda s: s.mean()))
-#     df = df[df["mean_count_per_country"] > mean_count_tol].copy()
-#     # select only countries with sufficient data overall
-#     country_counts = df["COUNTRY"].value_counts()
-#     countries = country_counts[country_counts >= 700].index
-#     df = df[df["COUNTRY"].isin(countries)]
-#     # check
-#     n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
-#     return(df, n_countries) 
-
-
 @st.cache_data()
 def filter_several_countries(df, countries):
     df = df[df["COUNTRY"].isin(countries)]
     n_countries = pd.Series(df["COUNTRY"].unique()).value_counts().shape
     return df, n_countries
-
-
-# @st.cache_data()
-# def re_center_season(df):
-#     print("check : >>>>", df.shape)
-#     # Re-define "year" as period from July -> June
-#     df["SEASON_YEAR"] = (df["ISO_WEEKSTARTDATE"].dt.year - (df["ISO_WEEKSTARTDATE"].dt.month < 7))
-#     # Reference date = 1 January within that season
-#     jan1 = pd.to_datetime((df["SEASON_YEAR"] + 1).astype("Int64").astype(str), format="%Y")
-#     # Set Jan 1 = week 0, previous weeks = -1, -2, ...
-#     df["SEASON_WEEK"] = ((df["ISO_WEEKSTARTDATE"] - jan1).dt.days // 7) + 0
-#     return(df)
 
 
 @st.cache_data()
@@ -151,8 +109,6 @@ def filter_a_country(df, c):
 def filter_a_data_source(df, c):
     df = df[df["ORIGIN_SOURCE"] == c]
     return(df)
-
-
 
 
 @st.cache_data()
@@ -221,15 +177,6 @@ def select_top_n_highest_slope(df, n, sorting_var):
     df = df.dropna(subset=[sorting_var])
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
-
-
-# @st.cache_data
-# def select_top_n_highest_val_by_origin(df, n, var):
-#     df = (df.dropna(subset=[var])
-#       .sort_values(var, ascending=False)
-#       .groupby("ORIGIN_SOURCE", group_keys=False)
-#       .head(n).reset_index(drop=True))
-#     return df
 
 
 @st.cache_data
