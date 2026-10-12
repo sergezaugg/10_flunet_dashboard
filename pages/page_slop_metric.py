@@ -9,25 +9,30 @@ import streamlit as st
 from src.utils import filter_a_data_source
 from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
-
-
+import pandas as pd
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.
-    Only top :primary[{int(ss.top_n)}] per data source are shown here.""")
+    all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
     st.divider()
-    st.markdown(f""":primary[Methods:] Traces are first smoothed with moving regression of degree :primary[{ss.ma_degree}]
-    with bin size of :primary[{ss.ma_bin_size}] weeks.
-    Then, the average change per week (slope) is estimated from the latest :primary[{int(ss.nw_slo)}] weeks via linear regression
+    st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.
+    Only :primary[top {int(ss.top_n)}] per data source are shown here.""")
+    st.markdown(f""":primary[Methods:]
+    Average change per week (slope) is estimated from latest {int(ss.nw_slo)} weeks via linear regression
     and normalized to percent change via historical baseline threshold (green line).
+    See **Methods** page for details.
     """)
 
 
-# unpack smoothed traces dfs
+
+# apply user's choice 
+df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+
+# make traces list
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 
 # for metrics boxes (unpack list and take top 10)
-df_metri = [filter_a_data_source(ss.df_metri_merged, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
+df_metri = [filter_a_data_source(df_metri_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'PERC_CHANGE') for a in df_metri]
 df_metri = [a.query("PERC_CHANGE > 0") for a in df_metri] # keep only positeve 'SLOPE' or "PERC_CHANGE"
 
