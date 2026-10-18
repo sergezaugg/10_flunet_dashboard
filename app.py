@@ -28,7 +28,7 @@ if "df_data" not in ss:
     # initialize session state (constant values)
     ss.max_countries_in_plots = 20
     ss.nw_global = 6 # weeks from ref to be used for stats 
-    ss.top_n = 5 # how much to show in 'top' pages
+    ss.top_n = 10 # how much to show in 'top' pages
     ss.nw_for_demo = 52*4
     # (1) advanced pre-processing (slope / percent change)
     ss.nw_ma = 20 # 15
@@ -148,7 +148,7 @@ for key in list(st.session_state.keys()):
 with st.sidebar:
     st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
     st.markdown(f"""
-    Ref. day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
+    Reference day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
     Download: \t{ss.ts_download}  
     """)
     # Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
