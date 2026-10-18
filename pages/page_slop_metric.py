@@ -13,7 +13,7 @@ import pandas as pd
 
 with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
-    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_slop_recency")
     st.divider()
     st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.
     Only :primary[top {int(ss.top_n)}] per data source are shown here.""")

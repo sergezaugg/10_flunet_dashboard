@@ -14,7 +14,7 @@ from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 
 with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
-    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
     st.divider()
     st.markdown(f""":primary[Summary:] Identify countries with unusually high flu activity.
     Only :primary[top {int(ss.top_n)}] per data source is shown here.
