@@ -19,121 +19,123 @@ st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/serg
 pd.set_option('display.max_rows', 500)
 
 #------------------------------
-# initialize session state (constant values)
-ss.max_countries_in_plots = 20
-ss.nw_global = 6 # weeks from ref to be used for stats 
-ss.top_n = 5 # how much to show in 'top' pages
-ss.nw_for_demo = 52*4
-# (1) advanced pre-processing (slope / percent change)
-ss.nw_ma = 20 # 15
-ss.ma_bin_size = 3 # 4
-ss.ma_degree = 1
-ss.nw_slo = ss.nw_global 
-# (2) advanced pre-processing (burden / above Baseline)
-ss.time_range_basli = 52*4
-ss.quantile_val = 0.65
-ss.tol_thld = 10
-ss.time_range_trace = 24
-ss.time_range_stats = ss.nw_global
+# prepare data once (only run on startup and when dev triggers refresh)
+# run the data prep pipe only and exactly once on session startup MCELP
+# better then old cache-based method i.e. cached_fun.clear()
+# # because many caches function consume time even on cache hit!
+if "df_data" not in ss:
+    #------------------------------
+    # initialize session state (constant values)
+    ss.max_countries_in_plots = 20
+    ss.nw_global = 6 # weeks from ref to be used for stats 
+    ss.top_n = 5 # how much to show in 'top' pages
+    ss.nw_for_demo = 52*4
+    # (1) advanced pre-processing (slope / percent change)
+    ss.nw_ma = 20 # 15
+    ss.ma_bin_size = 3 # 4
+    ss.ma_degree = 1
+    ss.nw_slo = ss.nw_global 
+    # (2) advanced pre-processing (burden / above Baseline)
+    ss.time_range_basli = 52*4
+    ss.quantile_val = 0.65
+    ss.tol_thld = 10
+    ss.time_range_trace = 24
+    ss.time_range_stats = ss.nw_global
 
-df_dat, ss.ts_download = download_flunet_data()
-ss.df_data = preprocess_flunet_data(df=df_dat)
+    #------------------------------
+    # download and pre-process (do once)
+    ss.ts_today = get_ts_today()
+    df_dat, ss.ts_download = download_flunet_data()
+    ss.df_data = preprocess_flunet_data(df = df_dat)
 
+    # initialize data dependent objects in ss
+    ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
 
-#------------------------------
-# download and pre-process (do once)
-ss.ts_today = get_ts_today()
-df_dat, ss.ts_download = download_flunet_data()
-ss.df_data = preprocess_flunet_data(df = df_dat)
+    # remove all data that is too old already here 
+    mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
+    mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
+    ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
 
-# initialize data dependent objects in ss
-ss.df_latest_data = get_latest_date_per_group(ss.df_data, ts_today = ss.ts_today)
+    #------------------------------
+    # advanced pre-processing
 
-# remove all data that is too old already here 
-mask = ss.df_latest_data[['COUNTRY', 'ORIGIN_SOURCE', 'days_since']]
-mask = mask[mask['days_since'] <= (ss.nw_global)*7] # 
-ss.df_data = ss.df_data.merge(mask, on=["COUNTRY", "ORIGIN_SOURCE"], how="right")
+    # (1) advanced pre-processing (Slope)
+    obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
+    ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
-#------------------------------
-# advanced pre-processing
+    # (2) advanced pre-processing (Flu Burden above Baseline)
+    obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
+    ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
-# (1) advanced pre-processing (Slope)
-obj = compute_recent_slope(ss.df_data, ss.nw_ma, ss.ma_bin_size, ss.ma_degree, ss.nw_slo, ss.ts_today)
-ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
+    # (3) combine bl and slope summaries
+    ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
-# (2) advanced pre-processing (Flu Burden above Baseline)
-obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
-ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
-
-# (3) combine bl and slope summaries
-ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
-
-# temp for p14
-ss.dfbl_temp = dfbl_temp
-# dfbl_temp['INF_ALL_BASELINE'].min()
+    # temp for p14
+    ss.dfbl_temp = dfbl_temp
+    # dfbl_temp['INF_ALL_BASELINE'].min()
 
 
 
 
-#------------------------------
-if "ts_latest_data" not in ss:
-    ss.ts_latest_data   = ss.df_data['ISO_WEEKSTARTDATE'].max()
-if "date_range_dt" not in ss:
-    ss.date_range_dt    = [ss.df_data["ISO_WEEKSTARTDATE"].min().date(), ss.df_data["ISO_WEEKSTARTDATE"].max().date()]
-if "top3_weeks" not in ss:
-    ss.top3_weeks       =  ss.df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
-if "delays_days" not in ss:
-    ss.delays_days      = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
-if "WHOREGION_levels" not in ss:
-    ss.WHOREGION_levels = ss.df_data["WHOREGION"].unique()
-if "FLUSEASON_levels" not in ss:
-    ss.FLUSEASON_levels = ss.df_data["FLUSEASON"].unique()
-if "ITZ_levels" not in ss:
-    ss.ITZ_levels       = ss.df_data["ITZ"].unique().tolist()
-if "ALL_COUNTRIES" not in ss:
-    ss.ALL_COUNTRIES    = ss.df_data['COUNTRY'].unique()
+    #------------------------------
+    if "ts_latest_data" not in ss:
+        ss.ts_latest_data   = ss.df_data['ISO_WEEKSTARTDATE'].max()
+    if "date_range_dt" not in ss:
+        ss.date_range_dt    = [ss.df_data["ISO_WEEKSTARTDATE"].min().date(), ss.df_data["ISO_WEEKSTARTDATE"].max().date()]
+    if "top3_weeks" not in ss:
+        ss.top3_weeks       =  ss.df_data["ISO_WEEKSTARTDATE"].drop_duplicates().sort_values(ascending=False).head(3)
+    if "delays_days" not in ss:
+        ss.delays_days      = ((ss.ts_today - ss.top3_weeks).dt.days).tolist()
+    if "WHOREGION_levels" not in ss:
+        ss.WHOREGION_levels = ss.df_data["WHOREGION"].unique()
+    if "FLUSEASON_levels" not in ss:
+        ss.FLUSEASON_levels = ss.df_data["FLUSEASON"].unique()
+    if "ITZ_levels" not in ss:
+        ss.ITZ_levels       = ss.df_data["ITZ"].unique().tolist()
+    if "ALL_COUNTRIES" not in ss:
+        ss.ALL_COUNTRIES    = ss.df_data['COUNTRY'].unique()
 
-#------------------------------
-# set widget defaults
+    #------------------------------
+    # set widget defaults
 
-# defaults for WHOREGION 
-ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
-ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
-ss.setdefault("k_who_04", 0.80)
-ss.setdefault("k_who_05", 30)
-ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
-# defaults for recency 
-ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
-ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
-# defaults for WHOREGION - positivity 
-ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
-ss.setdefault("k_who_pos_02", ss.FLUSEASON_levels.tolist())
-ss.setdefault("k_who_pos_04", 0.80)
-ss.setdefault("k_who_pos_05", 30)
-# defaults for ITZ 
-ss.setdefault("k_itz_04", 0.30)
-ss.setdefault("k_itz_05", 10)
-# defaults for wave onset 
-ss.setdefault("k_wave_01", 10)
-ss.setdefault("k_wave_02", ss.date_range_dt)
-ss.setdefault("k_wave_03", True)
-ss.setdefault("k_wave_04", True)
-ss.setdefault("k_wave_05", 125)
-# defaults for A vs B 
-ss.setdefault("k_ab_01", 10)
-ss.setdefault("k_ab_02", "SENTINEL")
-ss.setdefault("k_ab_03", 50)
-# defaults for moving average explorer 
-ss.setdefault("k_tre_02", ss.ma_bin_size)
-ss.setdefault("k_tre_03", ss.ma_degree)
-ss.setdefault("k_tre_04", 1)
-ss.setdefault("k_tre_05", ss.quantile_val)
-# defaults slop geo
-ss.setdefault("k_p10_01", "MAXCOMBINE")
-ss.setdefault("k_p10_03", "Bluered")
-# defaults burden geo
-ss.setdefault("k_p13_01", "MAXCOMBINE")
-ss.setdefault("k_p13_03", "Viridis")
+    # defaults for WHOREGION 
+    ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
+    ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
+    ss.setdefault("k_who_04", 0.80)
+    ss.setdefault("k_who_05", 30)
+    ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
+    # defaults for recency 
+    ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
+    ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
+    # defaults for WHOREGION - positivity 
+    ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
+    ss.setdefault("k_who_pos_02", ss.FLUSEASON_levels.tolist())
+    ss.setdefault("k_who_pos_04", 0.80)
+    ss.setdefault("k_who_pos_05", 30)
+    # defaults for ITZ 
+    ss.setdefault("k_itz_04", 0.30)
+    ss.setdefault("k_itz_05", 10)
+    # defaults for wave onset 
+    ss.setdefault("k_wave_01", 10)
+    ss.setdefault("k_wave_02", ss.date_range_dt)
+    ss.setdefault("k_wave_03", True)
+    ss.setdefault("k_wave_04", True)
+    ss.setdefault("k_wave_05", 125)
+    # defaults for A vs B 
+    ss.setdefault("k_ab_01", 10)
+    ss.setdefault("k_ab_02", "SENTINEL")
+    ss.setdefault("k_ab_03", 50)
+    # defaults for moving average explorer 
+    ss.setdefault("k_tre_02", ss.ma_bin_size)
+    ss.setdefault("k_tre_03", ss.ma_degree)
+    ss.setdefault("k_tre_04", 1)
+    ss.setdefault("k_tre_05", ss.quantile_val)
+    # defaults slop geo
+    ss.setdefault("k_p10_01", "MAXCOMBINE")
+    ss.setdefault("k_p10_03", "Bluered")
+    # defaults burden geo
+    ss.setdefault("k_p13_01", "MAXCOMBINE")
+    ss.setdefault("k_p13_03", "Viridis")
 
 # Protects every key from being deleted (for multi-page consistency across clicks)
 for key in list(st.session_state.keys()):
@@ -145,14 +147,11 @@ for key in list(st.session_state.keys()):
 # build sidebar
 with st.sidebar:
     st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
-
     st.markdown(f"""
     Ref. day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
     Download: \t{ss.ts_download}  
     """)
-
     # Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
-
     st.divider()
     
 # make navigation
