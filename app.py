@@ -26,7 +26,7 @@ ss.top_n = 5 # how much to show in 'top' pages
 ss.nw_for_demo = 52*4
 # (1) advanced pre-processing (slope / percent change)
 ss.nw_ma = 20 # 15
-ss.ma_bin_size = 4
+ss.ma_bin_size = 3 # 4
 ss.ma_degree = 1
 ss.nw_slo = ss.nw_global 
 # (2) advanced pre-processing (burden / above Baseline)

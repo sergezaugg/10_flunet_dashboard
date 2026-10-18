@@ -180,10 +180,6 @@ def select_top_n_highest_slope(df, n, sorting_var):
     return df
 
 
-@st.cache_data
-def prepre_for_pages_10_13(df, xvar):
-    df = df.dropna(subset=[xvar])
-    df["ISO_WEEKSTARTDATE_str"] = ("" + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
-    df = df.sort_values(xvar, ascending = False)
-    return(df)
+
+
 

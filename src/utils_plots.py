@@ -236,7 +236,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height, colormap, range_color):
     )
 
     fig.update_coloraxes(showscale=False)
-
+    # fig.update_yaxes(range=[-0.1, None])
     fig.update_traces(width=0.7,) #  marker_color=cc["traces"]["basic"])
     fig.update_traces(hovertemplate=(
         "%{customdata[0]}<br>"

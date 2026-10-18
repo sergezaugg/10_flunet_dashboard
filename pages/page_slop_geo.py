@@ -7,7 +7,7 @@ from streamlit import session_state as ss
 import plotly.express as px
 import pandas as pd
 import streamlit as st
-from src.utils import prepre_for_pages_10_13
+from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
 with st.sidebar:
@@ -24,13 +24,13 @@ with st.sidebar:
 # prepare 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
 
-# take max across 3 sources (resonable for this metric)
-df_max = df_metri_ma.loc[df_metri_ma.dropna(subset=["PERC_CHANGE"]).groupby("COUNTRY")["PERC_CHANGE"].idxmax()]
-
-
 df_dat00 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_dat02 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NOTDEFINED"]
+df_max = df_metri_ma.loc[df_metri_ma.dropna(subset=["PERC_CHANGE"]).groupby("COUNTRY")["PERC_CHANGE"].idxmax()]
+
+# filter only data with a actual stats value 
+df_dat00, df_dat01, df_dat02, df_max, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, "PERC_CHANGE")
 
 df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "PERC_CHANGE")
 df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "PERC_CHANGE")
@@ -47,9 +47,13 @@ if sel_source == "MAXCOMBINE":
     df_dat_map = df_max
 
 
+
+
+
+
 fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
 
-c0, c1 = st.columns([30, 1])
+c0, c1 = st.columns([30, 8])
 # map 
 with c0:
     with st.container(border=True, height = 400):
@@ -62,7 +66,13 @@ with c0:
                 colormap = sel_colormap, range_color = [-55,55])
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-
+with c1:
+    with st.container(border=True, height = 750):
+        st.text("Data prep summary" )
+        st.dataframe(dat_info, hide_index=True)
+        st.caption("Fresh: At least 1 value in recent range" )
+        st.caption("Analysable: Enough recent data for slope")
+    
 
 
 
