@@ -1,10 +1,9 @@
 
-# FluNet Dashboard
-
+# Global Influenza Explorer 
 
 ### Overview
-Interactive dashboard for exploring global influenza surveillance data from the WHO FluNet database.
-The dashboard provides a summarizing view of recent influenza activity across countries and regions, with tools for exploring historical trends and identifying countries Flu activity.
+Interactive web-app for exploring global influenza surveillance data from the WHO FluNet database.
+It provides a summarizing view of recent influenza activity across countries and regions, with tools for exploring historical trends and identifying per-country Flu activity.
 
 ### Features
 - Global influenza surveillance overview
@@ -30,7 +29,7 @@ pip install --upgrade -r requirements.txt
 ```
 
 ### Usage
-Start the dashboard locally with:
+Start the web-app locally with:
 ```bash
 streamlit run app.py
 ```
@@ -41,7 +40,7 @@ streamlit run app.py
 10_flunet_dashboard/
 ├── .streamlit/          # Streamlit configuration and theme
 ├── historical_data/     # Historical data files
-├── pages/               # Dashboard pages 
+├── pages/               # Pages for the frontend 
 ├── pics/                # Images and logos
 ├── src/                 # Data processing and reusable utilities
 ├── app.py               # Main app's entry point
