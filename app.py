@@ -144,7 +144,7 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f"""# :primary[**FluNet Explorer**] """)
+    st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
 
     st.markdown(f"""
     Ref. day: \t{ss.ts_today.strftime("%Y-%m-%d")}  

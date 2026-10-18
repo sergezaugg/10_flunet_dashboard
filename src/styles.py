@@ -27,11 +27,11 @@ def apply_global_styles():
     # change color of navigation bar background and tabs          
     st.markdown("""
         <style>
-        /* Header background */
-        .stAppHeader {background-color: #0E1117;}
+        /* Header background xxxxxxxxxxxx */
+        .stAppHeader {background-color: #111111;} 
 
         /* Default tab background */
-        .stAppHeader a {background-color: #2f2f2f !important;}
+        .stAppHeader a {background-color: #4f4f4f !important;}
 
         /* Hover state */
         .stAppHeader a:hover {background-color: #3b4d63 !important;}
