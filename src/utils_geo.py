@@ -9,23 +9,16 @@ import plotly.express as px
 import streamlit as st
 from datetime import datetime
 
-
-
 @st.cache_data
 def prepre_for_pages_10_13(df, xvar):
-    # df = df.dropna(subset=[xvar])
     df["ISO_WEEKSTARTDATE_str"] = ("" + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
     df = df.sort_values(xvar, ascending = False)
     return(df)
 
-@st.cache_data
+# @st.cache_data
 def prepre_for_pages_b(df, xvar):
     df = df.dropna(subset=[xvar])
-    # df["ISO_WEEKSTARTDATE_str"] = ("" + df["ISO_WEEKSTARTDATE"].dt.strftime("%Y-%m-%d"))
-    # df = df.sort_values(xvar, ascending = False)
     return(df)
-
-
 
 @st.cache_data
 def rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, xvar):

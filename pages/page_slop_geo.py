@@ -20,9 +20,12 @@ with st.sidebar:
     st.divider()
     st.markdown(f""":primary[Summary:] Visualize the geographical distribution of changes in flu activity.""")
 
-
 # prepare 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+
+# quick fix - supress stats if N was too small
+df_metri_ma.loc[df_metri_ma["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
+
 
 df_dat00 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NONSENTINEL"]
@@ -51,24 +54,23 @@ if sel_source == "MAXCOMBINE":
 
 
 
-fig = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
-
+fig_geo = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
+if df_dat_map.shape[0] > 0:
+    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300, 
+        colormap = sel_colormap, range_color = [-55,55])
+            
 c0, c1 = st.columns([30, 8])
-# map 
 with c0:
     with st.container(border=True, height = 400):
-        st.plotly_chart(fig, use_container_width=True)
-
+        st.plotly_chart(fig_geo, use_container_width=True)
 with c0:
     with st.container(border=True, height = 350):
         if df_dat_map.shape[0] > 0:
-            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300, 
-                colormap = sel_colormap, range_color = [-55,55])
-            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-
+            st.plotly_chart(fig_bar)
 with c1:
-    with st.container(border=True, height = 750):
-        st.text("Data prep summary" )
+    with st.container(border=True, height = 750 + 15):
+        # st.text("Data prep summary" )
+        st.markdown(f""":primary[Data Preparation Summary]""")
         st.dataframe(dat_info, hide_index=True)
         st.caption("Fresh: At least 1 value in recent range" )
         st.caption("Analysable: Enough recent data for slope")

@@ -25,6 +25,13 @@ with st.sidebar:
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+
+# quick fix - supress stats if N was too small
+df_metri_ma.loc[df_metri_ma["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
+
+
+
+
 # make traces list
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 # for metrics boxes (unpack list and take top 10)

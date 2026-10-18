@@ -20,9 +20,11 @@ with st.sidebar:
     st.divider()
     st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu activity levels.""")
 
-
 # prepare 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+
+# quick fix - supress stats if N was too small
+df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
 
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NONSENTINEL"]
@@ -46,29 +48,29 @@ if sel_source == "NOTDEFINED":
 if sel_source == "MAXCOMBINE":
     df_dat_map = df_max
 
+
 # # quick fix
 # df_dat00_bar = df_dat_map[df_dat_map["N_ABOVE_BASELINE"] > 0]
 
 #----------------------------------------------
 
-fig = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", sel_colormap, height = 370, range_color = [0,5], legend_title = "Nb weeks above BL") 
+fig_geo = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", sel_colormap, height = 370, range_color = [0,5], legend_title = "Nb weeks above BL") 
+if df_dat_map.shape[0] > 0:
+    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300, 
+    colormap = sel_colormap, range_color = [0,5],)
 
 c0, c1 = st.columns([30, 8])
-# map 
 with c0:
     with st.container(border=True, height = 400):
-        st.plotly_chart(fig, use_container_width=True)
-# barplots
+        st.plotly_chart(fig_geo, use_container_width=True)
 with c0:
     with st.container(border=True, height = 350):
         if df_dat_map.shape[0] > 0:
-            figbar = make_bar_plot_pages_10_13(df_dat_map, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300, 
-                colormap = sel_colormap, range_color = [0,5],)
-            st.plotly_chart(figbar, use_container_width=True, config={"displayModeBar": False})
-
+            st.plotly_chart(fig_bar, use_container_width=True, config={"displayModeBar": False})
 with c1:
-    with st.container(border=True, height = 750):
-        st.text("Data prep summary" )
+    with st.container(border=True, height = 750 + 15):
+        # st.text("Data prep summary" )
+        st.markdown(f""":primary[Data Preparation Summary]""")
         st.dataframe(dat_info, hide_index=True)
         st.caption("Fresh: At least 1 value in recent range" )
         st.caption("Analysable: Enough recent data for stats")
