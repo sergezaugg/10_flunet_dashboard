@@ -144,7 +144,8 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
 def make_metric_items_baseline(row, height_row, time_range_stats):
     with st.container(border= True, height = height_row):
         st.metric(label=row['COUNTRY'], 
-            value=f"{int(row['N_ABOVE_BASELINE'])} / {int(time_range_stats)} weeks",
+            # value=f"{int(row['N_ABOVE_BASELINE'])} / {int(time_range_stats)} weeks",
+            value=f"{int(row['N_ABOVE_BASELINE'])} / {row['N_VALID']} weeks",   
             border  = False, 
             # delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
             delta_description = f"Elevated",
