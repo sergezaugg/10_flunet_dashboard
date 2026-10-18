@@ -70,9 +70,7 @@ if "df_data" not in ss:
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
-    # temp for p14
-    ss.dfbl_temp = dfbl_temp
-    # dfbl_temp['INF_ALL_BASELINE'].min()
+    
 
 
 
@@ -167,8 +165,11 @@ p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
+p12 = st.Page("pages/page_refresh.py", title="Dev")
+p44 = st.Page("pages/xx_page_14.py", title="Assess BL thld")
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12], position="top")
+
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12, p44], position="top")
 pg.run()
 
 

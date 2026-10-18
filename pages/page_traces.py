@@ -28,6 +28,9 @@ with st.sidebar:
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
+
+
+
 # labels used in widgets and plots 
 outcome_labels = {
         "INF_ALL":    "Flu detections [count]",
