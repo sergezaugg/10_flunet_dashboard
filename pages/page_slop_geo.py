@@ -58,7 +58,8 @@ with c0:
 with c0:
     with st.container(border=True, height = 350):
         if df_dat_map.shape[0] > 0:
-            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300)
+            fig = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300, 
+                colormap = sel_colormap, range_color = [-55,55])
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

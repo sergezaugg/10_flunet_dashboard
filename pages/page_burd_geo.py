@@ -64,7 +64,8 @@ with c0:
 with c0:
     with st.container(border=True, height = 350):
         if df_dat00_bar.shape[0] > 0:
-            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300)
+            figbar = make_bar_plot_pages_10_13(df_dat00_bar, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300, 
+                colormap = sel_colormap, range_color = [0,5],)
             st.plotly_chart(figbar, use_container_width=True, config={"displayModeBar": False})
 
 
