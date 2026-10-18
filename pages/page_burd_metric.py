@@ -25,20 +25,17 @@ with st.sidebar:
     See **Methods** page for details.
     """)
 
-
 # apply user's choice 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
 
 # quick fix - supress stats if N was too small
-df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
+df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "REL_BURDEN"] = pd.NA
 
 # make traces list
 df_trace = [filter_a_data_source(ss.df_trace_bl, a)  for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 # select top N 
 df_metri = [filter_a_data_source(df_metri_bl, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
-df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'N_ABOVE_BASELINE') for a in df_metri]
-df_metri = [a.query("N_ABOVE_BASELINE > 0") for a in df_metri] # keep only positeve 'N_ABOVE_BASELINE' 
-
+df_metri = [select_top_n_highest_slope(a, n=ss.top_n, sorting_var = 'REL_BURDEN') for a in df_metri]
 
 # plot metrics and mini traces 
 for col, label in zip(st.columns(3), ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]):

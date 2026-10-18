@@ -147,14 +147,18 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, time
         .loc[df00.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].transform("count").gt(0)]  
         .assign(ABOVE_BASELINE=lambda x: x["INF_ALL"] >= x["INF_ALL_BASELINE"]) # create boolean for 'above bl'
         .groupby(["COUNTRY", "ORIGIN_SOURCE"], as_index=False) # extract summaries by group
-        .agg(N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
+        .agg(
+            N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
             N_VALID=("INF_ALL", "count"),  # NEW - get number of non-NA INF_ALL rows
             INF_ALL_BASELINE=("INF_ALL_BASELINE", "first"),
             ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),
             CNTRY=("CNTRY", "first"),
+            MEAN_INF=("INF_ALL", "mean") # 
             )
         .sort_values("N_ABOVE_BASELINE", ascending=False) # sort   
     )
+    # get simple mean base metric of burden 
+    df_metri["REL_BURDEN"] = df_metri["MEAN_INF"] / df_metri["INF_ALL_BASELINE"]
 
     return(df_trace, trace_x_range, df_metri, stats_x_range)
 

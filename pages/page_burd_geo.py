@@ -24,20 +24,20 @@ with st.sidebar:
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
 
 # quick fix - supress stats if N was too small
-df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
+df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "REL_BURDEN"] = pd.NA
 
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_dat02 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NOTDEFINED"]
-df_max = df_metri_bl.loc[df_metri_bl.dropna(subset=["N_ABOVE_BASELINE"]).groupby("COUNTRY")["N_ABOVE_BASELINE"].idxmax()]
+df_max = df_metri_bl.loc[df_metri_bl.dropna(subset=["REL_BURDEN"]).groupby("COUNTRY")["REL_BURDEN"].idxmax()]
 
 # filter only data with a actual stats value 
-df_dat00, df_dat01, df_dat02, df_max, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, "N_ABOVE_BASELINE")
+df_dat00, df_dat01, df_dat02, df_max, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, "REL_BURDEN")
 
-df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "N_ABOVE_BASELINE")
-df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "N_ABOVE_BASELINE")
-df_dat02 = prepre_for_pages_10_13(df_dat02, xvar = "N_ABOVE_BASELINE")
-df_max   = prepre_for_pages_10_13(df_max,   xvar = "N_ABOVE_BASELINE")
+df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "REL_BURDEN")
+df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "REL_BURDEN")
+df_dat02 = prepre_for_pages_10_13(df_dat02, xvar = "REL_BURDEN")
+df_max   = prepre_for_pages_10_13(df_max,   xvar = "REL_BURDEN")
 
 if sel_source == "SENTINEL":
     df_dat_map = df_dat00
@@ -48,15 +48,9 @@ if sel_source == "NOTDEFINED":
 if sel_source == "MAXCOMBINE":
     df_dat_map = df_max
 
-
-# # quick fix
-# df_dat00_bar = df_dat_map[df_dat_map["N_ABOVE_BASELINE"] > 0]
-
-#----------------------------------------------
-
-fig_geo = make_geo_map(df_dat_map, "N_ABOVE_BASELINE", sel_colormap, height = 370, range_color = [0,5], legend_title = "Nb weeks above BL") 
+fig_geo = make_geo_map(df_dat_map, "REL_BURDEN", sel_colormap, height = 370, range_color = [0.0, 2.0], legend_title = "Nb weeks above BL") 
 if df_dat_map.shape[0] > 0:
-    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "N_ABOVE_BASELINE", xlabel = "Nb weeks above BL", height = 300, 
+    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "REL_BURDEN", xlabel = "Nb weeks above BL", height = 300, 
     colormap = sel_colormap, range_color = [0,5],)
 
 c0, c1 = st.columns([30, 8])
