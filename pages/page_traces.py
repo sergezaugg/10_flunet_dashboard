@@ -11,7 +11,6 @@ from src.utils_plots import make_facet_line_plot
 
 # filter by region
 with st.sidebar:
-    # fse_regions = st.multiselect("Pre-select Flu Region", options = ss.FLUSEASON_levels, key="k_who_02")
     who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
 
@@ -35,7 +34,8 @@ outcome_labels = {
         "POSITIVITY": "Flu positivity [%]"}
 
 with st.sidebar:
-    outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0, format_func=lambda x: outcome_labels[x],)
+    outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0, 
+                           format_func=lambda x: outcome_labels[x], key = "k_who_07")
     st.divider()
     st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
 

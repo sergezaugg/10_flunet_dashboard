@@ -11,14 +11,14 @@ with c1:
 
     with st.container(border=True):
         st.markdown("""
-        #### About the dashboard:  
+        #### About this web-app:  
         FluNet Explorer provides an interactive overview of global influenza virus detections using data from the WHO FluNet surveillance system.
         Explore trends across countries and WHO regions and track changes over time.
         Interactive visualizations highlight recent activity and deviations from historical baselines.
         Explore geographic patterns to identify countries with increasing or unusually high detection levels.
         Data are retrieved from the WHO API and updated as new surveillance reports become available.
         Reported detections reflect surveillance and testing practices, which vary across countries and over time.
-        This dashboard is an exploratory data analysis tool, not a substitute for official public health assessments.
+        This app is an exploratory data analysis tool, not a substitute for official public health assessments.
         """)
 
     with st.container(border=True):

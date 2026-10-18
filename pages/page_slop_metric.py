@@ -13,7 +13,7 @@ import pandas as pd
 
 with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
-    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"))
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_slop_recency")
     st.divider()
     st.markdown(f""":primary[Summary:] Identify countries with the fastest-rising flu activity.
     Only :primary[top {int(ss.top_n)}] per data source are shown here.""")
@@ -25,6 +25,13 @@ with st.sidebar:
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
+
+# quick fix - supress stats if N was too small
+df_metri_ma.loc[df_metri_ma["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
+
+
+
+
 # make traces list
 df_trace = [filter_a_data_source(ss.df_trace_ma, a) for a in ["SENTINEL", "NONSENTINEL", "NOTDEFINED"]]
 # for metrics boxes (unpack list and take top 10)

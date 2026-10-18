@@ -26,7 +26,7 @@ ss.top_n = 5 # how much to show in 'top' pages
 ss.nw_for_demo = 52*4
 # (1) advanced pre-processing (slope / percent change)
 ss.nw_ma = 20 # 15
-ss.ma_bin_size = 4
+ss.ma_bin_size = 3 # 4
 ss.ma_degree = 1
 ss.nw_slo = ss.nw_global 
 # (2) advanced pre-processing (burden / above Baseline)
@@ -144,7 +144,7 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f"""# :primary[**FluNet Explorer**] """)
+    st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
 
     st.markdown(f"""
     Ref. day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
@@ -167,7 +167,7 @@ p08 = st.Page("pages/page_method.py", title="Methods")
 p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
-p12 = st.Page("pages/page_refresh.py", title="Setting")
+p12 = st.Page("pages/page_refresh.py", title="Dev")
 
 pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12], position="top")
 pg.run()

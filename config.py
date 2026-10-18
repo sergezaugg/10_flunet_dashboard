@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : config file for global-dashboard parameters 
+# Description : config file for global app's parameters 
 #--------------------
 
 from streamlit import session_state as ss

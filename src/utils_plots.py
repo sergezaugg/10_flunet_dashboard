@@ -144,7 +144,8 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
 def make_metric_items_baseline(row, height_row, time_range_stats):
     with st.container(border= True, height = height_row):
         st.metric(label=row['COUNTRY'], 
-            value=f"{int(row['N_ABOVE_BASELINE'])} / {int(time_range_stats)} weeks",
+            # value=f"{int(row['N_ABOVE_BASELINE'])} / {int(time_range_stats)} weeks",
+            value=f"{int(row['N_ABOVE_BASELINE'])} / {row['N_VALID']} weeks",   
             border  = False, 
             # delta_description = f"{int(row['N_ABOVE_BASELINE'])}/{time_range_stats} above BL",
             delta_description = f"Elevated",
@@ -217,7 +218,7 @@ def display_df_page_08(df, nw_cutoff, height):
 
 
 @st.cache_data
-def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
+def make_bar_plot_pages_10_13(df, xvar, xlabel, height, colormap, range_color):
 
     fig = px.bar(
         df,
@@ -230,9 +231,14 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
         width=130 + len(df)*30,
         category_orders={"COUNTRY": df["COUNTRY"].tolist()},
         labels={xvar: xlabel},
+        color=xvar,
+        range_color=range_color, 
+        color_continuous_scale=colormap,
     )
 
-    fig.update_traces(width=0.7, marker_color=cc["traces"]["basic"])
+    fig.update_coloraxes(showscale=False)
+    # fig.update_yaxes(range=[-0.1, None])
+    fig.update_traces(width=0.7,) #  marker_color=cc["traces"]["basic"])
     fig.update_traces(hovertemplate=(
         "%{customdata[0]}<br>"
         f"{xlabel}: %{{x}}"  ))
@@ -252,7 +258,8 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height):
 
 
 @st.cache_data
-def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide"): # mollweide , orthographic , natural earth
+def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide"): 
+    # mollweide , orthographic , natural earth
     fig = px.choropleth(
         df,
         locations="COUNTRY",

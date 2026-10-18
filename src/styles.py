@@ -27,11 +27,11 @@ def apply_global_styles():
     # change color of navigation bar background and tabs          
     st.markdown("""
         <style>
-        /* Header background */
-        .stAppHeader {background-color: #0E1117;}
+        /* Header background xxxxxxxxxxxx */
+        .stAppHeader {background-color: #111111;} 
 
         /* Default tab background */
-        .stAppHeader a {background-color: #2f2f2f !important;}
+        .stAppHeader a {background-color: #4f4f4f !important;}
 
         /* Hover state */
         .stAppHeader a:hover {background-color: #3b4d63 !important;}
@@ -75,7 +75,7 @@ def apply_global_styles():
             pointer-events: none;
         }
     </style>
-    <div class="app-label">FluNet Explorer v0.9.2-β</div>
+    <div class="app-label">FluNet Explorer v0.9.3-β</div>
     """, unsafe_allow_html=True)
 
 
