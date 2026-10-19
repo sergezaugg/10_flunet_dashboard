@@ -170,10 +170,27 @@ p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
-p12 = st.Page("pages/page_refresh.py", title="Dev")
 p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
 
-pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
+# pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
+
+pages = {
+    "Data Age": [p01],
+    "Flu Trend": [p02, p02b],
+    "Flu Burden": [p03,],
+    "Geo-Maps": [p04, p05],
+    "Traces": [p06],
+    "Deep dive": [p07, p08, p09],
+    "Methods": [p08b],
+    "Info": [p10],
+    "Disclaimer": [p11],
+    "Dev": [p12, p13],
+}
+
+
+pg = st.navigation(pages, position="top")
+
+
 pg.run()
 
 
