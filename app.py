@@ -39,6 +39,7 @@ if "df_data" not in ss:
     ss.time_range_basli = 52*4
     ss.quantile_val = 0.65
     ss.tol_thld = 10
+    ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
     ss.time_range_stats = ss.nw_global
 
@@ -64,16 +65,13 @@ if "df_data" not in ss:
     ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
     # (2) advanced pre-processing (Flu Burden above Baseline)
-    obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
+    obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
-    # temp for p14
-    ss.dfbl_temp = dfbl_temp
-    # dfbl_temp['INF_ALL_BASELINE'].min()
-
+    
 
 
 
@@ -162,13 +160,17 @@ p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
 p06 = st.Page("pages/page_traces.py", title="Traces")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
-p08 = st.Page("pages/page_method.py", title="Methods")
+p08 = st.Page("pages/page_play.py", title="Play")
+p08b = st.Page("pages/page_method.py", title="Methods")
 p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
+p12 = st.Page("pages/page_refresh.py", title="Dev")
+p44 = st.Page("pages/xx_page_14.py", title="Assess BL thld")
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12], position="top")
+
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p44], position="top")
 pg.run()
 
 

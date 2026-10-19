@@ -24,6 +24,7 @@ with st.sidebar:
     Nb weeks above threshold derived from latest {int(ss.time_range_stats)} weeks.
     See **Methods** page for details.
     """)
+    st.error("⚠️Preliminary methodology⚠️")
 
 # apply user's choice 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]

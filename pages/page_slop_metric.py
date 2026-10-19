@@ -22,6 +22,7 @@ with st.sidebar:
     and normalized to percent change via historical baseline threshold (green line).
     See **Methods** page for details.
     """)
+    st.error("⚠️Preliminary methodology⚠️")
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]

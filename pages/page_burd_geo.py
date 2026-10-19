@@ -19,6 +19,7 @@ with st.sidebar:
     sel_colormap = st.selectbox("Colormap", options = li_colormaps, key="k_p13_03", placeholder="select ...")
     st.divider()
     st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu activity levels.""")
+    st.error("⚠️Preliminary methodology⚠️")
 
 # prepare 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
