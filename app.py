@@ -46,7 +46,7 @@ if "df_data" not in ss:
     #------------------------------
     # download and pre-process (do once)
     ss.ts_today = get_ts_today()
-    df_dat, ss.ts_download = download_flunet_data()
+    df_dat, ss.ts_download, ss.sha256_download = download_flunet_data()
     ss.df_data = preprocess_flunet_data(df = df_dat)
 
     # initialize data dependent objects in ss
@@ -151,7 +151,7 @@ with st.sidebar:
             <div>Downloaded: <code>{}</code></div>
             <div>Reference date: <code>{}</code></div>
         </div>
-    """.format("Not available", ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
 
 

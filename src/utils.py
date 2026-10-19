@@ -11,6 +11,7 @@ from config import FLUNET_DATA_URL, FLUNET_META_URL
 import requests
 from io import BytesIO
 from datetime import datetime
+import hashlib
 
 @st.cache_data(ttl=12*60*60, show_spinner="Downloading FluNet data...") # refresh every 12 hours 
 def download_flunet_data():
@@ -19,6 +20,8 @@ def download_flunet_data():
     try:
         response = requests.get(FLUNET_DATA_URL, timeout=60)
         response.raise_for_status()
+        # Hash the original downloaded CSV bytes to get a pseudo version 
+        sha256 = hashlib.sha256(response.content).hexdigest()
         # Keep downloaded CSV in memory
         csv_data = BytesIO(response.content)
         # convert to DataFrame
@@ -34,7 +37,7 @@ def download_flunet_data():
         # handle if download successful but content is shit (FLUNET_DATA_URL sometimes does it)
         df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )
         ts = "Historical data (issue with downloaded data)"
-    return(df_dat, ts)
+    return(df_dat, ts, sha256)
 
 
 @st.cache_data(ttl=12*60*60) # refresh every 12 hours 
