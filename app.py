@@ -144,12 +144,17 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
-    st.markdown(f"""
-    Reference day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
-    Download: \t{ss.ts_download}  
-    """)
-    # Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
+    st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
+    st.markdown("""
+        <div style="line-height: 1.3; margin-bottom: 0.9em;;">
+            <div>Data Version: <code>{}</code></div>
+            <div>Downloaded: <code>{}</code></div>
+            <div>Reference date: <code>{}</code></div>
+        </div>
+    """.format("Not available", ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    unsafe_allow_html=True)
+
+
     st.divider()
     
 # make navigation
