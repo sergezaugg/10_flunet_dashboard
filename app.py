@@ -167,10 +167,10 @@ p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
-p44 = st.Page("pages/xx_page_14.py", title="Assess BL thld")
+p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
 
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p44], position="top")
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 pg.run()
 
 
