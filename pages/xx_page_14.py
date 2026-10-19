@@ -34,8 +34,8 @@ with st.sidebar:
 # apply user's data filter to data 
 df02, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
-
-sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
+with st.sidebar:
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
 
 
 df02 = filter_a_data_source(df02, sel_data_source)
@@ -70,7 +70,7 @@ if True:
         color = "TYPE",
         facet_col="COUNTRY",
         facet_col_wrap=2,
-        height=4000,
+        height=150*n_countries[0]-1,
         facet_row_spacing=0.030,
     )
     # fig.update_yaxes(type="log")

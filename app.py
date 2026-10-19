@@ -39,6 +39,7 @@ if "df_data" not in ss:
     ss.time_range_basli = 52*4
     ss.quantile_val = 0.65
     ss.tol_thld = 10
+    ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
     ss.time_range_stats = ss.nw_global
 
@@ -64,14 +65,13 @@ if "df_data" not in ss:
     ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma = obj # unwrap
 
     # (2) advanced pre-processing (Flu Burden above Baseline)
-    obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
+    obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
     
-
 
 
 

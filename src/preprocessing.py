@@ -77,7 +77,7 @@ def get_recency_slope(df):
     return df_slopes_all
 
 @st.cache_data
-def get_baseline_threshold(df, q, tol_thld):
+def get_baseline_threshold(df, q, tol_thld, na_thld):
     """
     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
@@ -86,8 +86,11 @@ def get_baseline_threshold(df, q, tol_thld):
     df = df[["ORIGIN_SOURCE", "COUNTRY", "CNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
 
     # Ensure one row per source × country × week
-    df = (df.groupby(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],as_index=False)["INF_ALL"]
-        .sum(min_count=1))
+    df = (df.groupby(["ORIGIN_SOURCE", "COUNTRY", "ISO_WEEKSTARTDATE"],as_index=False)["INF_ALL"].sum(min_count=1))
+
+    # exclude groups with more than x% NAs
+    prop_na = (df["INF_ALL"].isna().groupby([df["ORIGIN_SOURCE"], df["COUNTRY"]]).transform("mean"))
+    df = df[prop_na <= na_thld].copy()
 
     # Add missing weeks in ISO_WEEKSTARTDATE and replace NA with 0
     df = (
@@ -128,13 +131,13 @@ def compute_recent_slope(df_data, nw_ma, ma_bin_size, ma_degree, nw_slo, ref_dat
     return df_trace_ma, trace_x_range_ma, df_metri_ma, stats_x_range
 
 @st.cache_data
-def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, time_range_trace, time_range_stats, ref_date):
+def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, na_thld, time_range_trace, time_range_stats, ref_date):
     """ """
     df_bl = df_data # .copy()
     # keep last years to compute baseline 
     df_bl, _ = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_basli)
-    # get flu baseline counts (for all countries)
-    bl_thld = get_baseline_threshold(df_bl, quantile_val, tol_thld)
+    # get baseline (for all countries)
+    bl_thld = get_baseline_threshold(df_bl, quantile_val, tol_thld, na_thld)
     # reduce to fewer recent weeks for trace plots
     df_trace, trace_x_range = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_trace)
     # reduce even fewer recent weeks for recent stats (below)
