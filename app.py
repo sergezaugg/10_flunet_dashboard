@@ -37,7 +37,7 @@ if "df_data" not in ss:
     ss.nw_slo = ss.nw_global 
     # (2) advanced pre-processing (burden / above Baseline)
     ss.time_range_basli = 52*4
-    ss.quantile_val = 0.65
+    ss.quantile_val = 0.65 # originally 0.65
     ss.tol_thld = 10
     ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
@@ -153,8 +153,6 @@ with st.sidebar:
         </div>
     """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-
-
     st.divider()
     
 # make navigation
@@ -174,7 +172,6 @@ p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
 p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
-
 
 pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 pg.run()
