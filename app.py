@@ -28,7 +28,7 @@ if "df_data" not in ss:
     # initialize session state (constant values)
     ss.max_countries_in_plots = 20
     ss.nw_global = 6 # weeks from ref to be used for stats 
-    ss.top_n = 10 # how much to show in 'top' pages
+    ss.top_n = 5 # how much to show in 'top' pages
     ss.nw_for_demo = 52*4
     # (1) advanced pre-processing (slope / percent change)
     ss.nw_ma = 20 # 15
@@ -160,6 +160,7 @@ with st.sidebar:
 # make navigation
 p01 = st.Page("pages/page_age.py", title="Data Age")
 p02 = st.Page("pages/page_slop_metric.py", title="Top Trend", default=True)
+p02b = st.Page("pages/page_slop_metric_b.py", title="Trend All")
 p03 = st.Page("pages/page_burd_metric.py", title="Top Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
@@ -175,7 +176,7 @@ p12 = st.Page("pages/page_refresh.py", title="Dev")
 p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
 
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
+pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 pg.run()
 
 
