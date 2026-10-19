@@ -160,7 +160,8 @@ p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
 p06 = st.Page("pages/page_traces.py", title="Traces")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
-p08 = st.Page("pages/page_method.py", title="Methods")
+p08 = st.Page("pages/page_play.py", title="Play")
+p08b = st.Page("pages/page_method.py", title="Methods")
 p09 = st.Page("pages/page_data.py", title="Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
@@ -169,7 +170,7 @@ p12 = st.Page("pages/page_refresh.py", title="Dev")
 p44 = st.Page("pages/xx_page_14.py", title="Assess BL thld")
 
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p09, p10, p11, p12, p44], position="top")
+pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p44], position="top")
 pg.run()
 
 
