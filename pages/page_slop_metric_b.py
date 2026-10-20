@@ -23,8 +23,7 @@ df_metri = filter_a_data_source(df_metri_ma, sel_data_source)
 df_trace = filter_a_data_source(ss.df_trace_ma, sel_data_source) 
 
 # quick fix - supress stats if N was too small
-df_metri_ma.loc[df_metri_ma["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
-
+df_metri.loc[df_metri["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
 
 df_metri = select_top_n_highest_slope(df_metri, n=200000, sorting_var = 'PERC_CHANGE')
 
