@@ -25,9 +25,8 @@ df_metri = filter_a_data_source(df_metri_ma, sel_data_source)
 df_trace = filter_a_data_source(ss.df_trace_ma, sel_data_source) 
 
 # quick fix - supress stats if N was too small
-df_metri.loc[df_metri["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
-
-# keep only if + percent change 
+df_metri.loc[df_metri["N_VALID"] < 3, "PERC_CHANGE"] = pd.NA
+# keep only if + percent change positive
 df_metri =  df_metri[df_metri["PERC_CHANGE"] > 0.0]
 # select top X
 df_metri = select_top_n_highest_slope(df_metri, n=10, sorting_var = 'PERC_CHANGE')
@@ -41,7 +40,7 @@ rowheight = 150
 prerend1 = [make_mini_trace_slope(row, rowheight, df_trace, ss.trace_x_range_ma, ss.stats_x_range_ma) for _, row in df_metri.iterrows()]
 
 # smart way to fill in by rows (using st columns )
-c1, c2, c3, c4, c5,  = st.columns([50, 90, 50 , 90, 250])
+c1, c2, c3, c4, c5,  = st.columns([50, 90, 50, 90, 250])
 col_pairs = [(c1, c2), (c3, c4)]
 for i, row in df_metri.iterrows():
     c_metric, c_plot = col_pairs[i % 2]
@@ -54,7 +53,7 @@ for i, row in df_metri.iterrows():
 #------------------
 # make geo map 
 # mollweide , orthographic , natural earth
-fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "viridis", height = 700, range_color = [-55,55], 
+fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "bluered", height = 700, range_color = [-55,55], 
     legend_title = "Percent change from BL", 
     proj = "orthographic", # None , 
     col_bar_horiz = True) 

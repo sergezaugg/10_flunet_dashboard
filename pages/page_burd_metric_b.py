@@ -25,7 +25,9 @@ df_trace = filter_a_data_source(ss.df_trace_bl, sel_data_source)
 
 # quick fix - supress stats if N was too small
 df_metri.loc[df_metri["N_VALID"] < 3, "REL_BURDEN"] = pd.NA
-
+# keep only if > 1.0
+df_metri =  df_metri[df_metri["REL_BURDEN"] > 1.0]
+# not needed here 
 df_metri = select_top_n_highest_slope(df_metri, n=200000, sorting_var = 'REL_BURDEN') 
 
 with st.sidebar:

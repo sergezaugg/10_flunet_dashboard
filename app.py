@@ -150,7 +150,7 @@ with st.sidebar:
             <div>Data Version: <code>{}</code></div>
             <div>Downloaded: <code>{}</code></div>
             <div>Reference date: <code>{}</code></div>
-            <div>Hist-BL-Thld: <span style="color: #00CC66;">--------</span></div>
+            <div>Hist-BL-Thld: <span style="color: #00CC66;">     ..................</span></div>
         </div>
     """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
@@ -160,11 +160,13 @@ with st.sidebar:
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-# p02 = st.Page("pages/page_slop_metric.py", title="Top 5", default=True)
-p02b = st.Page("pages/page_slop_metric_b.py", title="Show All")
+
+p02b = st.Page("pages/page_slop_metric_b.py", title="Show All > 0")
 p02c = st.Page("pages/page_slop_metric_c.py", title="Top Increasers", default=True)
-p03 = st.Page("pages/page_burd_metric.py", title="Top 5")
-p03b = st.Page("pages/page_burd_metric_b.py", title="Show All")
+
+p03b = st.Page("pages/page_burd_metric_b.py", title="Show All > 1")
+p03c = st.Page("pages/page_burd_metric_c.py", title="Top Burden")
+
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
@@ -182,7 +184,7 @@ p13 = st.Page("pages/page_bl_thld.py", title="Hist-BL-Thld")
 pages = {
     "Data Age": [p01a, p01b],
     "Recent Trend": [p02c, p02b],
-    "Recent Burden": [p03, p03b],
+    "Recent Burden": [p03c, p03b],
     "Geo-Maps": [p04, p05],
     "Explore": [p06, p07, p13],
     "Methods": [p08b, p08],
