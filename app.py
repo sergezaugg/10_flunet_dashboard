@@ -141,8 +141,6 @@ for key in list(st.session_state.keys()):
 
 #------------------------------
 # build app's visible  frontend 
-
-# build sidebar
 with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
     st.markdown("""
@@ -150,7 +148,6 @@ with st.sidebar:
             <div>Data Version: <code>{}</code></div>
             <div>Downloaded: <code>{}</code></div>
             <div>Reference date: <code>{}</code></div>
-            <div>Hist-BL-Thld: <span style="color: #00CC66;">     ..................</span></div>
         </div>
     """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
@@ -160,23 +157,20 @@ with st.sidebar:
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-
 p02b = st.Page("pages/page_slop_metric_b.py", title="Show All > 0")
 p02c = st.Page("pages/page_slop_metric_c.py", title="Top Increasers", default=True)
-
 p03b = st.Page("pages/page_burd_metric_b.py", title="Show All > 1")
 p03c = st.Page("pages/page_burd_metric_c.py", title="Top Burden")
-
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08 = st.Page("pages/page_play.py", title="Interactive illustration")
 p08b = st.Page("pages/page_method.py", title="Methods")
-p09 = st.Page("pages/page_data.py", title="Data view")
+p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
-p12 = st.Page("pages/page_refresh.py", title="Dev")
+p12 = st.Page("pages/page_refresh.py", title="Maintenance")
 p13 = st.Page("pages/page_bl_thld.py", title="Hist-BL-Thld")
 
 # pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
@@ -193,9 +187,7 @@ pages = {
     "Disclaimer": [p11],
 }
 
-
 pg = st.navigation(pages, position="top")
-
 
 pg.run()
 
