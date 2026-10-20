@@ -68,10 +68,22 @@ if "df_data" not in ss:
     obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
+    # (2.5) MAXCOMBINE the 3 data sources 
+    dfma_temp_b = dfma_temp.loc[dfma_temp.dropna(subset=["SLOPE"]).groupby("COUNTRY")["SLOPE"].idxmax()]
+    dfma_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
+    dfma_temp = pd.concat([dfma_temp, dfma_temp_b], axis=0, ignore_index=True)
+    #
+    dfbl_temp_b = dfbl_temp.loc[dfbl_temp.dropna(subset=["REL_BURDEN"]).groupby("COUNTRY")["REL_BURDEN"].idxmax()]
+    dfbl_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
+    dfbl_temp = pd.concat([dfbl_temp, dfbl_temp_b], axis=0, ignore_index=True)
+
+   
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
     
+   
+
 
 
 
@@ -145,11 +157,11 @@ with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
     st.markdown("""
         <div style="line-height: 1.3; margin-bottom: 0.9em;;">
-            <div>Data Version: <code>{}</code></div>
+            <div>Data Hash: <code>{}</code></div>
             <div>Downloaded: <code>{}</code></div>
             <div>Reference date: <code>{}</code></div>
         </div>
-    """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    """.format(ss.sha256_download[0:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
     st.info("⚠️Prelim method")
     st.divider()

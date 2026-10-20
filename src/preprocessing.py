@@ -198,8 +198,6 @@ def combine_bl_and_slope_summaries(dfma_temp, dfbl_temp):
     # remove redundant columns
     dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
     dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
-    # safeguard - keep where BL-threshold enough above 0
-    # dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] # now handled in get_baseline_threshold()
     # compute percent change 
     dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']))).round(1)
     return dfmerged

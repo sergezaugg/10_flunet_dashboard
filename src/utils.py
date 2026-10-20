@@ -177,8 +177,8 @@ def get_start_stop_of_region(regions, time):
 @st.cache_data
 def select_top_n_highest_slope(df, n, sorting_var): 
     """ select top-n with highest slope in df """
-    df = df.sort_values(sorting_var, ascending=False)
     df = df.dropna(subset=[sorting_var])
+    df = df.sort_values(sorting_var, ascending=False)
     df = df.iloc[0:n].reset_index(drop=True) 
     return df
 

@@ -53,7 +53,8 @@ for i, row in df_metri.iterrows():
 # mollweide , orthographic , natural earth
 fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 700, range_color = [0.0, 2.0], 
     legend_title = "Relative Burden", 
-    proj = "orthographic", # None , 
+    proj = "orthographic", 
+    # proj = None , 
     col_bar_horiz = True) 
 
 with c5:

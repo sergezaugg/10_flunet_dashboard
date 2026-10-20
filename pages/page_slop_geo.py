@@ -30,7 +30,9 @@ df_metri_ma.loc[df_metri_ma["N_VALID"] < 3, "N_ABOVE_BASELINE"] = pd.NA
 df_dat00 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_dat02 = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "NOTDEFINED"]
-df_max = df_metri_ma.loc[df_metri_ma.dropna(subset=["PERC_CHANGE"]).groupby("COUNTRY")["PERC_CHANGE"].idxmax()]
+# df_max = df_metri_ma.loc[df_metri_ma.dropna(subset=["PERC_CHANGE"]).groupby("COUNTRY")["PERC_CHANGE"].idxmax()]
+df_max   = df_metri_ma[df_metri_ma["ORIGIN_SOURCE"] == "MAXCOMBINE"]
+
 
 # filter only data with a actual stats value 
 df_dat00, df_dat01, df_dat02, df_max, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, "PERC_CHANGE")

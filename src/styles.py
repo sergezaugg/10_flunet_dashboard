@@ -12,7 +12,7 @@ def apply_global_styles():
     st.markdown("""
         <style>
             .block-container {
-                max-width: 1600px;
+                max-width: 1590px;
                 min-width: 1400px;
                 padding-left: 2rem;
                 padding-right: 2rem;
