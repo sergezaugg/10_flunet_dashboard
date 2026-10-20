@@ -8,8 +8,6 @@ import pandas as pd
 from streamlit import session_state as ss
 import streamlit as st
 
-with st.sidebar:
-    st.error("⚠️Preliminary methodology⚠️")
 
 with st.container(border=True):
     st.markdown(f""":primary[Estimate Historical Baseline Threshold (HBT):]  

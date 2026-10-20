@@ -22,7 +22,6 @@ with st.sidebar:
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
     ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
     ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
-    st.error("⚠️Preliminary methodology⚠️")
 
 
 # load data to local page 

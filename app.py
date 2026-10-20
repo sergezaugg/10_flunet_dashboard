@@ -154,6 +154,7 @@ with st.sidebar:
         </div>
     """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
+    st.info("⚠️Prelim method")
     st.divider()
 
 # <div>HBT: ----</div>
@@ -163,12 +164,12 @@ with st.sidebar:
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
 
-p02 = st.Page("pages/page_slop_metric.py", title="Top 5", default=True)
+# p02 = st.Page("pages/page_slop_metric.py", title="Top 5", default=True)
 p02b = st.Page("pages/page_slop_metric_b.py", title="Show All")
+p02c = st.Page("pages/page_slop_metric_c.py", title="Top Increasers", default=True)
 
 p03 = st.Page("pages/page_burd_metric.py", title="Top 5")
 p03b = st.Page("pages/page_burd_metric_b.py", title="Show All")
-
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="Traces")
@@ -185,7 +186,7 @@ p13 = st.Page("pages/page_bl_thld.py", title="Explore HBT")
 
 pages = {
     "Data Age": [p01a, p01b],
-    "Recent Trend": [p02, p02b],
+    "Recent Trend": [p02c, p02b],
     "Recent Burden": [p03, p03b],
     "Geo-Maps": [p04, p05],
     "Full History": [p06, p07],

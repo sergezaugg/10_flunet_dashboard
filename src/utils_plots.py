@@ -264,7 +264,7 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height, colormap, range_color):
 
 
 @st.cache_data
-def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide"): 
+def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide", col_bar_horiz = False): 
     # mollweide , orthographic , natural earth
     fig = px.choropleth(
         df,
@@ -282,14 +282,23 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "m
         showframe=True, showcoastlines=True, showcountries=True,
         showocean=True, oceancolor="#1e5a8a", bgcolor="black",
         domain=dict(x=[0, 1], y=[0.0, 1]),
-        projection_scale=0.9,   
+        projection_scale=0.99,   
     )
+
+    bar_dict = dict(title=dict(text=legend_title, side="right"))
+    if col_bar_horiz :
+        bar_dict = dict(title=dict(text=legend_title, side="top"),
+                    orientation="h",x=0.5,xanchor="center",y=1.0,yanchor="bottom",len=0.6,thickness=12,)
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="black",
         plot_bgcolor="black",
+        coloraxis_colorbar=bar_dict,
     )
+
+
+ 
 
     return fig
 
