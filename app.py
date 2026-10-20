@@ -150,10 +150,14 @@ with st.sidebar:
             <div>Data Version: <code>{}</code></div>
             <div>Downloaded: <code>{}</code></div>
             <div>Reference date: <code>{}</code></div>
+            <div>Hist-BL-Thld: <span style="color: #00CC66;">--------</span></div>
         </div>
     """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
     st.divider()
+
+# <div>HBT: ----</div>
+
     
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
@@ -175,7 +179,7 @@ p09 = st.Page("pages/page_data.py", title="Data view")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
-p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
+p13 = st.Page("pages/page_bl_thld.py", title="Explore HBT")
 
 # pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 
@@ -185,10 +189,10 @@ pages = {
     "Recent Burden": [p03, p03b],
     "Geo-Maps": [p04, p05],
     "Full History": [p06, p07],
-    "Methods": [p08b, p08],
+    "Methods": [p08b, p13, p08],
     "About": [p10],
     # "Disclaimer": [p11],
-    "More": [p09, p12, p13],
+    "More": [p09, p12],
     "Disclaimer": [p11],
 }
 
