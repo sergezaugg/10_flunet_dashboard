@@ -157,7 +157,6 @@ with st.sidebar:
     st.info("⚠️Prelim method")
     st.divider()
 
-# <div>HBT: ----</div>
 
     
 # make navigation
