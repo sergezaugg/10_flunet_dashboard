@@ -156,17 +156,18 @@ with st.sidebar:
     st.divider()
     
 # make navigation
-p01 = st.Page("pages/page_age.py", title="Data Age")
-p02 = st.Page("pages/page_slop_metric.py", title="Top Trend", default=True)
-p02b = st.Page("pages/page_slop_metric_b.py", title="Trend All")
-p03 = st.Page("pages/page_burd_metric.py", title="Top Burden")
-p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
-p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
+p01a = st.Page("pages/page_age1.py", title="Geo-Map")
+p01b = st.Page("pages/page_age2.py", title="Tabular")
+p02 = st.Page("pages/page_slop_metric.py", title="Top 5", default=True)
+p02b = st.Page("pages/page_slop_metric_b.py", title="All")
+p03 = st.Page("pages/page_burd_metric.py", title="Top 5")
+p04 = st.Page("pages/page_slop_geo.py", title="Trend")
+p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="Traces")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
-p08 = st.Page("pages/page_play.py", title="Play")
+p08 = st.Page("pages/page_play.py", title="Interactive illustration")
 p08b = st.Page("pages/page_method.py", title="Methods")
-p09 = st.Page("pages/page_data.py", title="Data")
+p09 = st.Page("pages/page_data.py", title="Data view")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
@@ -175,16 +176,16 @@ p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
 # pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 
 pages = {
-    "Data Age": [p01],
-    "Flu Trend": [p02, p02b],
-    "Flu Burden": [p03,],
+    "Data Age": [p01a, p01b],
+    "Recent Trend": [p02, p02b],
+    "Recent Burden": [p03,],
     "Geo-Maps": [p04, p05],
-    "Traces": [p06],
-    "Deep dive": [p07, p08, p09],
-    "Methods": [p08b],
-    "Info": [p10],
+    "Full History": [p06, p07],
+    "Methods": [p08b, p08],
+    "About": [p10],
+    # "Disclaimer": [p11],
+    "More": [p09, p12, p13],
     "Disclaimer": [p11],
-    "Dev": [p12, p13],
 }
 
 

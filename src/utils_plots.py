@@ -212,7 +212,7 @@ def display_df_page_08(df, nw_cutoff, height):
     st.dataframe(
         df.style.map(set_color_in_df, subset=["days_since"]),
         hide_index=True,
-        use_container_width=False,
+        use_container_width=True,
         height = height,
         column_config={
             "COUNTRY": st.column_config.TextColumn("Country", width="auto", alignment="center",),

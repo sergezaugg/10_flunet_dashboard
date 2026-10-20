@@ -87,6 +87,10 @@ with c2:
 #----------------------------------------------
 # map of data age 
 dft = ss.df_latest_data
+
+# select based on WHOREGION
+dft = dft[dft["WHOREGION"].isin(who_regions)]
+
 df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
 
 fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7], legend_title = "Data age [Days]")
@@ -97,20 +101,4 @@ with c0:
 
 
 
-#----------------------------------------------
-# display detes
-c01, c02, = st.columns([60, 2])
-with c01:
-    with st.expander("detes", expanded=False):
-        c1, c2, c3 = st.columns([20,20,20])
-        with c1:
-            st.text('SENTINEL')
-            display_df_page_08(df_sel[0], nw_cutoff = ss.nw_global*7, height = 400)
-        
-        with c2:
-            st.text('NONSENTINEL')
-            display_df_page_08(df_sel[1], nw_cutoff = ss.nw_global*7, height = 400)
 
-        with c3:
-            st.text('NOTDEFINED')
-            display_df_page_08(df_sel[2], nw_cutoff = ss.nw_global*7, height = 400)
