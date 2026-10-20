@@ -77,11 +77,10 @@ def get_recency_slope(df):
     return df_slopes_all
 
 @st.cache_data
-def get_baseline_threshold(df, q, tol_thld, na_thld):
+def get_baseline_threshold(df, q, na_thld):
     """
     fill-in 0.0 where "INF_ALL" is NA or make new row with "INF_ALL"=0.0 where WEEKSTARTDATE row is missing      
     then compute quantile of "INF_ALL" for each "COUNTRY" x "ORIGIN_SOURCE"
-    tol_thld : float > 0, minimal tolerated threshold
     """
     df = df[["ORIGIN_SOURCE", "COUNTRY", "CNTRY", "ISO_WEEKSTARTDATE", "INF_ALL"]].copy()
 
@@ -105,11 +104,22 @@ def get_baseline_threshold(df, q, tol_thld, na_thld):
         .reset_index()
     )
 
-    # get quantile-base thresholds
+    # # get quantile-base thresholds
+    # baseline_thlds = (
+    #     df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(q).reset_index(name="INF_ALL_BASELINE"))
+    
+    # baseline_mad = (
+    #     df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].agg(INF_ALL_MAD=lambda s: (s - s.median()).abs().median()).reset_index())
+
+    # get quantile-based thresholds and mad
     baseline_thlds = (
-        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].quantile(q).reset_index(name="INF_ALL_BASELINE"))
-    # apply tolerance, to have all thlds above zero
-    baseline_thlds.loc[baseline_thlds["INF_ALL_BASELINE"] < tol_thld, "INF_ALL_BASELINE"] = tol_thld
+        df.groupby(["COUNTRY", "ORIGIN_SOURCE"])["INF_ALL"].agg(
+            INF_ALL_BASELINE=lambda s: s.quantile(q),
+            INF_ALL_MAD=lambda s: (s - s.median()).abs().median(),
+        ).reset_index())
+    
+    
+   
     # return 
     return baseline_thlds
 
@@ -137,7 +147,8 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, na_t
     # keep last years to compute baseline 
     df_bl, _ = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_basli)
     # get baseline (for all countries)
-    bl_thld = get_baseline_threshold(df_bl, quantile_val, tol_thld, na_thld)
+    bl_thld = get_baseline_threshold(df_bl, quantile_val, na_thld)
+    # st.write(bl_thld)
     # reduce to fewer recent weeks for trace plots
     df_trace, trace_x_range = keep_n_most_recent_weeks_2(df_bl, ref_date = ref_date, keep_n_weeks = time_range_trace)
     # reduce even fewer recent weeks for recent stats (below)
@@ -153,13 +164,25 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, na_t
         .agg(
             N_ABOVE_BASELINE=("ABOVE_BASELINE", "sum"),
             N_VALID=("INF_ALL", "count"),  # NEW - get number of non-NA INF_ALL rows
-            INF_ALL_BASELINE=("INF_ALL_BASELINE", "first"),
+            INF_ALL_QUANT = ("INF_ALL_BASELINE", "first"),
+            INF_ALL_MAD   = ("INF_ALL_MAD", "first"),
             ISO_WEEKSTARTDATE=("ISO_WEEKSTARTDATE", "max"),
             CNTRY=("CNTRY", "first"),
             MEAN_INF=("INF_ALL", "mean") # 
             )
         .sort_values("N_ABOVE_BASELINE", ascending=False) # sort   
     )
+
+    # baseline v1
+    # df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"]
+    # baseline v2
+    # df_metri["INF_ALL_BASELINE"] = 2*df_metri["INF_ALL_MAD"]
+    # baseline v3
+    df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"] + 0.5*df_metri["INF_ALL_MAD"]
+
+    # apply tolerance, to have all thlds above zero
+    df_metri.loc[df_metri["INF_ALL_BASELINE"] < tol_thld, "INF_ALL_BASELINE"] = tol_thld
+
     # get simple mean base metric of burden 
     df_metri["REL_BURDEN"] = df_metri["MEAN_INF"] / df_metri["INF_ALL_BASELINE"]
 

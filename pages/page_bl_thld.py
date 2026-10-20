@@ -24,7 +24,7 @@ df02 = filter_a_country(df02, selected_country)
 df02, _ = keep_n_most_recent_weeks_2(df02, ref_date = ss.ts_today , keep_n_weeks = ss.time_range_basli)
 df_plot = df02 
 
-df01 = ss.df_metri_merged[[ 'COUNTRY', 'ORIGIN_SOURCE', 'INF_ALL_BASELINE']]
+df01 = ss.df_metri_merged[[ 'COUNTRY', 'ORIGIN_SOURCE', 'INF_ALL_QUANT', 'INF_ALL_MAD', 'INF_ALL_BASELINE']]
 df01 = filter_a_data_source(df01, sel_data_source)
 df01 = filter_a_country(df01, selected_country)
 
@@ -39,11 +39,17 @@ if df_plot.shape[0] > 0:
         height=400,
     )
 
+    qua = df01['INF_ALL_QUANT'].item()
+    mad = df01['INF_ALL_MAD'].item()
     hbt = df01['INF_ALL_BASELINE'].item()
+    
     st.write("N years back:" , ss.time_range_basli/52)
     st.write("HBT: ", hbt)
     if not np.isnan(hbt):
-        fig.add_hline(y=hbt, line_width=3, line_dash="dot", line_color="green")
+        fig.add_hline(y=qua, line_width=3, line_dash="dash", line_color="blue")
+        fig.add_hline(y=mad, line_width=3, line_dash="dot", line_color="green")
+        fig.add_hline(y=hbt, line_width=3, line_dash="dot", line_color="red")
+
 
     fig.update_layout(margin=dict(l=40, r=40, t=20, b=20))
     fig.update_yaxes(range=[0, None])
