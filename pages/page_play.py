@@ -43,7 +43,7 @@ if len(df_plot) < 10:
     st.stop()
 
 # get baseline of flu counts (for all countries)
-bthld = get_baseline_threshold(df, q = quantile_val, tol_thld = ss.tol_thld, na_thld = ss.na_thld)
+bthld = get_baseline_threshold(df, q = quantile_val, na_thld = ss.na_thld)
 # select values for chosen country and ORIGIN_SOURCE
 thld = bthld.loc[bthld['COUNTRY']==selected_country]
 thld = thld.loc[thld['ORIGIN_SOURCE']==sel_data_source]
