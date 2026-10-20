@@ -22,7 +22,6 @@ with st.sidebar:
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
     ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
     ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
-    st.error("⚠️Preliminary methodology⚠️")
 
 
 # load data to local page 
@@ -44,7 +43,7 @@ if len(df_plot) < 10:
     st.stop()
 
 # get baseline of flu counts (for all countries)
-bthld = get_baseline_threshold(df, q = quantile_val, tol_thld = ss.tol_thld, na_thld = ss.na_thld)
+bthld = get_baseline_threshold(df, q = quantile_val, na_thld = ss.na_thld)
 # select values for chosen country and ORIGIN_SOURCE
 thld = bthld.loc[bthld['COUNTRY']==selected_country]
 thld = thld.loc[thld['ORIGIN_SOURCE']==sel_data_source]

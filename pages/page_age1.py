@@ -93,7 +93,11 @@ dft = dft[dft["WHOREGION"].isin(who_regions)]
 
 df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
 
-fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7], legend_title = "Data age [Days]")
+fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7],
+                   proj = None, 
+                   legend_title = "Data age [Days]",
+                   col_bar_horiz = False
+                   )
 c0, c1 = st.columns([30, 1])
 with c0:
     with st.container(border=True, height = 400):
