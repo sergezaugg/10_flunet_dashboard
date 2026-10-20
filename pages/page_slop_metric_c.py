@@ -18,6 +18,10 @@ with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
+    sel_top_n = st.select_slider("Top N", options=[10,20,30,40,50], key = "fgbbhjmn")
+    sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 20.0, key = "dfftzurqqffsxcv")
+    st.divider()
+
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
@@ -27,9 +31,9 @@ df_trace = filter_a_data_source(ss.df_trace_ma, sel_data_source)
 # quick fix - supress stats if N was too small
 df_metri.loc[df_metri["N_VALID"] < 3, "PERC_CHANGE"] = pd.NA
 # keep only if + percent change positive
-df_metri =  df_metri[df_metri["PERC_CHANGE"] > 0.0]
+df_metri =  df_metri[df_metri["PERC_CHANGE"] > sel_thld]
 # select top X
-df_metri = select_top_n_highest_slope(df_metri, n=10, sorting_var = 'PERC_CHANGE')
+df_metri = select_top_n_highest_slope(df_metri, n=sel_top_n, sorting_var = 'PERC_CHANGE')
 
 with st.sidebar:
     st.write("N countries", df_metri.shape[0])
@@ -55,7 +59,8 @@ for i, row in df_metri.iterrows():
 # mollweide , orthographic , natural earth
 fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "bluered", height = 700, range_color = [-55,55], 
     legend_title = "Percent change from BL", 
-    proj = "orthographic", # None , 
+    # proj = "orthographic", 
+    proj = None , 
     col_bar_horiz = True) 
 
 with c5:
