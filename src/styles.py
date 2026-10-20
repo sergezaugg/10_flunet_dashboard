@@ -24,26 +24,71 @@ def apply_global_styles():
         </style>
         """, unsafe_allow_html=True)
 
-    # change color of navigation bar background and tabs          
+    # change color of multilevel-navigation bar background and tabs  
     st.markdown("""
-        <style>
-        /* Header background xxxxxxxxxxxx */
-        .stAppHeader {background-color: #111111;} 
+    <style>
+    /* Overall header background */
+    .stAppHeader {
+        background-color: #111111 !important;
+    }
 
-        /* Default tab background */
-        .stAppHeader a {background-color: #4f4f4f !important;}
+    /* Navigation group labels (e.g. Flu Trend, Deep dive) */
+    .stAppHeader button {
+        background-color: #4f4f4f !important;
+        color: white !important;
+        border-radius: 5px !important;
+    }
 
-        /* Hover state */
-        .stAppHeader a:hover {background-color: #3b4d63 !important;}
+    /* Hover over group labels */
+    .stAppHeader button:hover {
+        background-color: #3b4d63 !important;
+    }
 
-        /* click state */
-        .stAppHeader a:active {background-color: #dddddd !important; }
+    /* Navigation page links inside dropdown groups */
+    .stAppHeader a {
+        background-color: #4f4f4f !important;
+        color: white !important;
+    }
 
-        /* Active page */
-        .stAppHeader a[aria-current="page"] {background-color: #fb2d2d !important;}
+    /* Hover over page links */
+    .stAppHeader a:hover {
+        background-color: #3b4d63 !important;
+    }
 
-        </style>
+    /* Active/current page link */
+    .stAppHeader a[aria-current="page"] {
+        background-color: #fb2d2d !important;
+        color: white !important;
+    }
+
+    /* Optional: dropdown menu background */
+    .stAppHeader [role="menu"] {
+        background-color: #222222 !important;
+    }
+    </style>
     """, unsafe_allow_html=True)
+
+
+                
+    # st.markdown("""
+    #     <style>
+    #     /* Header background xxxxxxxxxxxx */
+    #     .stAppHeader {background-color: #111111;} 
+
+    #     /* Default tab background */
+    #     .stAppHeader a {background-color: #4f4f4f !important;}
+
+    #     /* Hover state */
+    #     .stAppHeader a:hover {background-color: #3b4d63 !important;}
+
+    #     /* click state */
+    #     .stAppHeader a:active {background-color: #dddddd !important; }
+
+    #     /* Active page */
+    #     .stAppHeader a[aria-current="page"] {background-color: #fb2d2d !important;}
+
+    #     </style>
+    # """, unsafe_allow_html=True)
 
     # All navigation tabs: same fixed width
     st.markdown("""
@@ -90,4 +135,4 @@ def apply_global_styles():
     """, unsafe_allow_html=True)
 
 
-    
+
