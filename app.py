@@ -28,7 +28,7 @@ if "df_data" not in ss:
     # initialize session state (constant values)
     ss.max_countries_in_plots = 20
     ss.nw_global = 6 # weeks from ref to be used for stats 
-    ss.top_n = 10 # how much to show in 'top' pages
+    ss.top_n = 5 # how much to show in 'top' pages
     ss.nw_for_demo = 52*4
     # (1) advanced pre-processing (slope / percent change)
     ss.nw_ma = 20 # 15
@@ -37,7 +37,7 @@ if "df_data" not in ss:
     ss.nw_slo = ss.nw_global 
     # (2) advanced pre-processing (burden / above Baseline)
     ss.time_range_basli = 52*4
-    ss.quantile_val = 0.65
+    ss.quantile_val = 0.65 # originally 0.65
     ss.tol_thld = 10
     ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
@@ -46,7 +46,7 @@ if "df_data" not in ss:
     #------------------------------
     # download and pre-process (do once)
     ss.ts_today = get_ts_today()
-    df_dat, ss.ts_download = download_flunet_data()
+    df_dat, ss.ts_download, ss.sha256_download = download_flunet_data()
     ss.df_data = preprocess_flunet_data(df = df_dat)
 
     # initialize data dependent objects in ss
@@ -144,33 +144,58 @@ for key in list(st.session_state.keys()):
 
 # build sidebar
 with st.sidebar:
-    st.markdown(f"""# :primary[**Global Influenza Explorer**] """)
-    st.markdown(f"""
-    Reference day: \t{ss.ts_today.strftime("%Y-%m-%d")}  
-    Download: \t{ss.ts_download}  
-    """)
-    # Latest data: \t{ss.ts_latest_data.strftime("%Y-%m-%d")}
+    st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
+    st.markdown("""
+        <div style="line-height: 1.3; margin-bottom: 0.9em;;">
+            <div>Data Version: <code>{}</code></div>
+            <div>Downloaded: <code>{}</code></div>
+            <div>Reference date: <code>{}</code></div>
+        </div>
+    """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    unsafe_allow_html=True)
     st.divider()
     
 # make navigation
-p01 = st.Page("pages/page_age.py", title="Data Age")
-p02 = st.Page("pages/page_slop_metric.py", title="Top Trend", default=True)
-p03 = st.Page("pages/page_burd_metric.py", title="Top Burden")
-p04 = st.Page("pages/page_slop_geo.py", title="Geo Trend")
-p05 = st.Page("pages/page_burd_geo.py", title="Geo Burden")
+p01a = st.Page("pages/page_age1.py", title="Geo-Map")
+p01b = st.Page("pages/page_age2.py", title="Tabular")
+
+p02 = st.Page("pages/page_slop_metric.py", title="Top 5", default=True)
+p02b = st.Page("pages/page_slop_metric_b.py", title="Show All")
+
+p03 = st.Page("pages/page_burd_metric.py", title="Top 5")
+p03b = st.Page("pages/page_burd_metric_b.py", title="Show All")
+
+p04 = st.Page("pages/page_slop_geo.py", title="Trend")
+p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="Traces")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
-p08 = st.Page("pages/page_play.py", title="Play")
+p08 = st.Page("pages/page_play.py", title="Interactive illustration")
 p08b = st.Page("pages/page_method.py", title="Methods")
-p09 = st.Page("pages/page_data.py", title="Data")
+p09 = st.Page("pages/page_data.py", title="Data view")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Dev")
-p12 = st.Page("pages/page_refresh.py", title="Dev")
-p44 = st.Page("pages/xx_page_14.py", title="Assess BL thld")
+p13 = st.Page("pages/page_bl_thld.py", title="BL thld")
+
+# pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
+
+pages = {
+    "Data Age": [p01a, p01b],
+    "Recent Trend": [p02, p02b],
+    "Recent Burden": [p03, p03b],
+    "Geo-Maps": [p04, p05],
+    "Full History": [p06, p07],
+    "Methods": [p08b, p08],
+    "About": [p10],
+    # "Disclaimer": [p11],
+    "More": [p09, p12, p13],
+    "Disclaimer": [p11],
+}
 
 
-pg = st.navigation([p01, p02, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p44], position="top")
+pg = st.navigation(pages, position="top")
+
+
 pg.run()
 
 

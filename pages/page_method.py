@@ -12,7 +12,7 @@ with st.sidebar:
     st.error("⚠️Preliminary methodology⚠️")
 
 with st.container(border=True):
-    st.markdown(f""":primary[Estimate Historical Baseline Threshold:]  
+    st.markdown(f""":primary[Estimate Historical Baseline Threshold (HBT):]  
     All computation below per countries and data sources  
     :primary[(1)] Restrain analysis period to {ss.time_range_basli} weeks before reference date  
     :primary[(2)] Exclude groups with more than {int(100*((ss.na_thld)))}% NAs in analysis period.  
@@ -26,18 +26,26 @@ with st.container(border=True):
     """) 
 
 with st.container(border=True):
-    st.markdown(f""":primary[Burden = BL-Normalized avrage:] 
-    <TBD>
+    st.markdown(f""":primary[Burden:]  
+    The Burden is a metric of average cases count relative to the Historical Baseline Threshold; it derived as follows:  
+    :primary[(1)] The average case count is estimated from the latest {int(ss.time_range_stats)} weeks.  
+    :primary[(2)] This average is divided by the historical baseline threshold and expressed as a ratio.  
+    :primary[Unit:] ratio [dimensionless]  
+    :primary[Interpretation:] This is the Relative case burden, values above 1.0 mean that case count is above HBT.  
+    :primary[Limitation:] Normalization by the historical baseline improves comparability
+    but does not account for differences in seasonal patterns and reporting practices across countries and data sources.
     """)     
 
 with st.container(border=True):
-    st.markdown(f""":primary[Trend = BL-Normalized Change:]  
+    st.markdown(f""":primary[Trend:]  
+    The Trend is a metric of change in cases count relative to the Historical Baseline Threshold; it derived as follows:  
     :primary[(1)] Traces (blue line) are first smoothed with moving regression of degree {ss.ma_degree} with bin size of {ss.ma_bin_size} weeks.
     Trailing moving regression is used here (=right-aligned).  
     :primary[(2)] The average change per week (slope) is then estimated from the latest {int(ss.nw_slo)} weeks via linear regression.  
-    :primary[(3)] Finally, the slope is normalized by the historical baseline threshold and expressed as a percentage.    
+    :primary[(3)] Finally, the slope is divided by the historical baseline threshold and expressed as a percentage.  
+    :primary[Unit:] Percent change per week [% week⁻¹]  
     :primary[Limitation:] Normalization by the historical baseline improves comparability
-    but does not account for differences differences in seasonal patterns and reporting practices across countries and data sources.
+    but does not account for differences in seasonal patterns and reporting practices across countries and data sources.
     """)
 
 
