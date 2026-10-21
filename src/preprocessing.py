@@ -7,6 +7,8 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import numpy as np
+from streamlit import session_state as ss
+
 
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
@@ -178,7 +180,7 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, na_t
     # baseline v2
     # df_metri["INF_ALL_BASELINE"] = 2*df_metri["INF_ALL_MAD"]
     # baseline v3
-    df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"] + 0.5*df_metri["INF_ALL_MAD"]
+    df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"] + (ss.mad_factor*df_metri["INF_ALL_MAD"])
 
     # apply tolerance, to have all thlds above zero
     df_metri.loc[df_metri["INF_ALL_BASELINE"] < tol_thld, "INF_ALL_BASELINE"] = tol_thld
@@ -198,8 +200,6 @@ def combine_bl_and_slope_summaries(dfma_temp, dfbl_temp):
     # remove redundant columns
     dfmerged = dfmerged.drop(columns = ['CNTRY_bl'])
     dfmerged = dfmerged.rename(columns={"CNTRY_slo": "CNTRY"})
-    # safeguard - keep where BL-threshold enough above 0
-    # dfmerged = dfmerged[dfmerged["INF_ALL_BASELINE"] >= 2] # now handled in get_baseline_threshold()
     # compute percent change 
     dfmerged['PERC_CHANGE'] = (100*(dfmerged['SLOPE']  / (dfmerged['INF_ALL_BASELINE']))).round(1)
     return dfmerged

@@ -273,22 +273,22 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "m
         labels={var: legend_title},
         locationmode="ISO-3",
         projection=proj,
-        color_continuous_scale=colormap, # "RdYlGn_r",
+        color_continuous_scale=colormap, 
         range_color=range_color, 
-        height=height
+        height=height,
     )
 
     fig.update_geos(
-        showframe=True, showcoastlines=True, showcountries=True,
+        showframe=False, showcoastlines=True, showcountries=True,
         showocean=True, oceancolor="#1e5a8a", bgcolor="black",
         domain=dict(x=[0, 1], y=[0.0, 1]),
         projection_scale=0.99,   
     )
 
-    bar_dict = dict(title=dict(text=legend_title, side="right"))
+    bar_dict = dict(title=dict(text=legend_title, side="right"), len=0.6, thickness=12,)
     if col_bar_horiz :
         bar_dict = dict(title=dict(text=legend_title, side="top"),
-                    orientation="h",x=0.5,xanchor="center",y=1.0,yanchor="bottom",len=0.6,thickness=12,)
+                    orientation="h", x=0.5, xanchor="center", y=0.95, yanchor="bottom", len=0.8, thickness=12,)
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
@@ -296,9 +296,6 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "m
         plot_bgcolor="black",
         coloraxis_colorbar=bar_dict,
     )
-
-
- 
 
     return fig
 
@@ -361,6 +358,19 @@ def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
     return fig
 
 
-
+@st.cache_data
+def make_per_source_strip_plot(df, yvar, height, log_y, y_title):
+    """  """
+    fig = px.strip(df, x="ORIGIN_SOURCE", y=yvar, 
+        log_y=log_y, height = height, labels = {yvar : y_title})
+    fig.update_layout(
+        margin=dict(l=10, r=120, t=10, b=1),
+        paper_bgcolor="black",
+        plot_bgcolor="black",
+        yaxis=dict(side="right"),
+        )
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
+    return fig
 
 

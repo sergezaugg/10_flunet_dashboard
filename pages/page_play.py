@@ -17,6 +17,8 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
+    st.markdown(f""":primary[Summary:] Didactic page to play with some parameters used for data-preparation.""")
+    st.divider()
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
@@ -76,8 +78,7 @@ with c1:
     height_all = 320
     with c01:
         with st.container(border=True, height = height_all):
-            st.markdown(f""":primary[Summary:] This is a Didactic page where you can
-            play with some parameters used in the data-preparation module.
+            st.markdown(f""":primary[Summary:] 
             Only the latest {int(ss.nw_for_demo)} weeks are used to derive the Historical Baseline and shown here.  
             :primary[Automatic Flu Season Detection:] Candidate Flu seasons are automatically detected (transparent rectangles) based on 
             smoothed trace and Threshold using a simple hysteresis method (like a thermostat).

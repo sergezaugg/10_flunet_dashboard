@@ -38,6 +38,7 @@ if "df_data" not in ss:
     # (2) advanced pre-processing (burden / above Baseline)
     ss.time_range_basli = 52*4
     ss.quantile_val = 0.50 # 0.65 # originally 0.65
+    ss.mad_factor = 0.5
     ss.tol_thld = 10 # 10
     ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
@@ -68,10 +69,22 @@ if "df_data" not in ss:
     obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
+    # (2.5) MAXCOMBINE the 3 data sources 
+    dfma_temp_b = dfma_temp.loc[dfma_temp.dropna(subset=["SLOPE"]).groupby("COUNTRY")["SLOPE"].idxmax()]
+    dfma_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
+    dfma_temp = pd.concat([dfma_temp, dfma_temp_b], axis=0, ignore_index=True)
+    #
+    dfbl_temp_b = dfbl_temp.loc[dfbl_temp.dropna(subset=["REL_BURDEN"]).groupby("COUNTRY")["REL_BURDEN"].idxmax()]
+    dfbl_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
+    dfbl_temp = pd.concat([dfbl_temp, dfbl_temp_b], axis=0, ignore_index=True)
+
+   
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
     
+   
+
 
 
 
@@ -141,61 +154,51 @@ for key in list(st.session_state.keys()):
 
 #------------------------------
 # build app's visible  frontend 
-
-# build sidebar
 with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
     st.markdown("""
-        <div style="line-height: 1.3; margin-bottom: 0.9em;;">
-            <div>Data Version: <code>{}</code></div>
-            <div>Downloaded: <code>{}</code></div>
-            <div>Reference date: <code>{}</code></div>
-            <div>Hist-BL-Thld: <span style="color: #00CC66;">     ..................</span></div>
-        </div>
-    """.format(ss.sha256_download[0:8], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    <div style="line-height: 1.3; margin-bottom: 0.9em;">
+        <div>Data Hash: <code style="color:orange">{}</code></div>
+        <div>Downloaded: <code style="color:orange">{}</code></div>
+        <div>Reference date: <code style="color:orange">{}</code></div>
+    </div>
+    """.format(ss.sha256_download[:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-    st.info("⚠️Prelim method")
+    # st.page_link("pages/page_method.py", label="⚠️PRELIMINARY METHOD⚠️")
+    st.caption("⚠️PRELIMINARY METHOD⚠️")
     st.divider()
  
 # make navigation
-p01a = st.Page("pages/page_age1.py", title="Geo-Map")
+p08b = st.Page("pages/page_method.py", title="Methods")
+p01a = st.Page("pages/page_age1.py", title="Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-
-p02b = st.Page("pages/page_slop_metric_b.py", title="Show All > 0")
-p02c = st.Page("pages/page_slop_metric_c.py", title="Top Increasers", default=True)
-
-p03b = st.Page("pages/page_burd_metric_b.py", title="Show All > 1")
-p03c = st.Page("pages/page_burd_metric_c.py", title="Top Burden")
-
+p02c = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
+p03c = st.Page("pages/page_burd_metric_c.py", title="Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08 = st.Page("pages/page_play.py", title="Interactive illustration")
-p08b = st.Page("pages/page_method.py", title="Methods")
-p09 = st.Page("pages/page_data.py", title="Data view")
+p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
-p12 = st.Page("pages/page_refresh.py", title="Dev")
-p13 = st.Page("pages/page_bl_thld.py", title="Hist-BL-Thld")
+p12 = st.Page("pages/page_refresh.py", title="Maintenance")
+p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 # pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 
 pages = {
     "Data Age": [p01a, p01b],
-    "Recent Trend": [p02c, p02b],
-    "Recent Burden": [p03c, p03b],
-    "Geo-Maps": [p04, p05],
-    "Explore": [p06, p07, p13],
-    "Methods": [p08b, p08],
+    "Metrics Rank": [p02c, p03c,],
+    "Metrics Map": [p04, p05],
+    "Explore": [p06, p07],
+    "Methods": [p08b, p13, p08],
     "About": [p10],
     "More": [p09, p12],
     "Disclaimer": [p11],
 }
 
-
 pg = st.navigation(pages, position="top")
-
 
 pg.run()
 

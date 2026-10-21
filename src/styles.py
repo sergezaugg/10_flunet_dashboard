@@ -8,6 +8,22 @@ import streamlit as st
 def apply_global_styles():
     """Apply global CSS styles to the Streamlit app."""
 
+    # enforce  min and max accepted screen width via CSS
+    st.markdown("""
+        <style>
+            .block-container {
+                max-width: 1590px;
+                min-width: 1400px;
+                padding-left: 2rem;
+                padding-right: 2rem;
+                margin-left: auto;
+                margin-right: auto;
+                box-sizing: border-box;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+
     # Reduce spacing around st.divider() 
     st.markdown("""
         <style>
@@ -69,27 +85,6 @@ def apply_global_styles():
     """, unsafe_allow_html=True)
 
 
-                
-    # st.markdown("""
-    #     <style>
-    #     /* Header background xxxxxxxxxxxx */
-    #     .stAppHeader {background-color: #111111;} 
-
-    #     /* Default tab background */
-    #     .stAppHeader a {background-color: #4f4f4f !important;}
-
-    #     /* Hover state */
-    #     .stAppHeader a:hover {background-color: #3b4d63 !important;}
-
-    #     /* click state */
-    #     .stAppHeader a:active {background-color: #dddddd !important; }
-
-    #     /* Active page */
-    #     .stAppHeader a[aria-current="page"] {background-color: #fb2d2d !important;}
-
-    #     </style>
-    # """, unsafe_allow_html=True)
-
     # All navigation tabs: same fixed width
     st.markdown("""
     <style>
@@ -106,7 +101,6 @@ def apply_global_styles():
     """, unsafe_allow_html=True)
 
 
-
     # text right to logo 
     st.markdown("""
     <style>
@@ -120,7 +114,7 @@ def apply_global_styles():
             pointer-events: none;
         }
     </style>
-    <div class="app-label">v0.10.3-β<br>© 2026 Serge Zaugg</div>
+    <div class="app-label">v0.10.4-β<br>© 2026 Serge Zaugg</div>
     """, unsafe_allow_html=True)
 
 

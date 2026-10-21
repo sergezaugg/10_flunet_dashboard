@@ -11,6 +11,8 @@ from src.utils_plots import make_facet_line_plot
 
 # filter by region
 with st.sidebar:
+    st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
+    st.divider()
     who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels, key="k_who_01")
     country_info_temp = st.empty() 
 
@@ -39,8 +41,7 @@ outcome_labels = {
 with st.sidebar:
     outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0, 
                            format_func=lambda x: outcome_labels[x], key = "k_who_07")
-    st.divider()
-    st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
+
 
 # exclude all from "ORIGIN_SOURCE" level if too few non-na
 df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)

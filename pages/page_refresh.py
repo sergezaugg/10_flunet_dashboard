@@ -7,6 +7,11 @@ from streamlit import session_state as ss
 import streamlit as st
 from src.utils import preprocess_flunet_data
 
+
+with st.sidebar:
+    st.markdown(f""":primary[Summary:] Maintenance access.""")
+    st.divider()
+
 c1, c2 = st.columns([15, 50])
 with c1:
     # password protected maintenance dev-mode

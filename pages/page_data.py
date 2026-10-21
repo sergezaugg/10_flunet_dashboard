@@ -14,11 +14,11 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select...", index=indx, 
-                                    key="k_dat_01")
-    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_dat_02")
-    st.divider()
     st.markdown(f""":primary[Summary:] Inspect the data used in this app.""")
+    st.divider()
+    selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select...", index=indx, key="k_dat_01")
+    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_dat_02")
+    
 
 # load data to local page 
 df = ss.df_data.copy()
