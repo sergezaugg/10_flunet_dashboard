@@ -11,7 +11,7 @@ import streamlit as st
 from src.utils import filter_a_data_source
 from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
-from src.utils_plots import make_geo_map
+from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
@@ -53,13 +53,25 @@ for i, row in df_metri.iterrows():
 #------------------
 # make geo map 
 # mollweide , orthographic , natural earth
-fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 700, range_color = [0.0, 2.0], 
+fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 340, range_color = [0.0, 2.0], 
     legend_title = "Relative Burden", 
     # proj = "orthographic", 
     proj = None , 
-    col_bar_horiz = True) 
+    col_bar_horiz = False) 
 
 with c5:
-    with st.container(border=True, height = 750):
+    with st.container(border=True, height = 400):
+        st.text("Mini-map (only countries from selection are highlighted)")
         st.plotly_chart(fig_geo, use_container_width=True)
+
+    with st.container(border=True, height = 400):
+        st.text("Overview of countries where metrics could be computed")
+        df_scat = ss.df_metri_merged[ss.df_metri_merged["ORIGIN_SOURCE"] != "MAXCOMBINE"]
+        fig = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height = 340, log_y=True)
+        fig.add_hline(y=sel_thld, line_width=2, line_dash="dash", line_color="yellow" )
+        st.plotly_chart(fig, use_container_width=False)
+
+
+
+
 

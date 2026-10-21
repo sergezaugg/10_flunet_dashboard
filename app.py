@@ -169,9 +169,7 @@ with st.sidebar:
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-# p02b = st.Page("pages/page_slop_metric_b.py", title="Show All > 0")
 p02c = st.Page("pages/page_slop_metric_c.py", title="Top Trend", default=True)
-# p03b = st.Page("pages/page_burd_metric_b.py", title="Show All > 1")
 p03c = st.Page("pages/page_burd_metric_c.py", title="Top Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
