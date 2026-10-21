@@ -19,7 +19,7 @@ with st.sidebar:
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
     sel_top_n = st.select_slider("Top N", options=[10,20,30,40,50], key = "fgbbhjmn")
-    sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 20.0, key = "dfftzurqqffsxcv")
+    sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
     st.divider()
 
 

@@ -163,14 +163,14 @@ with st.sidebar:
         </div>
     """.format(ss.sha256_download[0:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-    st.info("⚠️Prelim method")
+    st.caption("⚠️PRELIMINARY METHOD⚠️")
     st.divider()
  
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Geo-Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-p02c = st.Page("pages/page_slop_metric_c.py", title="Top Trend", default=True)
-p03c = st.Page("pages/page_burd_metric_c.py", title="Top Burden")
+p02c = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
+p03c = st.Page("pages/page_burd_metric_c.py", title="Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
@@ -187,10 +187,10 @@ p13 = st.Page("pages/page_bl_thld.py", title="Hist-BL-Thld")
 
 pages = {
     "Data Age": [p01a, p01b],
-    "Metrics Ranked": [p02c, p03c,],
-    "Geo-Maps": [p04, p05],
-    "Explore": [p06, p07, p13],
-    "Methods": [p08b, p08],
+    "Metrics Rank": [p02c, p03c,],
+    "Metrics Map": [p04, p05],
+    "Explore": [p06, p07],
+    "Methods": [p08b, p13, p08],
     "About": [p10],
     "More": [p09, p12],
     "Disclaimer": [p11],
