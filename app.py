@@ -164,10 +164,11 @@ with st.sidebar:
         </div>
     """.format(ss.sha256_download[0:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-    st.page_link("pages/page_method.py", label="⚠️PRELIMINARY METHOD⚠️")
+    # st.page_link("pages/page_method.py", label="⚠️PRELIMINARY METHOD⚠️")
     st.divider()
  
 # make navigation
+p08b = st.Page("pages/page_method.py", title="Methods")
 p01a = st.Page("pages/page_age1.py", title="Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
 p02c = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
@@ -177,7 +178,6 @@ p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08 = st.Page("pages/page_play.py", title="Interactive illustration")
-p08b = st.Page("pages/page_method.py", title="Methods")
 p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")

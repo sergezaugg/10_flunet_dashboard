@@ -15,6 +15,8 @@ from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
+    st.markdown(f""":primary[Summary:] Her you can rank countries with highest flu burden first.""")
+    st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_ab_02")

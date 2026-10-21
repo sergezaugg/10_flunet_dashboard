@@ -13,9 +13,9 @@ df_lat = ss.df_latest_data.copy()
 
 # build control items in sidebar
 with st.sidebar:
-    who_regions = st.multiselect("Select WHO regions", options = ss.WHOREGION_levels, key="k_rec_01")
-    st.divider()
     st.markdown(f""":primary[Summary: ] Assess data freshness by country relative to the reference date.""")
+    st.divider()
+    who_regions = st.multiselect("Select WHO regions", options = ss.WHOREGION_levels, key="k_rec_01")
 
     
 

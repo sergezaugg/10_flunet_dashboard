@@ -11,14 +11,15 @@ from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
 
 with st.sidebar:
+    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu activity levels.""")
+    st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_p13_00")
     source_options = ["MAXCOMBINE", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p13_01")
     li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
     sel_colormap = st.selectbox("Colormap", options = li_colormaps, key="k_p13_03", placeholder="select ...")
-    st.divider()
-    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu activity levels.""")
+
 
 # prepare 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
