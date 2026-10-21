@@ -38,6 +38,7 @@ if "df_data" not in ss:
     # (2) advanced pre-processing (burden / above Baseline)
     ss.time_range_basli = 52*4
     ss.quantile_val = 0.50 # 0.65 # originally 0.65
+    ss.mad_factor = 0.5
     ss.tol_thld = 10 # 10
     ss.na_thld = 0.40 # tolerance for prop NAs 
     ss.time_range_trace = 24
@@ -163,11 +164,11 @@ with st.sidebar:
         </div>
     """.format(ss.sha256_download[0:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-    st.caption("⚠️PRELIMINARY METHOD⚠️")
+    st.page_link("pages/page_method.py", label="⚠️PRELIMINARY METHOD⚠️")
     st.divider()
  
 # make navigation
-p01a = st.Page("pages/page_age1.py", title="Geo-Map")
+p01a = st.Page("pages/page_age1.py", title="Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
 p02c = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
 p03c = st.Page("pages/page_burd_metric_c.py", title="Burden")
@@ -181,7 +182,7 @@ p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Maintenance")
-p13 = st.Page("pages/page_bl_thld.py", title="Hist-BL-Thld")
+p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 # pg = st.navigation([p01, p02, p02b, p03, p04, p05, p06, p07, p08, p08b, p09, p10, p11, p12, p13], position="top")
 

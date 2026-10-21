@@ -7,6 +7,8 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import numpy as np
+from streamlit import session_state as ss
+
 
 @st.cache_data()
 def keep_n_most_recent_weeks_2(df, ref_date, keep_n_weeks):
@@ -178,7 +180,7 @@ def compute_recent_level(df_data, time_range_basli, quantile_val, tol_thld, na_t
     # baseline v2
     # df_metri["INF_ALL_BASELINE"] = 2*df_metri["INF_ALL_MAD"]
     # baseline v3
-    df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"] + 0.5*df_metri["INF_ALL_MAD"]
+    df_metri["INF_ALL_BASELINE"] = df_metri["INF_ALL_QUANT"] + (ss.mad_factor*df_metri["INF_ALL_MAD"])
 
     # apply tolerance, to have all thlds above zero
     df_metri.loc[df_metri["INF_ALL_BASELINE"] < tol_thld, "INF_ALL_BASELINE"] = tol_thld
