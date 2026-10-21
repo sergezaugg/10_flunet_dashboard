@@ -58,13 +58,13 @@ for i, row in df_metri.iterrows():
 # make geo map 
 # mollweide , orthographic , natural earth
 fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "bluered", height = 300, range_color = [-55,55], 
-    legend_title = "Percent change from BL", 
+    legend_title = "Trend (Percent Change)", 
     # proj = "orthographic", 
     proj = None , 
     col_bar_horiz = False) 
 
 df_scat = ss.df_metri_merged[ss.df_metri_merged["ORIGIN_SOURCE"] != "MAXCOMBINE"]
-fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "PERC_CHANGE", height = 300, log_y=False)
+fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "PERC_CHANGE", height = 300, log_y=False, y_title = "Trend (Percent Change)")
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dash", line_color="yellow" )
 
 with c5:

@@ -359,15 +359,16 @@ def make_a_b_area_plot(df_plot, area_cutoff, col_a, col_b):
 
 
 @st.cache_data
-def make_per_source_strip_plot(df, yvar, height, log_y):
+def make_per_source_strip_plot(df, yvar, height, log_y, y_title):
     """  """
     fig = px.strip(df, x="ORIGIN_SOURCE", y=yvar, 
-        log_y=log_y, height = height)
+        log_y=log_y, height = height, labels = {yvar : y_title})
     fig.update_layout(
         margin=dict(l=10, r=120, t=10, b=1),
         paper_bgcolor="black",
         plot_bgcolor="black",
-        yaxis=dict(side="right"))
+        yaxis=dict(side="right"),
+        )
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     return fig
