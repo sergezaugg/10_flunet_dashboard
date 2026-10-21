@@ -11,7 +11,7 @@ from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of changes in flu activity.""")
+    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu trend.""")
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_p10_00")

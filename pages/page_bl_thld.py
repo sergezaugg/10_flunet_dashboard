@@ -13,7 +13,7 @@ import numpy as np
 # build control items in sidebar
 indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] This is a technical diagnostics page to assess the methods used to compute HBT""")
+    st.markdown(f""":primary[Summary:] Technical diagnostics page to assess the methods used to compute HBT""")
     st.divider()
     selected_country = st.selectbox("Choose a Country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
                                     index=indx, key="asdvadsasd")

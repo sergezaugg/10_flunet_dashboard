@@ -17,7 +17,7 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Analyze temporal patterns in Influenza A/B ratio across countries.""")
+    st.markdown(f""":primary[Summary:] Inspect temporal patterns in Influenza type A/B ratio per country.""")
     st.divider()
     selected_country = st.selectbox("Choose a Country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
                                     index=indx, key="k_ab_01")

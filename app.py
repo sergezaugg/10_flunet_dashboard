@@ -157,14 +157,15 @@ for key in list(st.session_state.keys()):
 with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
     st.markdown("""
-        <div style="line-height: 1.3; margin-bottom: 0.9em;;">
-            <div>Data Hash: <code>{}</code></div>
-            <div>Downloaded: <code>{}</code></div>
-            <div>Reference date: <code>{}</code></div>
-        </div>
-    """.format(ss.sha256_download[0:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
+    <div style="line-height: 1.3; margin-bottom: 0.9em;">
+        <div>Data Hash: <code style="color:orange">{}</code></div>
+        <div>Downloaded: <code style="color:orange">{}</code></div>
+        <div>Reference date: <code style="color:orange">{}</code></div>
+    </div>
+    """.format(ss.sha256_download[:12], ss.ts_download, ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
     # st.page_link("pages/page_method.py", label="⚠️PRELIMINARY METHOD⚠️")
+    st.caption("⚠️PRELIMINARY METHOD⚠️")
     st.divider()
  
 # make navigation
