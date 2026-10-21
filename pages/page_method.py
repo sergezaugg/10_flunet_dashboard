@@ -18,8 +18,8 @@ with c1:
         Note: HBT attempts to estimate an :primary[upper bound] on BL fluctuations (not an average).  
         :primary[(1)] Restrain analysis period to {ss.time_range_basli} weeks before reference date  
         :primary[(2)] Exclude groups with more than {int(100*((ss.na_thld)))}% NAs in analysis period.  
-        :primary[(3)] Missing weeks are padded with zeros (Only adequate for countries that fail to report 
-        out-of-season when count can be assume low, but not for all countries)  
+        :primary[(3.1)] Missing weeks are padded with zeros  
+        :primary[(3.2)] Only adequate for countries that fail to report when count can be assume low, but not for all.  
         :primary[(4.1)] qua = {ss.quantile_val} quantile of these values.  
         :primary[(4.2)] mad = median absolute deviation of these values.  
         :primary[(4.3)] Compute BL threshold as qua +   {ss.mad_factor} *mad (⚠️PRELIMINARY METHOD⚠️)  
@@ -32,9 +32,9 @@ with c1:
     with st.container(border=True):
         st.markdown(f""":primary[Trend:]  
         The Trend is a metric of change in cases count relative to the Historical Baseline Threshold; it derived as follows:  
-        :primary[(1)] Traces (blue line) are first smoothed with moving regression of degree {ss.ma_degree} with bin size of {ss.ma_bin_size} weeks.
+        :primary[(1)] Traces are smoothed with moving regression of degree {ss.ma_degree} with bin size of {ss.ma_bin_size} weeks.
         Trailing moving regression is used here (=right-aligned).  
-        :primary[(2)] The average change per week (slope) is then estimated from the latest {int(ss.nw_slo)} weeks via linear regression.  
+        :primary[(2)] The average change per week (slope) is then estimated from available data in the latest {int(ss.nw_slo)} weeks via linear regression.  
         :primary[(3)] Finally, the slope is divided by the historical baseline threshold and expressed as a percentage.  
         :primary[Unit:] Percent change per week [% week⁻¹]  
         :primary[Limitation:] Normalization by the historical baseline improves comparability

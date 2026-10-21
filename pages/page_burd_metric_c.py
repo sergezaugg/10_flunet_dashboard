@@ -36,8 +36,8 @@ df_metri =  df_metri[df_metri["REL_BURDEN"] > sel_thld]
 # not needed here 
 df_metri = select_top_n_highest_slope(df_metri, n=sel_top_n, sorting_var = 'REL_BURDEN') 
 
-with st.sidebar:
-    st.write("N countries", df_metri.shape[0])
+# with st.sidebar:
+#     st.write("N countries", df_metri.shape[0])
 
 rowheight = 160
 
@@ -63,7 +63,7 @@ fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 300, range_co
 
 df_scat = ss.df_metri_merged[ss.df_metri_merged["ORIGIN_SOURCE"] != "MAXCOMBINE"]
 fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height = 300, log_y=True, y_title = "Relative Burden")
-fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dash", line_color="yellow" )
+fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 
 with c5:
     with st.container(border=True, height = 380):
