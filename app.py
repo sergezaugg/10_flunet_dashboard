@@ -150,7 +150,7 @@ for key in list(st.session_state.keys()):
 # build app's visible  frontend
  
 with st.sidebar:
-    st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
+    st.markdown(f"""## :primary[**Global Influenza Explorer (BETA)**] """)
     st.markdown("""
     <div style="line-height: 1.3; margin-bottom: 0.9em;">
         <div>Data Hash: <code style="color:orange">{}</code></div>
