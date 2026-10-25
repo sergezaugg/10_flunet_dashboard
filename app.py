@@ -162,7 +162,6 @@ with st.sidebar:
         ss.ts_download.strftime("%Y-%m-%d %H:%M"), 
         ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
-    # st.caption("⚠️Preliminary Method")
     st.caption(ss.dl_status)
     st.divider()
  

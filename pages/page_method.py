@@ -22,7 +22,7 @@ with c1:
         :primary[(3.2)] Only adequate for countries that fail to report when count can be assume low, but not for all.  
         :primary[(4.1)] qua = {ss.quantile_val} quantile of these values.  
         :primary[(4.2)] mad = median absolute deviation of these values.  
-        :primary[(4.3)] Compute BL threshold as qua +   {ss.mad_factor} *mad (⚠️PRELIMINARY METHOD⚠️)  
+        :primary[(4.3)] Compute BL threshold as qua + {ss.mad_factor} *mad.  
         :primary[(5)] The BL threshold is floored at {int(ss.tol_thld)} to avoid unrealistically low baselines.   
         :primary[Limitation:] Same quantile is applied to all countries and data sources, 
                 regardless of differences in seasonal patterns and reporting practices. 
