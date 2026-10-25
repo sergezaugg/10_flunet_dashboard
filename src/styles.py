@@ -101,23 +101,6 @@ def apply_global_styles():
     """, unsafe_allow_html=True)
 
 
-    # # text right to logo 
-    # st.markdown("""
-    # <style>
-    #     .app-label {
-    #         position: fixed;
-    #         top:  10px;
-    #         left: 60px;
-    #         color: #9CA3AF;
-    #         font-size: 15px;
-    #         z-index: 999999;
-    #         pointer-events: none;
-    #     }
-    # </style>
-    # <div class="app-label">v0.10.4-β<br>© 2026 Serge Zaugg</div>
-    # """, unsafe_allow_html=True)
-
-
     # copyright notice and version at bottom-left
     st.markdown("""
     <style>
@@ -133,7 +116,7 @@ def apply_global_styles():
         }
     </style>
     <div class="app-label">
-        v0.10.4-β<br>© 2026 Serge Zaugg
+        v0.10.5-β<br>© 2026 Serge Zaugg
     </div>
     """, unsafe_allow_html=True)
 

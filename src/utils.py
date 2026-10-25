@@ -14,7 +14,7 @@ from datetime import datetime
 import hashlib
 
 @st.cache_data(ttl=12*60*60, show_spinner="Downloading FluNet data...") # refresh every 12 hours 
-def download_flunet_data():
+def download_flunet_data(dummy = 55):
     """Download FluNet data"""
     # step-by-step import 
     try:
@@ -27,22 +27,24 @@ def download_flunet_data():
         # convert to DataFrame
         df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
         # get a timestamp
-        # ts = datetime.now().strftime("%Y-%m-%d")
-        ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+        ts = datetime.now() # .strftime("%Y-%m-%d %H:%M")
+        data_source = "✅ Sucessfully downloaded"
+
     except (requests.RequestException, pd.errors.ParserError):
         # handle if not downloaded
         df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )
-        ts = "Historical data (could not download)"
+        sha256 = hashlib.sha256(pd.util.hash_pandas_object(df_dat, index=True).values.tobytes()).hexdigest()
+        ts = datetime(2026, 10, 5, 12, 0, 0)
+        data_source = "⚠️ Download failed — falling back to historical data"
+
     if df_dat.shape[1] != 53:
         # handle if download successful but content is shit (FLUNET_DATA_URL sometimes does it)
         df_dat = pd.read_csv("historical_data/VIW_FNT_20261003.csv", engine="c", on_bad_lines="skip", low_memory=False )
-        ts = "Historical data (issue with downloaded data)"
-    return(df_dat, ts, sha256)
+        sha256 = hashlib.sha256(pd.util.hash_pandas_object(df_dat, index=True).values.tobytes()).hexdigest()
+        ts = datetime(2026, 10, 5, 12, 0, 0)
+        data_source = "⚠️ Download failed — falling back to historical data"
 
-
-@st.cache_data(ttl=12*60*60) # refresh every 12 hours 
-def get_ts_today():
-    return datetime.now()
+    return(df_dat, ts, sha256, data_source)
 
 
 @st.cache_data(show_spinner="Preprocessing FluNet data...")
