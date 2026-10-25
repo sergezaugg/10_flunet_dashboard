@@ -177,7 +177,7 @@ p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08 = st.Page("pages/page_play.py", title="Interactive illustration")
-p09 = st.Page("pages/page_data.py", title="Tabular Data")
+# p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Maintenance")
@@ -190,7 +190,7 @@ pages = {
     "Explore": [p06, p07],
     "Methods": [p08b, p13, p08],
     "About": [p10],
-    "More": [p09, p12],
+    "More": [p12],
     "Disclaimer": [p11],
 }
 
