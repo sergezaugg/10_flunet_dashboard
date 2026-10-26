@@ -1,9 +1,4 @@
-
 # Global Influenza Explorer 
-
-### Overview
-Interactive web-app for exploring global influenza surveillance data from the WHO FluNet database.
-It provides a summarizing view of recent influenza activity across countries and regions, with tools for exploring historical trends and identifying per-country Flu activity.
 
 ### Features
 - Global influenza surveillance overview
@@ -16,6 +11,8 @@ It provides a summarizing view of recent influenza activity across countries and
 - Python 3.12 
 - Streamlit 1.64.0
 - Plotly 7.1.0
+
+### Dependencies Data Source
 - FluNet API (`https://xmart-api-public.who.int/FLUMART/VIW_FNT?$format=csv`)
 
 ### Installation
@@ -24,8 +21,6 @@ It provides a summarizing view of recent influenza activity across countries and
 3. **Install dependencies**  
 ```bash
 pip install -r requirements.txt
-# or 
-pip install --upgrade -r requirements.txt
 ```
 
 ### Usage
@@ -35,7 +30,6 @@ streamlit run app.py
 ```
 
 ### Project Structure
-
 ```text
 10_flunet_dashboard/
 ├── .streamlit/          # Streamlit configuration and theme
@@ -51,8 +45,9 @@ streamlit run app.py
 └── README.md            # Project documentation
 ```
 
-### Data
-Data are retrieved from the [WHO FluNet](https://www.who.int/tools/flunet) surveillance database.
+### Credits
+- Data provided by the [WHO FluNet](https://www.who.int/tools/flunet) 
+- Web-app concept, analytics and implementation by Serge Zaugg ([Pollito-ML](https://github.com/sergezaugg))
 
 ### License
 MIT
