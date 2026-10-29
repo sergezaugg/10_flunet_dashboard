@@ -74,7 +74,7 @@ if "df_data" not in ss:
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
-    # (4) derive new indicator columns for 'MAXCOMBINE'
+    # (4) derive new indicator columns for 'COMBINED' = 'MAXCOMBINE'
     ss.df_metri_merged["rel_burden_is_max"] = (ss.df_metri_merged["REL_BURDEN"].eq(
         ss.df_metri_merged.groupby("COUNTRY")["REL_BURDEN"].transform("max")))
 
