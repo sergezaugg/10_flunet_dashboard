@@ -104,15 +104,23 @@ def make_metric_items_slope(row, height_row, show_percent = False):
         selected_desc = "*New cases/week" 
 
     with st.container(border= True, height = height_row):
-        st.metric(label=row['COUNTRY'],                  
-            # value=f"{int(row['SLOPE']):+d} / W",
-            value=selected_met,
-            delta_description = selected_desc,
-            border  = False, 
-            width = 210, height = int(0.55*height_row))
+        # st.metric(label=row['COUNTRY'],                  
+        #     # value=f"{int(row['SLOPE']):+d} / W",
+        #     value=selected_met,
+        #     delta_description = selected_desc,
+        #     border  = False, 
+        #     width = 210, height = int(0.55*height_row))
+        # st.markdown(
+        #     f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
+        #     unsafe_allow_html=True,)
         st.markdown(
-            f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
-            unsafe_allow_html=True,)
+            f"**{row['COUNTRY']}**  \n"
+            f"{int(row['PERC_CHANGE']):+d} % \n"
+            f"{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')} "
+            f"{row['ORIGIN_SOURCE']} ",
+            # f"(n={row['N_VALID']}) weeks",
+            unsafe_allow_html=False,
+        )
 
 #--------------------------------------------------
 
