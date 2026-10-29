@@ -5,7 +5,7 @@
 
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import filter_a_data_source, filter_a_country
+from src.utils_pages import filter_a_data_source, filter_a_country
 import plotly.express as px
 from src.preprocessing import keep_n_most_recent_weeks_2
 import numpy as np

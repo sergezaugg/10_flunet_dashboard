@@ -5,7 +5,7 @@
 
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import download_flunet_data
+from src.preprocessing import download_flunet_data
 
 
 with st.sidebar:

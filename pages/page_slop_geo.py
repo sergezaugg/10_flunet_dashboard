@@ -7,7 +7,7 @@ from streamlit import session_state as ss
 import plotly.express as px
 import pandas as pd
 import streamlit as st
-from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
+from src.utils_pages import prepre_for_pages_10_13, rm_if_stat_na_per_source
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
 with st.sidebar:

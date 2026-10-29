@@ -6,7 +6,7 @@
 import streamlit as st
 from streamlit import session_state as ss
 import numpy as np
-from src.utils import filter_a_country
+from src.utils_pages import filter_a_country
 from config import cc
 from src.utils_plots import make_a_b_area_plot
 

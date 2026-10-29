@@ -6,7 +6,7 @@
 import numpy as np
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import filter_data_region, filter_several_countries
+from src.utils_pages import filter_data_region, filter_several_countries
 from src.utils_plots import make_facet_line_plot
 
 # filter by region
