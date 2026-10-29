@@ -1,6 +1,6 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : trend (slope) all bu ine source 
+# Description : trend (slope) 
 #--------------------
 
 from streamlit import session_state as ss
@@ -10,8 +10,8 @@ import streamlit as st
 from src.utils import filter_a_data_source
 from src.utils import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
-from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
-from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map, make_per_source_strip_plot
+# from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
+from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
@@ -20,7 +20,7 @@ with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
-    sel_top_n = st.select_slider("Top N", options=[10,20,30], key = "fgbbhjmn")
+    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 20, key = "fgbbhjmn")
     sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
 
 

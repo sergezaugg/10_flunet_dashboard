@@ -20,7 +20,7 @@ with st.sidebar:
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_abcvbfg_02")
-    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 10, key = "k_burd_top_n")
+    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 20, key = "k_burd_top_n")
     sel_thld = st.slider("Burden > t", min_value = 0.0, max_value = 10.0, value = 1.0, step = 0.1, key = "dfrqqsxcv")
     st.divider()
 
