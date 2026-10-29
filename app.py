@@ -7,8 +7,8 @@
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
-from src.preprocessing import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group
-from src.preprocessing import compute_recent_slope, compute_recent_level, combine_bl_and_slope_summaries
+from src.utils_preproc import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group
+from src.utils_preproc import compute_recent_slope, compute_recent_level, combine_bl_and_slope_summaries
 from resources.styles import apply_global_styles
 
 #------------------------------

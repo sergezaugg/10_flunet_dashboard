@@ -59,7 +59,6 @@ def make_facet_line_plot(df, n_countr, outcome, label_dict):
         annotation.textangle = 0
     return(fig)    
 
-
 @st.cache_data
 def make_smoothed_curve_plot(df_plot, height):
     """
@@ -121,8 +120,6 @@ def make_metric_items_slope(row, height_row, show_percent = False):
             # f"(n={row['N_VALID']}) weeks",
             unsafe_allow_html=False,
         )
-
-#--------------------------------------------------
 
 @st.cache_data
 def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):

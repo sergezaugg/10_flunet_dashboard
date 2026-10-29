@@ -9,7 +9,7 @@ from streamlit import session_state as ss
 import streamlit as st
 from src.utils_pages import filter_a_country, filter_a_data_source
 from src.utils_pages import det_regions, get_start_stop_of_region
-from src.preprocessing import polyreg_by_country_source, get_baseline_threshold
+from src.utils_preproc import polyreg_by_country_source, get_baseline_threshold
 from src.utils_plots import make_smoothed_curve_plot
 
 # # Choose index of starting country
