@@ -21,7 +21,7 @@ def prepre_for_pages_b(df, xvar):
     return(df)
 
 @st.cache_data
-def rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, xvar):
+def rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_dat03, xvar):
     """ Helper function to prepare data for geo pages """
     df_fresh = pd.DataFrame({
         "SOURCE" : ["Fresh"],
@@ -33,6 +33,8 @@ def rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, xvar):
     df_dat00 = prepre_for_pages_b(df_dat00, xvar = xvar)
     df_dat01 = prepre_for_pages_b(df_dat01, xvar = xvar)
     df_dat02 = prepre_for_pages_b(df_dat02, xvar = xvar)
+    df_dat03 = prepre_for_pages_b(df_dat03, xvar = xvar)
+
 
     df_with_slope = pd.DataFrame({
         "SOURCE" : ["Analysable"],
@@ -47,5 +49,5 @@ def rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, xvar):
     dat_info.columns = dat_info.loc[dat_info["a"] == "SOURCE"].iloc[0]
     dat_info = dat_info.drop(dat_info.index[dat_info["SOURCE"] == "SOURCE"][0]).reset_index(drop=True)
 
-    return df_dat00, df_dat01, df_dat02, dat_info
+    return df_dat00, df_dat01, df_dat02, df_dat03, dat_info
 
