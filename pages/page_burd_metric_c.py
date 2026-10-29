@@ -19,15 +19,27 @@ with st.sidebar:
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
-    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_ab_02")
+    sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_ab_02")
     sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 10, key = "k_burd_top_n")
     sel_thld = st.slider("Burden > t", min_value = 0.0, max_value = 10.0, value = 1.0, step = 0.1, key = "dfrqqsxcv")
     st.divider()
 
 # apply user's choice 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
-df_metri = filter_a_data_source(df_metri_bl, sel_data_source) 
-df_trace = filter_a_data_source(ss.df_trace_bl, sel_data_source)  
+
+
+# spec for COMBINED
+if sel_data_source == "COMBINED":
+    df_metri = df_metri_bl[df_metri_bl["rel_burden_is_max"] == True]
+    # get correct traces via the merge-mask trick
+    df_mask = df_metri[['COUNTRY','ORIGIN_SOURCE']]
+    df_trace = df_mask.merge(ss.df_trace_bl, on=['COUNTRY','ORIGIN_SOURCE'], how="left")
+else :
+    df_metri = filter_a_data_source(df_metri_bl, sel_data_source) 
+    df_trace = filter_a_data_source(ss.df_trace_bl, sel_data_source)  
+
+# st.write(df_metri)
+# st.write(df_trace)
 
 # quick fix - supress stats if N was too small
 df_metri.loc[df_metri["N_VALID"] < 3, "REL_BURDEN"] = pd.NA

@@ -69,25 +69,19 @@ if "df_data" not in ss:
     obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
-
-    ss.dfma_temp = dfma_temp
-    ss.dfbl_temp = dfbl_temp
-
-
-    # # (2.5) MAXCOMBINE the 3 data sources 
-    # dfma_temp_b = dfma_temp.loc[dfma_temp.dropna(subset=["SLOPE"]).groupby("COUNTRY")["SLOPE"].idxmax()]
-    # dfma_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
-    # dfma_temp = pd.concat([dfma_temp, dfma_temp_b], axis=0, ignore_index=True)
-
-    
-    # dfbl_temp_b = dfbl_temp.loc[dfbl_temp.dropna(subset=["REL_BURDEN"]).groupby("COUNTRY")["REL_BURDEN"].idxmax()]
-    # dfbl_temp_b['ORIGIN_SOURCE'] = 'MAXCOMBINE'
-    # dfbl_temp = pd.concat([dfbl_temp, dfbl_temp_b], axis=0, ignore_index=True)
-
-    
+   
 
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
+
+    # (4) derive new indicator columns for 'MAXCOMBINE'
+    ss.df_metri_merged["rel_burden_is_max"] = (ss.df_metri_merged["REL_BURDEN"].eq(
+        ss.df_metri_merged.groupby("COUNTRY")["REL_BURDEN"].transform("max")))
+
+    ss.df_metri_merged["perc_change_is_max"] = (ss.df_metri_merged["PERC_CHANGE"].eq(
+        ss.df_metri_merged.groupby("COUNTRY")["PERC_CHANGE"].transform("max")))
+
+
 
     #------------------------------
     if "ts_latest_data" not in ss:
@@ -154,9 +148,10 @@ for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
 
-# ss.df_trace_ma, ss.trace_x_range_ma, dfma_temp, ss.stats_x_range_ma
-# st.write(ss.dfma_temp)
-# st.write(ss.dfbl_temp)
+# st.write(ss.df_metri_merged)
+# st.write(ss.df_trace_bl)
+
+
 
 #------------------------------
 # build app's visible  frontend
