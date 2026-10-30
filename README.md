@@ -55,13 +55,8 @@
 - Data provided by the [WHO FluNet](https://www.who.int/tools/flunet) 
 - Web-app concept, analytics and implementation by Serge Zaugg ([Pollito-ML](https://github.com/sergezaugg))
 
-### Credits
-
-- Data provided by the <a href="https://www.who.int/tools/flunet" target="_blank">WHO FluNet</a>
-- Web-app concept, analytics and implementation by Serge Zaugg (<a href="https://github.com/sergezaugg" target="_blank">Pollito-ML</a>)
-
 ### License
-MIT
+[MIT © 2026 Serge Zaugg](LICENSE)
 
 
 
