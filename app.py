@@ -69,8 +69,6 @@ if "df_data" not in ss:
     obj = compute_recent_level(ss.df_data, ss.time_range_basli, ss.quantile_val, ss.tol_thld, ss.na_thld, ss.time_range_trace, ss.time_range_stats, ss.ts_today)
     ss.df_trace_bl, ss.trace_x_range_bl, dfbl_temp, ss.stats_x_range_bl = obj # unwrap
 
-   
-
     # (3) combine bl and slope summaries
     ss.df_metri_merged = combine_bl_and_slope_summaries(dfma_temp, dfbl_temp)
 
@@ -103,47 +101,12 @@ if "df_data" not in ss:
 
     #------------------------------
     # set widget defaults
-
-    # defaults for WHOREGION 
-    ss.setdefault("k_who_01", ss.WHOREGION_levels.tolist())
-    ss.setdefault("k_who_02", ss.FLUSEASON_levels.tolist())
-    ss.setdefault("k_who_04", 0.80)
-    ss.setdefault("k_who_05", 30)
+    # needed here !
     ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
-    # defaults for recency 
-    ss.setdefault("k_rec_01", ss.WHOREGION_levels.tolist())
-    ss.setdefault("k_rec_02", ss.FLUSEASON_levels.tolist())
-    # defaults for WHOREGION - positivity 
-    ss.setdefault("k_who_pos_01", ss.WHOREGION_levels.tolist())
-    ss.setdefault("k_who_pos_02", ss.FLUSEASON_levels.tolist())
-    ss.setdefault("k_who_pos_04", 0.80)
-    ss.setdefault("k_who_pos_05", 30)
-    # defaults for ITZ 
-    ss.setdefault("k_itz_04", 0.30)
-    ss.setdefault("k_itz_05", 10)
-    # defaults for wave onset 
-    ss.setdefault("k_wave_01", 10)
-    ss.setdefault("k_wave_02", ss.date_range_dt)
-    ss.setdefault("k_wave_03", True)
-    ss.setdefault("k_wave_04", True)
-    ss.setdefault("k_wave_05", 125)
-    # defaults for A vs B 
-    ss.setdefault("k_ab_01", 10)
-    ss.setdefault("k_ab_02", "SENTINEL")
-    ss.setdefault("k_ab_03", 50)
-    # defaults for moving average explorer 
-    ss.setdefault("k_tre_02", ss.ma_bin_size)
-    ss.setdefault("k_tre_03", ss.ma_degree)
-    ss.setdefault("k_tre_04", 1)
-    ss.setdefault("k_tre_05", ss.quantile_val)
-    # defaults slop geo
-    ss.setdefault("k_p10_01", "MAXCOMBINE")
-    ss.setdefault("k_p10_03", "Bluered")
-    # defaults burden geo
-    ss.setdefault("k_p13_01", "MAXCOMBINE")
-    ss.setdefault("k_p13_03", "Viridis")
+
 
 # Protects every key from being deleted (for multi-page consistency across clicks)
+# official docu Option 4: Interrupt the widget clean-up process
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
@@ -183,7 +146,6 @@ p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08 = st.Page("pages/page_play.py", title="Interactive illustration")
-# p09 = st.Page("pages/page_data.py", title="Tabular Data")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Maintenance")

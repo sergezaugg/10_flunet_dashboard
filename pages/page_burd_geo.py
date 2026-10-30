@@ -18,7 +18,7 @@ with st.sidebar:
     source_options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p13_01")
     li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
-    sel_colormap = st.selectbox("Colormap", options = li_colormaps, key="k_p13_03", placeholder="select ...")
+    sel_colormap = st.selectbox("Colormap", options = li_colormaps, index=1, key="k_p13_03", placeholder="select ...")
 
 
 # prepare 
