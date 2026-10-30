@@ -19,11 +19,11 @@ st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/serg
 pd.set_option('display.max_rows', 500)
 
 #------------------------------
-# prepare data once (only run on startup and when dev triggers refresh)
-# run the data prep pipe only and exactly once on session startup MCELP
-# better then old cache-based method i.e. cached_fun.clear()
-# because evaluating many cache functions consumes time even on cache hit!
+# prepare data once on session startup 
+# Functions cached across sessions for the lifetime of the running app.
+# Cache of download_flunet_data() cleared on 'refresh', triggering re-run of data prep
 if "df_data" not in ss:
+
     #------------------------------
     # initialize session state (constant values)
     ss.max_countries_in_plots = 20
@@ -79,9 +79,8 @@ if "df_data" not in ss:
     ss.df_metri_merged["perc_change_is_max"] = (ss.df_metri_merged["PERC_CHANGE"].eq(
         ss.df_metri_merged.groupby("COUNTRY")["PERC_CHANGE"].transform("max")))
 
-
-
     #------------------------------
+    # put values for multiple pages into ss
     if "ts_latest_data" not in ss:
         ss.ts_latest_data   = ss.df_data['ISO_WEEKSTARTDATE'].max()
     if "date_range_dt" not in ss:
@@ -100,21 +99,17 @@ if "df_data" not in ss:
         ss.ALL_COUNTRIES    = ss.df_data['COUNTRY'].unique()
 
     #------------------------------
-    # set widget defaults
-    # needed here !
+    # set widget defaults here if really needed here!
     ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
-
 
 # Protects every key from being deleted (for multi-page consistency across clicks)
 # official docu Option 4: Interrupt the widget clean-up process
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
 
-
+# debug
 # st.write(ss.df_metri_merged)
 # st.write(ss.df_trace_bl)
-
-
 
 #------------------------------
 # build app's visible  frontend
