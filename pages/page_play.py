@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from streamlit import session_state as ss
 import streamlit as st
-from src.utils import filter_a_country, filter_a_data_source
-from src.utils import det_regions, get_start_stop_of_region
-from src.preprocessing import polyreg_by_country_source, get_baseline_threshold
+from src.utils_pages import filter_a_country, filter_a_data_source
+from src.utils_pages import det_regions, get_start_stop_of_region
+from src.utils_preproc import polyreg_by_country_source, get_baseline_threshold
 from src.utils_plots import make_smoothed_curve_plot
 
 # # Choose index of starting country
@@ -21,9 +21,9 @@ with st.sidebar:
     st.divider()
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
-    quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, format="%.2f", key="k_tre_05")
-    ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), key="k_tre_02")
-    ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), key="k_tre_03")
+    quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, value = ss.quantile_val, format="%.2f", key="k_tre_05")
+    ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), value = ss.ma_bin_size   , key="k_tre_02")
+    ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), value = ss.ma_degree     , key="k_tre_03")
 
 
 # load data to local page 

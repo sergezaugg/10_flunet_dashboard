@@ -1,17 +1,16 @@
 #--------------------             
 # Author : Serge Zaugg
-# Description : trend (slope) all bu ine source 
+# Description : trend (slope) 
 #--------------------
 
 from streamlit import session_state as ss
 import plotly.express as px
 import pandas as pd
 import streamlit as st
-from src.utils import filter_a_data_source
-from src.utils import select_top_n_highest_slope
+from src.utils_pages import filter_a_data_source
+from src.utils_pages import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_slope, make_mini_trace_slope
-from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
-from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map, make_per_source_strip_plot
+from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
@@ -19,15 +18,30 @@ with st.sidebar:
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
-    sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
-    sel_top_n = st.select_slider("Top N", options=[10,20,30], key = "fgbbhjmn")
+    sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
+    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 20, key = "fgbbhjmn")
     sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
 
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
-df_metri = filter_a_data_source(df_metri_ma, sel_data_source) 
-df_trace = filter_a_data_source(ss.df_trace_ma, sel_data_source) 
+
+# st.write(df_metri_ma)
+
+# spec for COMBINED
+if sel_data_source == "COMBINED":
+    df_metri = df_metri_ma[df_metri_ma["perc_change_is_max"] == True]
+    # get correct traces via the merge-mask trick
+    df_mask = df_metri[['COUNTRY','ORIGIN_SOURCE']]
+    df_trace = df_mask.merge(ss.df_trace_ma, on=['COUNTRY','ORIGIN_SOURCE'], how="left")
+else :
+    df_metri = filter_a_data_source(df_metri_ma, sel_data_source) 
+    df_trace = filter_a_data_source(ss.df_trace_ma, sel_data_source) 
+
+
+
+
+
 
 # quick fix - supress stats if N was too small
 df_metri.loc[df_metri["N_VALID"] < 3, "PERC_CHANGE"] = pd.NA
@@ -64,7 +78,7 @@ fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "bluered", height = 300, range_c
     proj = None , 
     col_bar_horiz = False) 
 
-df_scat = ss.df_metri_merged[ss.df_metri_merged["ORIGIN_SOURCE"] != "MAXCOMBINE"]
+df_scat = ss.df_metri_merged
 fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "PERC_CHANGE", height = 300, log_y=False, y_title = "Trend (Percent Change)")
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 

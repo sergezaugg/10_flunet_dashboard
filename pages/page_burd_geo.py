@@ -8,17 +8,17 @@ import plotly.express as px
 import pandas as pd
 import streamlit as st
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
-from src.utils_geo import prepre_for_pages_10_13, rm_if_stat_na_per_source
+from src.utils_pages import prepre_for_pages_10_13, rm_if_stat_na_per_source
 
 with st.sidebar:
     st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu burden.""")
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_p13_00")
-    source_options = ["MAXCOMBINE", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
+    source_options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p13_01")
     li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
-    sel_colormap = st.selectbox("Colormap", options = li_colormaps, key="k_p13_03", placeholder="select ...")
+    sel_colormap = st.selectbox("Colormap", options = li_colormaps, index=1, key="k_p13_03", placeholder="select ...")
 
 
 # prepare 
@@ -30,15 +30,22 @@ df_metri_bl.loc[df_metri_bl["N_VALID"] < 3, "REL_BURDEN"] = pd.NA
 df_dat00 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "SENTINEL"]
 df_dat01 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NONSENTINEL"]
 df_dat02 = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "NOTDEFINED"]
-df_max   = df_metri_bl[df_metri_bl["ORIGIN_SOURCE"] == "MAXCOMBINE"]
+df_dat03 = df_metri_bl[df_metri_bl["rel_burden_is_max"] == True]
 
 # filter only data with a actual stats value 
-df_dat00, df_dat01, df_dat02, df_max, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_max, "REL_BURDEN")
+df_dat00, df_dat01, df_dat02, df_dat03, dat_info = rm_if_stat_na_per_source(df_dat00, df_dat01, df_dat02, df_dat03, "REL_BURDEN")
 
 df_dat00 = prepre_for_pages_10_13(df_dat00, xvar = "REL_BURDEN")
 df_dat01 = prepre_for_pages_10_13(df_dat01, xvar = "REL_BURDEN")
 df_dat02 = prepre_for_pages_10_13(df_dat02, xvar = "REL_BURDEN")
-df_max   = prepre_for_pages_10_13(df_max,   xvar = "REL_BURDEN")
+df_dat03 = prepre_for_pages_10_13(df_dat03, xvar = "REL_BURDEN")
+
+
+# st.write(df_dat00.shape)
+# st.write(df_dat01.shape)
+# st.write(df_dat02.shape)
+# st.write(df_dat03.shape)
+
 
 if sel_source == "SENTINEL":
     df_dat_map = df_dat00
@@ -46,8 +53,8 @@ if sel_source == "NONSENTINEL":
     df_dat_map = df_dat01
 if sel_source == "NOTDEFINED":
     df_dat_map = df_dat02
-if sel_source == "MAXCOMBINE":
-    df_dat_map = df_max
+if sel_source == "COMBINED":
+    df_dat_map = df_dat03
 
 fig_geo = make_geo_map(df_dat_map, "REL_BURDEN", sel_colormap, height = 370, range_color = [0.0, 2.0], legend_title = "Nb weeks above BL") 
 if df_dat_map.shape[0] > 0:

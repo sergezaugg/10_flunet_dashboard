@@ -6,42 +6,44 @@
 import numpy as np
 import streamlit as st
 from streamlit import session_state as ss
-from src.utils import filter_data_region, filter_several_countries
+from src.utils_pages import filter_data_region, filter_several_countries
 from src.utils_plots import make_facet_line_plot
 
 # filter by region
 with st.sidebar:
     st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
     st.divider()
-    who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels, key="k_who_01")
+    who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels.tolist(), 
+        default = ss.WHOREGION_levels.tolist(), key="k_who_01")
     country_info_temp = st.empty() 
+
+# st.write(who_regions)
 
 # apply user's data filter to data 
 df_plot_temp, n_countries_temp = filter_data_region(df = ss.df_data, who_regions = who_regions, 
-                                                    fse_regions = ss.FLUSEASON_levels.tolist(), 
-                                                    itz_regions = ss.ITZ_levels)
+    fse_regions = ss.FLUSEASON_levels.tolist(), itz_regions = ss.ITZ_levels)
 country_info_temp.text(f"N Countries = {n_countries_temp[0]}")
+
+# st.write(df_plot_temp)
 
 # filter by country  
 all_countries = df_plot_temp['COUNTRY'].unique()
 with st.sidebar:
-    sel_countries = st.multiselect("Select Countries", options=sorted(all_countries), placeholder="Select countries", key="k_who_06")
+    sel_countries = st.multiselect("Select Countries", options=sorted(all_countries), placeholder="Select countries", 
+        # default = ['CHE', 'ESP', 'FRA'], 
+        key="k_who_06")
     country_info = st.empty() 
 # apply user's data filter to data 
 df_plot, n_countries = filter_several_countries(df_plot_temp, sel_countries)
 
-
-
-
 # labels used in widgets and plots 
 outcome_labels = {
-        "INF_ALL":    "Flu detections [count]",
-        "POSITIVITY": "Flu positivity [%]"}
+    "INF_ALL":    "Flu detections [count]",
+    "POSITIVITY": "Flu positivity [%]"}
 
 with st.sidebar:
     outcome_var = st.radio(label = "Select Outcome Metric", options = ["INF_ALL", "POSITIVITY"], index=0, 
                            format_func=lambda x: outcome_labels[x], key = "k_who_07")
-
 
 # exclude all from "ORIGIN_SOURCE" level if too few non-na
 df_plot = df_plot.groupby("ORIGIN_SOURCE").filter(lambda g: g[outcome_var].notna().sum() >= 10)
