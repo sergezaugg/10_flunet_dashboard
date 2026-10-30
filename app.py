@@ -80,7 +80,7 @@ if "df_data" not in ss:
         ss.df_metri_merged.groupby("COUNTRY")["PERC_CHANGE"].transform("max")))
 
     #------------------------------
-    # put values for multiple pages into ss
+    # put data-dependent values into ss
     if "ts_latest_data" not in ss:
         ss.ts_latest_data   = ss.df_data['ISO_WEEKSTARTDATE'].max()
     if "date_range_dt" not in ss:
@@ -102,7 +102,7 @@ if "df_data" not in ss:
     # set widget defaults here if really needed here!
     ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
 
-# Protects every key from being deleted (for multi-page consistency across clicks)
+# Protect widget keys from being deleted (for multi-page consistency across clicks)
 # official docu Option 4: Interrupt the widget clean-up process
 for key in list(st.session_state.keys()):
     st.session_state[key] = st.session_state[key]
@@ -113,7 +113,6 @@ for key in list(st.session_state.keys()):
 
 #------------------------------
 # build app's visible  frontend
- 
 with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer (BETA)**] """)
     st.markdown("""
@@ -131,35 +130,33 @@ with st.sidebar:
     st.divider()
  
 # make navigation
-p08b = st.Page("pages/page_method.py", title="Methods")
 p01a = st.Page("pages/page_age1.py", title="Map")
 p01b = st.Page("pages/page_age2.py", title="Tabular")
-p02c = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
-p03c = st.Page("pages/page_burd_metric_c.py", title="Burden")
+p02 = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
+p03 = st.Page("pages/page_burd_metric_c.py", title="Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
 p05 = st.Page("pages/page_burd_geo.py", title="Burden")
 p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
-p08 = st.Page("pages/page_play.py", title="Interactive illustration")
+p08a = st.Page("pages/page_play.py", title="Interactive illustration")
+p08b = st.Page("pages/page_method.py", title="Methods")
 p10 = st.Page("pages/page_info.py", title="Info")
 p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
 p12 = st.Page("pages/page_refresh.py", title="Maintenance")
 p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 pages = {
-    "Data Age": [p01a, p01b],
-    "Metrics Rank": [p02c, p03c,],
-    "Metrics Map": [p04, p05],
-    "Explore": [p06, p07],
-    "Methods": [p08b, p13, p08],
-    "About": [p10],
-    "More": [p12],
-    "Disclaimer": [p11],
+    "Data Age":     [p01a, p01b],
+    "Metrics Rank": [p02, p03],
+    "Metrics Map":  [p04, p05],
+    "Explore":      [p06, p07],
+    "Methods":      [p08b, p13, p08a],
+    "About":        [p10],
+    "More":         [p12],
+    "Disclaimer":   [p11],
 }
 
 pg = st.navigation(pages, position="top")
 
 pg.run()
 
-
-    
