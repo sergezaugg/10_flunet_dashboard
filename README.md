@@ -16,18 +16,24 @@
 - FluNet API (`https://xmart-api-public.who.int/FLUMART/VIW_FNT?$format=csv`)
 
 ### Installation
-1. **Download or clone the repository**  
-2. **Create and activate a virtual environment**  
-3. **Install dependencies**  
-```bash
-pip install -r requirements.txt
-```
+1. Clone the repository  
+2. Create and activate a Python venv
+3. Install dependencies with ```pip install -r requirements.txt```
 
-### Usage
-Start the web-app locally with:
-```bash
-streamlit run app.py
-```
+### Set a maintenance code (facultative)
+1. Create a file ```.streamlit/secrets.toml``` with one key: ```refreshcode```
+2. The value is a string with you code.
+3. This is needed to access the data refresh button in running app
+
+### Usage (Easy with VS Code)
+1. Open this repo with "Open Folder..."
+2. Activate virtual environment (CTRL-SHIFT-P, "Python Select Interpreter") 
+3. Open a terminal and type: ```streamlit run app.py```
+
+### Usage (With CMD terminal under windows)
+1. Open cmd and navigate to root dir of this repo
+3. Activate venv with ```[full-path-to-venv-dir]\Scripts\activate.bat```
+4. type: ```streamlit run app.py```
 
 ### Project Structure
 ```text
