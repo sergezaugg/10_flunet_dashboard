@@ -13,13 +13,12 @@ from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 with st.sidebar:
     st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu trend.""")
     st.divider()
-    all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
-    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_p10_00")
     source_options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p10_01")
+    all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_p10_00")
     li_colormaps = ["Bluered", "Viridis", "Plasma", "Balance", "RdYlGn_r", "Reds"]
     sel_colormap = st.selectbox("Colormap", options = li_colormaps, index=0, key="k_p10_03", placeholder="select ...")
-
 
 # prepare 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
@@ -50,9 +49,9 @@ if sel_source == "COMBINED":
     df_dat_map = df_dat03
 
 
-fig_geo = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Percent change from BL" ) 
+fig_geo = make_geo_map(df_dat_map, "PERC_CHANGE", sel_colormap, height = 370, range_color = [-55,55], legend_title = "Trend (Percent change)" ) 
 if df_dat_map.shape[0] > 0:
-    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Percent change from BL", height = 300, 
+    fig_bar = make_bar_plot_pages_10_13(df_dat_map, xvar = "PERC_CHANGE", xlabel = "Trend (Percent change)", height = 300, 
         colormap = sel_colormap, range_color = [-55,55])
             
 c0, c1 = st.columns([30, 8])
