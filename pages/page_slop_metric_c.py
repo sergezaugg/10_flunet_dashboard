@@ -17,7 +17,7 @@ with st.sidebar:
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
-    sel_top_n = st.select_slider("Top N to Display", options=[10,20,30,40], value = 20, key = "fgbbhjmn")
+    sel_top_n = st.select_slider("Top N to Display", options=[10,20,30], value = 20, key = "fgbbhjmn")
     sel_thld = st.slider("Min Trend value to Display", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
 
