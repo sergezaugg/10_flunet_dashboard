@@ -91,7 +91,6 @@ def make_smoothed_curve_plot(df_plot, height):
     fig.update_layout(legend_title_text="")
     return(fig)
 
-
 @st.cache_data
 def make_metric_items_slope(row, height_row):
     with st.container(border= True, height = height_row):
@@ -111,7 +110,7 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
         df_subset, 
         x = 'ISO_WEEKSTARTDATE', 
         y = 'INF_MA', 
-        height = int(0.8*height_row), 
+        height = int(0.75*height_row), 
         # markers = True,
         color_discrete_sequence=[cc["traces"]["basic"]],
         )
@@ -143,12 +142,6 @@ def make_metric_items_baseline(row, height_row, time_range_stats):
             unsafe_allow_html=True,
         )
 
-
-
- 
-
-        
-
 @st.cache_data
 def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats_x_range):
      with st.container(border= True, height = height_row):
@@ -157,7 +150,7 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
             df_subset, 
             x = 'ISO_WEEKSTARTDATE', 
             y = 'INF_ALL', 
-            height = int(0.8*height_row), 
+            height = int(0.75*height_row), 
             markers = True,
             color_discrete_sequence=[cc["traces"]["basic"]],
         )
@@ -168,7 +161,10 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
         fig.add_hrect(y0=0.0, y1=row['INF_ALL_BASELINE'], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
         fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
         fig.add_vrect(x0=trace_x_range[0], x1=stats_x_range[0], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        # st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
+
+       
 
 
 

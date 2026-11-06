@@ -48,20 +48,24 @@ df_metri =  df_metri[df_metri["REL_BURDEN"] > sel_thld]
 # not needed here 
 df_metri = select_top_n_highest_slope(df_metri, n=sel_top_n, sorting_var = 'REL_BURDEN') 
 
-# with st.sidebar:
-#     st.write("N countries", df_metri.shape[0])
+
 
 rowheight = 150
 
+# prepare the two main columns
+m0, m1 = st.columns([280, 250])
+
 # smart way to fill in by rows (using st columns )
-c1, c2, c3, c4, c5 = st.columns([50, 90, 50 , 90, 250])
-col_pairs = [(c1, c2), (c3, c4)]
-for i, row in df_metri.iterrows():
-    c_metric, c_plot = col_pairs[i % 2]
-    with c_metric:
-        make_metric_items_baseline(row, rowheight, ss.time_range_stats)
-    with c_plot:
-        make_mini_trace_baseline(row, rowheight, df_trace, ss.trace_x_range_bl, ss.stats_x_range_bl) 
+with m0:
+    with st.container(border = False, height = 720):
+        c1, c2, c3, c4 = st.columns([50, 90, 50, 90])
+        col_pairs = [(c1, c2), (c3, c4)]
+        for i, row in df_metri.iterrows():
+            c_metric, c_plot = col_pairs[i % 2]
+            with c_metric:
+                make_metric_items_baseline(row, rowheight, ss.time_range_stats)
+            with c_plot:
+                make_mini_trace_baseline(row, rowheight, df_trace, ss.trace_x_range_bl, ss.stats_x_range_bl) 
 
 
 #------------------
@@ -77,13 +81,13 @@ df_scat = ss.df_metri_merged
 fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height = 300, log_y=True, y_title = "Relative Burden")
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 
-with c5:
+with m1:
     with st.container(border=True, height = 380):
-        st.text("Mini-map (only countries from selection are highlighted)")
+        st.text("Mini-map (only top N countries from selection are highlighted)")
         st.plotly_chart(fig_geo, use_container_width=True)
 
-    with st.container(border=True, height = 380):
-        st.text("Overview of countries where metrics could be computed")
+    with st.container(border=True, height = 350):
+        st.text("Overview of Relative Burden across countries")
         st.plotly_chart(fig_strip, use_container_width=False)
 
 
