@@ -91,34 +91,16 @@ def make_smoothed_curve_plot(df_plot, height):
     fig.update_layout(legend_title_text="")
     return(fig)
 
-
 @st.cache_data
-def make_metric_items_slope(row, height_row, show_percent = False):
-    
-    if show_percent:
-        selected_met = f"{int(row['PERC_CHANGE']):+d} %"
-        selected_desc = "Per Week" 
-    else:
-        selected_met = f"{int(row['SLOPE']):+d} / W"   
-        selected_desc = "*New cases/week" 
-
+def make_metric_items_slope(row, height_row):
     with st.container(border= True, height = height_row):
-        # st.metric(label=row['COUNTRY'],                  
-        #     # value=f"{int(row['SLOPE']):+d} / W",
-        #     value=selected_met,
-        #     delta_description = selected_desc,
-        #     border  = False, 
-        #     width = 210, height = int(0.55*height_row))
-        # st.markdown(
-        #     f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
-        #     unsafe_allow_html=True,)
         st.markdown(
-            f"**{row['COUNTRY']}**  \n"
-            f"{int(row['PERC_CHANGE']):+d} % \n"
-            f"{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')} "
-            f"{row['ORIGIN_SOURCE']} ",
-            # f"(n={row['N_VALID']}) weeks",
-            unsafe_allow_html=False,
+            f"<span style='font-size:15px'>{row['COUNTRY']} </span>"
+            f"<span style='font-size:13px; color:grey'>{"Trend"}<br></span>"
+            f"<span style='font-size:24px'>{f"{int(row['PERC_CHANGE']):+d} %"}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ORIGIN_SOURCE'][:8]}<br></span>",
+            unsafe_allow_html=True,
         )
 
 @st.cache_data
@@ -128,7 +110,7 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
         df_subset, 
         x = 'ISO_WEEKSTARTDATE', 
         y = 'INF_MA', 
-        height = int(0.8*height_row), 
+        height = int(0.75*height_row), 
         # markers = True,
         color_discrete_sequence=[cc["traces"]["basic"]],
         )
@@ -142,29 +124,22 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
         # marker=dict(color=  cc["traces"]["hot"]), 
         showlegend=False)
     fig.add_hline(y=row['INF_ALL_BASELINE'], line_width=1, line_dash="dot", line_color="green")
-    # fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
+    fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
     fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), xaxis_title=None, yaxis_title=None)
     fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, range=xrange, showgrid=False)
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero", showgrid=False) 
     return fig
 
-
-
 @st.cache_data
 def make_metric_items_baseline(row, height_row, time_range_stats):
     with st.container(border= True, height = height_row):
-        # st.caption(row['COUNTRY'])
-        # st.text(f"{np.round(row['REL_BURDEN'], 1)}")     
-        # st.caption(row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d") + 
-        #            " " + row["ORIGIN_SOURCE"] +
-        #            " " + f"(n={row['N_VALID']}) weeks")
         st.markdown(
-            f"**{row['COUNTRY']}**  \n"
-            f"{np.round(row['REL_BURDEN'], 1)}  \n"
-            f"{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')} "
-            f"{row['ORIGIN_SOURCE']} "
-            f"(n={row['N_VALID']}) weeks",
-            unsafe_allow_html=False,
+            f"<span style='font-size:15px'>{row['COUNTRY']} </span>"
+            f"<span style='font-size:13px; color:grey'>{"Burden"}<br></span>"
+            f"<span style='font-size:24px'>{np.round(row['REL_BURDEN'], 1)}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ORIGIN_SOURCE'][:8]}<br></span>",
+            unsafe_allow_html=True,
         )
 
 @st.cache_data
@@ -175,8 +150,8 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
             df_subset, 
             x = 'ISO_WEEKSTARTDATE', 
             y = 'INF_ALL', 
-            height = int(0.8*height_row), 
-            markers = True,
+            height = int(0.75*height_row), 
+            # markers = True,
             color_discrete_sequence=[cc["traces"]["basic"]],
         )
         fig.update_layout(margin=dict(l=10, r=15, t=10, b=10), xaxis_title=None, yaxis_title=None)
@@ -186,20 +161,10 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
         fig.add_hrect(y0=0.0, y1=row['INF_ALL_BASELINE'], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
         fig.add_vline(x=stats_x_range[0], line_width=1, line_dash="dot", line_color="red")
         fig.add_vrect(x0=trace_x_range[0], x1=stats_x_range[0], fillcolor="pink", opacity=0.10, line_width=0, layer="below")
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        # st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
 
-
-
-
-
-
-
-
-
-
-
-
-
+       
 
 
 
@@ -267,8 +232,6 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height, colormap, range_color):
     return fig
 
 
-
-
 @st.cache_data
 def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide", col_bar_horiz = False): 
     # mollweide , orthographic , natural earth
@@ -304,7 +267,6 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "m
     )
 
     return fig
-
 
 
 @st.cache_data
@@ -375,7 +337,7 @@ def make_per_source_strip_plot(df, yvar, height, log_y, y_title):
         plot_bgcolor="black",
         yaxis=dict(side="right"),
         )
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, title_text=None)  
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     return fig
 

@@ -5,11 +5,14 @@
 
 import streamlit as st
 
+# def apply_global_styles():
+#     print("Not using custom CSS styles")
+
 def apply_global_styles():
     """Apply global CSS styles to the Streamlit app."""
 
-    # enforce  min and max accepted screen width via CSS
-    st.markdown("""
+    # enforce min and max accepted screen width via CSS
+    st.html("""
         <style>
             .block-container {
                 max-width: 1500px;
@@ -21,27 +24,35 @@ def apply_global_styles():
                 box-sizing: border-box;
             }
         </style>
-    """, unsafe_allow_html=True)
-
+    """)
 
     # Reduce spacing around st.divider() 
-    st.markdown("""
+    st.html("""
         <style>
             div[data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] hr) {
                 margin-top: -1.5rem !important;
                 margin-bottom: -0.8rem !important;}
         </style>
-        """, unsafe_allow_html=True)
+        """)
 
     # reduce vertical space between navig and items(content
-    st.markdown("""
+    st.html("""
         <style> 
-            [data-testid="stMainBlockContainer"] {padding-top: 0rem; padding-left: 1.8rem;} 
+            [data-testid="stMainBlockContainer"] {padding-top: 5rem; padding-left: 1.8rem; } 
         </style>
-        """, unsafe_allow_html=True)
+        """)
+
+    # reduce height of nav bar 
+    st.html("""
+        <style>
+            [data-testid="stHeader"] {
+            height: 4.1rem; min-height: 4rem; 
+            }
+        </style>
+        """)
 
     # change color of multilevel-navigation bar background and tabs  
-    st.markdown("""
+    st.html("""
     <style>
     /* Overall header background */
     .stAppHeader {
@@ -82,11 +93,10 @@ def apply_global_styles():
         background-color: #222222 !important;
     }
     </style>
-    """, unsafe_allow_html=True)
-
+    """)
 
     # All navigation tabs: same fixed width
-    st.markdown("""
+    st.html("""
     <style>
         .stAppHeader a {
             width: 90px !important;
@@ -98,11 +108,10 @@ def apply_global_styles():
             white-space: nowrap !important;
         }
     </style>
-    """, unsafe_allow_html=True)
-
+    """)
 
     # copyright notice and version at bottom-left
-    st.markdown("""
+    st.html("""
     <style>
         .app-label {
             position: fixed;
@@ -116,20 +125,15 @@ def apply_global_styles():
         }
     </style>
     <div class="app-label">
-        v0.11.0-β<br>© 2026 Serge Zaugg
+        v0.11.1-β<br>© 2026 Serge Zaugg
     </div>
-    """, unsafe_allow_html=True)
+    """)
+
+  
 
 
-    # reduce height of nav bar 
-    st.markdown("""
-    <style>
-        [data-testid="stHeader"] {
-            height: 4rem;
-            min-height: 4rem;
-            }
-    </style>
-    """, unsafe_allow_html=True)
+
+
 
 
 
