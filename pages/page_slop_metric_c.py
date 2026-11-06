@@ -14,13 +14,13 @@ from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Her you can rank countries with highest flu trend first.""")
+    st.markdown(f""":primary[Summary:] Rank countries with highest flu trend first.""")
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "tbnhfgdbefrth")
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="xcndhfgetr")
-    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 20, key = "fgbbhjmn")
-    sel_thld = st.slider("Trend > t", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
+    sel_top_n = st.select_slider("Top N to Display", options=[10,20,30,40], value = 20, key = "fgbbhjmn")
+    sel_thld = st.slider("Min Trend value to Display", min_value = -200.0, max_value = +200.0, value = 0.0, step = 10.0, key = "dfftzurqqffsxcv")
 
 # apply user's choice 
 df_metri_ma = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
@@ -79,14 +79,14 @@ fig_geo = make_geo_map(df_metri, "PERC_CHANGE", "bluered", height = 300, range_c
     col_bar_horiz = False) 
 
 df_scat = ss.df_metri_merged
-fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "PERC_CHANGE", height = 300, log_y=False, y_title = "Trend (Percent Change)")
+fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "PERC_CHANGE", height = 230, log_y=False, y_title = "Trend (Percent Change)")
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 
 with m1:
     with st.container(border=True, height = 380):
-        st.text("Mini-map (only top N countries from selection are highlighted)")
+        st.caption("Mini-map (only top N countries from selection are highlighted)")
         st.plotly_chart(fig_geo, use_container_width=True)
 
-    with st.container(border=True, height = 350):
-        st.text("Overview of Trend (Percent Change) across countries")
+    with st.container(border=True, height = 300):
+        st.caption("Overview of Trend (Percent Change) across countries")
         st.plotly_chart(fig_strip, use_container_width=False)

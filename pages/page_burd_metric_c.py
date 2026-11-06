@@ -15,13 +15,13 @@ from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Her you can rank countries with highest flu burden first.""")
+    st.markdown(f""":primary[Summary:] Rank countries with highest flu burden first.""")
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_abcvbfg_02")
-    sel_top_n = st.select_slider("Top N", options=[10,20,30], value = 20, key = "k_burd_top_n")
-    sel_thld = st.slider("Burden > t", min_value = 0.0, max_value = 10.0, value = 1.0, step = 0.1, key = "dfrqqsxcv")
+    sel_top_n = st.select_slider("Top N to Display", options=[10,20,30,40], value = 20, key = "k_burd_top_n")
+    sel_thld = st.slider("Min Burden value to Display", min_value = 0.0, max_value = 10.0, value = 1.0, step = 0.1, key = "dfrqqsxcv")
     st.divider()
 
 # apply user's choice 
@@ -78,16 +78,16 @@ fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 300, range_co
     col_bar_horiz = False) 
 
 df_scat = ss.df_metri_merged
-fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height = 300, log_y=True, y_title = "Relative Burden")
+fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height = 230, log_y=True, y_title = "Relative Burden")
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 
 with m1:
     with st.container(border=True, height = 380):
-        st.text("Mini-map (only top N countries from selection are highlighted)")
+        st.caption("Mini-map (only top N countries from selection are highlighted)")
         st.plotly_chart(fig_geo, use_container_width=True)
 
-    with st.container(border=True, height = 350):
-        st.text("Overview of Relative Burden across countries")
+    with st.container(border=True, height = 300):
+        st.caption("Overview of Relative Burden across countries")
         st.plotly_chart(fig_strip, use_container_width=False)
 
 

@@ -168,19 +168,6 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 @st.cache_data
 def display_df_page_08(df, nw_cutoff, height):
 
@@ -245,8 +232,6 @@ def make_bar_plot_pages_10_13(df, xvar, xlabel, height, colormap, range_color):
     return fig
 
 
-
-
 @st.cache_data
 def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "mollweide", col_bar_horiz = False): 
     # mollweide , orthographic , natural earth
@@ -282,7 +267,6 @@ def make_geo_map(df, var, colormap, height, range_color, legend_title, proj = "m
     )
 
     return fig
-
 
 
 @st.cache_data
@@ -353,7 +337,7 @@ def make_per_source_strip_plot(df, yvar, height, log_y, y_title):
         plot_bgcolor="black",
         yaxis=dict(side="right"),
         )
-    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True)
+    fig.update_xaxes(showline = True, linewidth=0.8, mirror=True, title_text=None)  
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True)
     return fig
 
