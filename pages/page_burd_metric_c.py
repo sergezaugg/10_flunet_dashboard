@@ -3,7 +3,6 @@
 # Description : flu burden from past few weeks 
 #--------------------
 
-import numpy as np
 import pandas as pd
 import plotly.express as px
 from streamlit import session_state as ss
@@ -13,20 +12,17 @@ from src.utils_pages import select_top_n_highest_slope
 from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
-
 with st.sidebar:
     st.markdown(f""":primary[Summary:] Rank countries with highest flu burden first.""")
     st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
-    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_abcvbfg_02")
     sel_top_n = st.select_slider("Top N to Display", options=[10,20,30,40], value = 20, key = "k_burd_top_n")
     sel_thld = st.slider("Min Burden value to Display", min_value = 0.0, max_value = 10.0, value = 1.0, step = 0.1, key = "dfrqqsxcv")
-    st.divider()
+    sel_date = st.select_slider("Filter by recency", options=all_recent_dates, format_func=lambda x: x.strftime("%y-%m-%d"), key = "k_burd_recency")
 
 # apply user's choice 
 df_metri_bl = ss.df_metri_merged[ss.df_metri_merged["ISO_WEEKSTARTDATE"] >= sel_date]
-
 
 # spec for COMBINED
 if sel_data_source == "COMBINED":
@@ -38,9 +34,6 @@ else :
     df_metri = filter_a_data_source(df_metri_bl, sel_data_source) 
     df_trace = filter_a_data_source(ss.df_trace_bl, sel_data_source)  
 
-# st.write(df_metri)
-# st.write(df_trace)
-
 # quick fix - supress stats if N was too small
 df_metri.loc[df_metri["N_VALID"] < 3, "REL_BURDEN"] = pd.NA
 # keep only if > 1.0
@@ -49,6 +42,8 @@ df_metri =  df_metri[df_metri["REL_BURDEN"] > sel_thld]
 df_metri = select_top_n_highest_slope(df_metri, n=sel_top_n, sorting_var = 'REL_BURDEN') 
 
 
+#------------------
+# display 
 
 rowheight = 150
 
@@ -57,7 +52,7 @@ m0, m1 = st.columns([280, 250])
 
 # smart way to fill in by rows (using st columns )
 with m0:
-    with st.container(border = False, height = 720):
+    with st.container(border = False, height = 700):
         c1, c2, c3, c4 = st.columns([50, 90, 50, 90])
         col_pairs = [(c1, c2), (c3, c4)]
         for i, row in df_metri.iterrows():
@@ -67,8 +62,6 @@ with m0:
             with c_plot:
                 make_mini_trace_baseline(row, rowheight, df_trace, ss.trace_x_range_bl, ss.stats_x_range_bl) 
 
-
-#------------------
 # make geo map 
 # mollweide , orthographic , natural earth
 fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 300, range_color = [0.0, 2.0], 
@@ -82,15 +75,12 @@ fig_strip = make_per_source_strip_plot(df = df_scat, yvar = "REL_BURDEN", height
 fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey" )
 
 with m1:
-    with st.container(border=True, height = 380):
+    with st.container(border=True, height = 370):
         st.caption("Mini-map (only top N countries from selection are highlighted)")
         st.plotly_chart(fig_geo, use_container_width=True)
 
     with st.container(border=True, height = 300):
         st.caption("Overview of Relative Burden across countries")
         st.plotly_chart(fig_strip, use_container_width=False)
-
-
-
 
 
