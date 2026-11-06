@@ -63,7 +63,7 @@ c1, c2, c3, c4, c5,  = st.columns([50, 90, 50, 90, 250])
 col_pairs = [(c1, c2), (c3, c4)]
 for i, row in df_metri.iterrows():
     c_metric, c_plot = col_pairs[i % 2]
-    with c_metric:make_metric_items_slope(row, height_row=rowheight, show_percent=True)
+    with c_metric:make_metric_items_slope(row, height_row=rowheight)
     with c_plot:
         with st.container(border=True, height=rowheight):
             st.plotly_chart(prerend1[i], use_container_width=True, config={"displayModeBar": False})

@@ -93,32 +93,15 @@ def make_smoothed_curve_plot(df_plot, height):
 
 
 @st.cache_data
-def make_metric_items_slope(row, height_row, show_percent = False):
-    
-    if show_percent:
-        selected_met = f"{int(row['PERC_CHANGE']):+d} %"
-        selected_desc = "Per Week" 
-    else:
-        selected_met = f"{int(row['SLOPE']):+d} / W"   
-        selected_desc = "*New cases/week" 
-
+def make_metric_items_slope(row, height_row):
     with st.container(border= True, height = height_row):
-        # st.metric(label=row['COUNTRY'],                  
-        #     # value=f"{int(row['SLOPE']):+d} / W",
-        #     value=selected_met,
-        #     delta_description = selected_desc,
-        #     border  = False, 
-        #     width = 210, height = int(0.55*height_row))
-        # st.markdown(
-        #     f'<span style="font-size: 12px;">Upd. {row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d")}</span>',
-        #     unsafe_allow_html=True,)
         st.markdown(
-            f"**{row['COUNTRY']}**  \n"
-            f"{int(row['PERC_CHANGE']):+d} % \n"
-            f"{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')} "
-            f"{row['ORIGIN_SOURCE']} ",
-            # f"(n={row['N_VALID']}) weeks",
-            unsafe_allow_html=False,
+            f"<span style='font-size:15px'>{row['COUNTRY']} </span>"
+            f"<span style='font-size:13px; color:grey'>{"Trend"}<br></span>"
+            f"<span style='font-size:24px'>{f"{int(row['PERC_CHANGE']):+d} %"}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ORIGIN_SOURCE'][:8]}<br></span>",
+            unsafe_allow_html=True,
         )
 
 @st.cache_data
@@ -148,24 +131,23 @@ def make_mini_trace_slope(row, height_row, df_for_trace, xrange, stats_x_range):
     fig.update_yaxes(showline = True, linewidth=0.8, mirror=True, rangemode="tozero", showgrid=False) 
     return fig
 
-
-
 @st.cache_data
 def make_metric_items_baseline(row, height_row, time_range_stats):
     with st.container(border= True, height = height_row):
-        # st.caption(row['COUNTRY'])
-        # st.text(f"{np.round(row['REL_BURDEN'], 1)}")     
-        # st.caption(row["ISO_WEEKSTARTDATE"].strftime("%Y-%m-%d") + 
-        #            " " + row["ORIGIN_SOURCE"] +
-        #            " " + f"(n={row['N_VALID']}) weeks")
         st.markdown(
-            f"**{row['COUNTRY']}**  \n"
-            f"{np.round(row['REL_BURDEN'], 1)}  \n"
-            f"{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')} "
-            f"{row['ORIGIN_SOURCE']} "
-            f"(n={row['N_VALID']}) weeks",
-            unsafe_allow_html=False,
+            f"<span style='font-size:15px'>{row['COUNTRY']} </span>"
+            f"<span style='font-size:13px; color:grey'>{"Burden"}<br></span>"
+            f"<span style='font-size:24px'>{np.round(row['REL_BURDEN'], 1)}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ISO_WEEKSTARTDATE'].strftime('%Y-%m-%d')}<br></span>"
+            f"<span style='font-size:13px; color:grey'>{row['ORIGIN_SOURCE'][:8]}<br></span>",
+            unsafe_allow_html=True,
         )
+
+
+
+ 
+
+        
 
 @st.cache_data
 def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats_x_range):

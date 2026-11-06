@@ -51,7 +51,7 @@ df_metri = select_top_n_highest_slope(df_metri, n=sel_top_n, sorting_var = 'REL_
 # with st.sidebar:
 #     st.write("N countries", df_metri.shape[0])
 
-rowheight = 160
+rowheight = 150
 
 # smart way to fill in by rows (using st columns )
 c1, c2, c3, c4, c5 = st.columns([50, 90, 50 , 90, 250])
