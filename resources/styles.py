@@ -5,10 +5,13 @@
 
 import streamlit as st
 
+# def apply_global_styles():
+#     print("Not using custom CSS styles")
+
 def apply_global_styles():
     """Apply global CSS styles to the Streamlit app."""
 
-    # enforce  min and max accepted screen width via CSS
+    # enforce min and max accepted screen width via CSS
     st.html("""
         <style>
             .block-container {
@@ -35,7 +38,16 @@ def apply_global_styles():
     # reduce vertical space between navig and items(content
     st.html("""
         <style> 
-            [data-testid="stMainBlockContainer"] {padding-top: 0rem; padding-left: 1.8rem;} 
+            [data-testid="stMainBlockContainer"] {padding-top: 5rem; padding-left: 1.8rem; } 
+        </style>
+        """)
+
+    # reduce height of nav bar 
+    st.html("""
+        <style>
+            [data-testid="stHeader"] {
+            height: 4.1rem; min-height: 4rem; 
+            }
         </style>
         """)
 
@@ -117,12 +129,11 @@ def apply_global_styles():
     </div>
     """)
 
-    # reduce height of nav bar 
-    st.html("""
-    <style>
-        [data-testid="stHeader"] {
-            height: 4rem;
-            min-height: 4rem;
-            }
-    </style>
-    """)
+  
+
+
+
+
+
+
+
