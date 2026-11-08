@@ -49,7 +49,7 @@ dft = dft[dft["WHOREGION"].isin(who_regions)]
 # get series with most recent data (with min of days_since)
 df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
 # make plot 
-fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7],
+fig = make_geo_map(df_min, "days_since", "RdYlGn_r", height = 370, range_color = [0, 20+ss.nw_global*7],
     proj = None, 
     legend_title = "Data age [Days]",
     col_bar_horiz = False
@@ -70,7 +70,7 @@ with c11:
                 x1, x2 = st.columns([1,1])
                 with x1:
                     st.text("Countries with at least one fresh series")
-                    st.markdown(f"<p style='color:#00bbff; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
+                    st.markdown(f"<p style='color:#00ff00; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
                         unsafe_allow_html=True)
                 with x2:
                     st.text("Countries with all series stale")

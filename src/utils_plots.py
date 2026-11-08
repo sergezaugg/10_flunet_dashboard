@@ -168,11 +168,10 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
 @st.cache_data
 def display_df_page_08(df, nw_cutoff, height):
 
-    
     def set_color_in_df(x):
         """ helper function for formatting df """
         if x < nw_cutoff:
-            return "color: #00bbff"
+            return "color: #00ff00"
         elif x >= nw_cutoff:
             return "color: red"
         return ""
