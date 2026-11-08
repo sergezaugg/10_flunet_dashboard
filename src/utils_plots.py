@@ -165,9 +165,6 @@ def make_mini_trace_baseline(row, height_row, df_for_trace, trace_x_range, stats
         st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
 
        
-
-
-
 @st.cache_data
 def display_df_page_08(df, nw_cutoff, height):
 
@@ -175,7 +172,7 @@ def display_df_page_08(df, nw_cutoff, height):
     def set_color_in_df(x):
         """ helper function for formatting df """
         if x < nw_cutoff:
-            return "color: green"
+            return "color: #00bbff"
         elif x >= nw_cutoff:
             return "color: red"
         return ""

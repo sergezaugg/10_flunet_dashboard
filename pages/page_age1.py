@@ -63,24 +63,25 @@ c11, c12 = st.columns([30,15])
 
 # quick overview of stale and fresh data 
 with c11:
-    with st.container(border= True, height = 250):
-
-        x1, x2 = st.columns([1,1])
-        with x1:
-            st.text("Countries with >=1 series fresh")
-            st.markdown(f"<p style='color:green; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
-                unsafe_allow_html=True)
+    with st.container(border= False, height = 250):
+        a1,a2 = st.columns([2,1], border= False)
+        with a1:    
+            with st.container(border= True, height = 250):
+                x1, x2 = st.columns([1,1])
+                with x1:
+                    st.text("Countries with at least one fresh series")
+                    st.markdown(f"<p style='color:#00bbff; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
+                        unsafe_allow_html=True)
+                with x2:
+                    st.text("Countries with all series stale")
+                    st.markdown(f"<p style='color:red; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
+                        unsafe_allow_html=True)
+                st.caption("Selected Regions: " + " · ".join(who_regions))
+        with a2: 
+            with st.container(border= True, height = 250):
+                st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
+                    older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
             
-        with x2:
-            st.text("Countries with all series stale")
-            st.markdown(f"<p style='color:red; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
-                unsafe_allow_html=True)
-
-        st.text("Selected Regions: " + " · ".join(who_regions))
-
-        st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
-            older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
-        
 with c11:
     with st.container(border=True, height = 450):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
