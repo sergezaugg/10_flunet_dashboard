@@ -64,3 +64,5 @@ c1,c2 = st.columns([30,1])
 with c1:
     with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    st.caption("Tip: You can select up to 10 countries on the sidebar")
+    st.caption("Tip: Plots are interactive and zoomable")

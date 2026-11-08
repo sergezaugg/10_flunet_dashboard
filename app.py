@@ -29,7 +29,7 @@ if "df_data" not in ss:
     ss.max_countries_in_plots = 20
     ss.nw_global = 6 # weeks from ref to be used for stats 
     ss.top_n = 5 # how much to show in 'top' pages
-    ss.nw_for_demo = 52*4
+    # ss.nw_for_demo = 52*4
     # (1) advanced pre-processing (slope / percent change)
     ss.nw_ma = 20 # 15
     ss.ma_bin_size = 3 # 4
@@ -100,7 +100,7 @@ if "df_data" not in ss:
 
     #------------------------------
     # set widget defaults here if really needed here!
-    ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
+    ss.setdefault("k_who_06", ['CHE', 'ESP'])
 
 # Protect widget keys from being deleted (for multi-page consistency across clicks)
 # official docu Option 4: Interrupt the widget clean-up process
@@ -117,9 +117,9 @@ with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer (BETA)**] """)
     st.markdown("""
     <div style="line-height: 1.3; margin-bottom: 0.9em;">
-        <div>Data Hash: <code style="color:orange">{}</code></div>
-        <div>Downloaded: <code style="color:orange">{}</code></div>
-        <div>Reference date: <code style="color:orange">{}</code></div>
+        <div>Data Hash: <code style="color:#ee2a2a">{}</code></div>
+        <div>Downloaded: <code style="color:#ee2a2a">{}</code></div>
+        <div>Reference date: <code style="color:#ee2a2a">{}</code></div>
     </div>
     """.format(
         ss.sha256_download[:12], 
@@ -130,8 +130,7 @@ with st.sidebar:
     st.divider()
  
 # make navigation
-p01a = st.Page("pages/page_age1.py", title="Map")
-p01b = st.Page("pages/page_age2.py", title="Tabular")
+p01a = st.Page("pages/page_age1.py", title="Data Age")
 p02 = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
 p03 = st.Page("pages/page_burd_metric_c.py", title="Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
@@ -146,14 +145,14 @@ p12 = st.Page("pages/page_refresh.py", title="Maintenance")
 p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 pages = {
-    "Data Age":     [p01a, p01b],
+    "Data Age":     [p01a],
     "Metrics Rank": [p02, p03],
     "Metrics Map":  [p04, p05],
     "Explore":      [p06, p07],
     "Methods":      [p08b, p13, p08a],
     "About":        [p10],
-    "More":         [p12],
     "Disclaimer":   [p11],
+    "More":         [p12],
 }
 
 pg = st.navigation(pages, position="top")

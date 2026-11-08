@@ -54,7 +54,7 @@ m0, m1 = st.columns([280, 250])
 
 # smart way to fill in by rows (using st columns )
 with m0:
-    with st.container(border = False, height = 700):
+    with st.container(border = False, height = 680):
         c1, c2, c3, c4  = st.columns([50, 90, 50, 90])
         col_pairs = [(c1, c2), (c3, c4)]
         for i, row in df_metri.iterrows():
@@ -63,6 +63,7 @@ with m0:
             with c_plot:
                 with st.container(border=True, height=rowheight):
                     st.plotly_chart(prerend1[i], use_container_width=True, config={"staticPlot": True})
+    st.caption("Tip: Scroll down to see more")
 
 # make geo map 
 # mollweide , orthographic , natural earth
@@ -79,7 +80,7 @@ fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey"
 with m1:
     with st.container(border=True, height = 370):
         st.caption("Mini-map (only top N countries from selection are highlighted)")
-        st.plotly_chart(fig_geo, use_container_width=True)
+        st.plotly_chart(fig_geo, use_container_width=True, config={"staticPlot": True})
 
     with st.container(border=True, height = 300):
         st.caption("Overview of Trend (Percent Change) across countries")

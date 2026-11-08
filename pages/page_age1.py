@@ -17,11 +17,6 @@ with st.sidebar:
     st.divider()
     who_regions = st.multiselect("Select WHO regions", options = ss.WHOREGION_levels, default = ss.WHOREGION_levels.tolist(), key="k_rec_01")
 
-    
-
-
-
-
 #-------------------------------------------------------------
 # data processing  
 
@@ -30,10 +25,8 @@ df_lat = df_lat[df_lat["WHOREGION"].isin(who_regions)]
 # set initial row order
 df_lat = df_lat.sort_values("days_since", ascending = True)
 
-# prepare overview 
+# # prepare overview 
 df_lat["stale_data"] = np.where(df_lat["days_since"] > ss.nw_global*7, "Stale", "Fresh",)
-table = (df_lat.groupby(["ORIGIN_SOURCE", "stale_data"]).size().reset_index(name="count"))
-table = table.sort_values(['stale_data', 'ORIGIN_SOURCE'], ascending= [True, False])
 
 # get overview counts
 n_countries_all = df_lat.loc[ :,["COUNTRY"]].drop_duplicates().shape[0]
@@ -47,62 +40,60 @@ df_lat = df_lat.drop(columns = ["ISO_WEEKSTARTDATE", "WHOREGION", "FLUSEASON", "
 df_sel = [df_lat[df_lat['ORIGIN_SOURCE'] == a] for a in ['SENTINEL', 'NONSENTINEL', 'NOTDEFINED']]
 df_sel = [a.drop(columns = "ORIGIN_SOURCE") for a in df_sel]
 
+#----------------------------------------------
+# create map of data age 
+
+dft = ss.df_latest_data
+# select based on WHOREGION
+dft = dft[dft["WHOREGION"].isin(who_regions)]
+# get series with most recent data (with min of days_since)
+df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
+# make plot 
+fig = make_geo_map(df_min, "days_since", "RdYlGn_r", height = 370, range_color = [0, 20+ss.nw_global*7],
+    proj = None, 
+    legend_title = "Data age [Days]",
+    col_bar_horiz = False
+    )
+
 #-------------------------------------------------------------
 # display 
 
+# create layout 
+c11, c12 = st.columns([30,15])
+
 # quick overview of stale and fresh data 
-c1, c2, c3 = st.columns([30,30,2])
-with c1:
-    with st.container(border= True, height = 280):
-
-        x1, x2 = st.columns([1,1])
-        with x1:
-            st.text("Countries with >=1 series fresh")
-            st.markdown(f"<p style='color:green; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
-                unsafe_allow_html=True)
+with c11:
+    with st.container(border= False, height = 250):
+        a1,a2 = st.columns([2,1], border= False)
+        with a1:    
+            with st.container(border= True, height = 250):
+                x1, x2 = st.columns([1,1])
+                with x1:
+                    st.text("Countries with at least one fresh series")
+                    st.markdown(f"<p style='color: #00dd00; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
+                        unsafe_allow_html=True)
+                with x2:
+                    st.text("Countries with all series stale")
+                    st.markdown(f"<p style='color: #dd0000; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
+                        unsafe_allow_html=True)
+                st.caption("Selected Regions: " + " · ".join(who_regions))
+        with a2: 
+            with st.container(border= True, height = 250):
+                st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
+                    older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
             
-        with x2:
-            st.text("Countries with all series stale")
-            st.markdown(f"<p style='color:red; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
-                unsafe_allow_html=True)
+with c11:
+    with st.container(border=True, height = 450):
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-        st.text("Selected Regions: " + " · ".join(who_regions))
-
-        st.markdown(f"""Data are considered stale if all series ('SENTINEL', 'NONSENTINEL', 'NOTDEFINED') are 
-            older than {ss.nw_global*7} days and consequently data summaries are not shown on the other pages.""")
-        
-with c2:
-    with st.container(border= True, height = 280):
-        st.dataframe(table, hide_index  = True, 
-                    #  height = 260, 
-                     height="content",
-            column_config={
-                "ORIGIN_SOURCE": st.column_config.TextColumn("Data Source", width="auto", alignment="left",),
-                "stale_data": st.column_config.TextColumn("Data Status", width="auto", alignment="center",),
-                "count": st.column_config.NumberColumn("Nb Countries", width="auto", alignment="center",),
-            },)
-
-
-
-#----------------------------------------------
-# map of data age 
-dft = ss.df_latest_data
-
-# select based on WHOREGION
-dft = dft[dft["WHOREGION"].isin(who_regions)]
-
-df_min = dft.loc[dft.dropna(subset=["days_since"]).groupby("COUNTRY")["days_since"].idxmin()]
-
-fig = make_geo_map(df_min, "days_since", "Bluered", height = 370, range_color = [0, 20+ss.nw_global*7],
-                   proj = None, 
-                   legend_title = "Data age [Days]",
-                   col_bar_horiz = False
-                   )
-c0, c1 = st.columns([30, 1])
-with c0:
-    with st.container(border=True, height = 400):
-        st.plotly_chart(fig, use_container_width=True)
-
-
+with c12:
+    with st.container(border=True, height = 250+450+16):
+        t1, t2, t3 = st.tabs(["SENTINEL", "NONSENTINEL", "NOTDEFINED"], width="stretch", default="SENTINEL")
+        with t1:
+            display_df_page_08(df_sel[0], nw_cutoff = ss.nw_global*7, height = 600)
+        with t2:
+            display_df_page_08(df_sel[1], nw_cutoff = ss.nw_global*7, height = 600)
+        with t3:
+            display_df_page_08(df_sel[2], nw_cutoff = ss.nw_global*7, height = 600)
 
 
