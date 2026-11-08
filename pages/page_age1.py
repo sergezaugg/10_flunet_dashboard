@@ -70,11 +70,11 @@ with c11:
                 x1, x2 = st.columns([1,1])
                 with x1:
                     st.text("Countries with at least one fresh series")
-                    st.markdown(f"<p style='color:#00ff00; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
+                    st.markdown(f"<p style='color: #00dd00; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_remain)}</p>",
                         unsafe_allow_html=True)
                 with x2:
                     st.text("Countries with all series stale")
-                    st.markdown(f"<p style='color:red; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
+                    st.markdown(f"<p style='color: #dd0000; font-size:1.80rem; font-weight:600;'>N = {int(n_countries_stale)}</p>",
                         unsafe_allow_html=True)
                 st.caption("Selected Regions: " + " · ".join(who_regions))
         with a2: 

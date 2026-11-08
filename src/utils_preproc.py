@@ -142,7 +142,7 @@ def download_flunet_data(dummy = 55):
         df_dat = pd.read_csv(csv_data, engine="c", on_bad_lines="skip", low_memory=False )
         # get a timestamp
         ts = datetime.now() # .strftime("%Y-%m-%d %H:%M")
-        data_source = "✅ Sucessfully downloaded"
+        data_source = "😊 Sucessfully downloaded"
 
     except (requests.RequestException, pd.errors.ParserError):
         # handle if not downloaded

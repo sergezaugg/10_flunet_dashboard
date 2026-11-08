@@ -171,9 +171,9 @@ def display_df_page_08(df, nw_cutoff, height):
     def set_color_in_df(x):
         """ helper function for formatting df """
         if x < nw_cutoff:
-            return "color: #00ff00"
+            return "color: #ffffff"
         elif x >= nw_cutoff:
-            return "color: red"
+            return "color: #ffffff"
         return ""
 
     st.dataframe(

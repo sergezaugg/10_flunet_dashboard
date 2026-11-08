@@ -117,9 +117,9 @@ with st.sidebar:
     st.markdown(f"""## :primary[**Global Influenza Explorer (BETA)**] """)
     st.markdown("""
     <div style="line-height: 1.3; margin-bottom: 0.9em;">
-        <div>Data Hash: <code style="color:orange">{}</code></div>
-        <div>Downloaded: <code style="color:orange">{}</code></div>
-        <div>Reference date: <code style="color:orange">{}</code></div>
+        <div>Data Hash: <code style="color:#ee2a2a">{}</code></div>
+        <div>Downloaded: <code style="color:#ee2a2a">{}</code></div>
+        <div>Reference date: <code style="color:#ee2a2a">{}</code></div>
     </div>
     """.format(
         ss.sha256_download[:12], 
