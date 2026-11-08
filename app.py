@@ -130,8 +130,7 @@ with st.sidebar:
     st.divider()
  
 # make navigation
-p01a = st.Page("pages/page_age1.py", title="Map")
-p01b = st.Page("pages/page_age2.py", title="Tabular")
+p01a = st.Page("pages/page_age1.py", title="Data Age")
 p02 = st.Page("pages/page_slop_metric_c.py", title="Trend", default=True)
 p03 = st.Page("pages/page_burd_metric_c.py", title="Burden")
 p04 = st.Page("pages/page_slop_geo.py", title="Trend")
@@ -146,7 +145,7 @@ p12 = st.Page("pages/page_refresh.py", title="Maintenance")
 p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 pages = {
-    "Data Age":     [p01a, p01b],
+    "Data Age":     [p01a],
     "Metrics Rank": [p02, p03],
     "Metrics Map":  [p04, p05],
     "Explore":      [p06, p07],

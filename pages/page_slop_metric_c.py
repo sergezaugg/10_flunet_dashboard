@@ -79,7 +79,7 @@ fig_strip.add_hline(y=sel_thld, line_width=2, line_dash="dot", line_color="grey"
 with m1:
     with st.container(border=True, height = 370):
         st.caption("Mini-map (only top N countries from selection are highlighted)")
-        st.plotly_chart(fig_geo, use_container_width=True)
+        st.plotly_chart(fig_geo, use_container_width=True, config={"staticPlot": True})
 
     with st.container(border=True, height = 300):
         st.caption("Overview of Trend (Percent Change) across countries")
