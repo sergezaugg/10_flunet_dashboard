@@ -49,7 +49,7 @@ if df_plot.shape[0] > 0:
     mad_upe = qua + (ss.mad_factor*mad)
     hbt = df01['INF_ALL_BASELINE'].item()
     
-    st.write("N years back:" , ss.time_range_basli/52)
+    
     # st.write("HBT: ", hbt)
     if not np.isnan(hbt):
         fig.add_hline(y=hbt, line_width=1, line_dash="dot", line_color="red", annotation_text="HBT", 
@@ -69,3 +69,8 @@ if df_plot.shape[0] > 0:
     with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
+    with st.container(border=True, height = 150):
+        st.markdown(f""" 
+        Latest {int(ss.time_range_basli)} weeks ({ss.time_range_basli/52} years) are used to compute 
+        Historical Baseline Threshold (HBT) and shown here.
+        """)

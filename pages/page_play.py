@@ -17,7 +17,7 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Didactic page to play with some parameters used for data-preparation.""")
+    st.markdown(f""":primary[Summary:] Didactic page to play with some parameters.""")
     st.divider()
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
@@ -25,19 +25,17 @@ with st.sidebar:
     ma_bin_size = st.select_slider("Poly reg N weeks", options=np.arange(2,10), value = ss.ma_bin_size   , key="k_tre_02")
     ma_degree   = st.select_slider("Poly reg degree", options=np.arange(0,6), value = ss.ma_degree     , key="k_tre_03")
 
-
 # load data to local page 
 df = ss.df_data.copy()
 
 # keep only n most recent weeks 
-week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=ss.nw_for_demo)
+week_limit = df['ISO_WEEKSTARTDATE'].max() - pd.Timedelta(weeks=ss.time_range_basli)
 df = df[df["ISO_WEEKSTARTDATE"] > week_limit]
 
 # apply moving regression (for all countries)
 df_sel1 = filter_a_country(df, selected_country)
 df_sel2 = filter_a_data_source(df_sel1, sel_data_source)
 df_plot = polyreg_by_country_source(df_sel2, bin_size = ma_bin_size, deg = ma_degree)
-
 
 # plot if any reasonable data 
 if len(df_plot) < 10:
@@ -46,6 +44,9 @@ if len(df_plot) < 10:
 
 # get baseline of flu counts (for all countries)
 bthld = get_baseline_threshold(df, q = quantile_val, na_thld = ss.na_thld)
+
+# st.write(bthld)
+
 # select values for chosen country and ORIGIN_SOURCE
 thld = bthld.loc[bthld['COUNTRY']==selected_country]
 thld = thld.loc[thld['ORIGIN_SOURCE']==sel_data_source]
@@ -73,18 +74,11 @@ with c1:
 
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-   
-    c01,c02,c03 = st.columns([15,20,20])
-    height_all = 320
-    with c01:
-        with st.container(border=True, height = height_all):
-            st.markdown(f""":primary[Summary:] 
-            Only the latest {int(ss.nw_for_demo)} weeks are used to derive the Historical Baseline and shown here.  
-            :primary[Automatic Flu Season Detection:] Candidate Flu seasons are automatically detected (transparent rectangles) based on 
-            smoothed trace and Threshold using a simple hysteresis method (like a thermostat).
-            This is not yet used elsewhere in this app.
-            
-            """)
-  
-
-
+    with st.container(border=True, height = 150):
+        st.markdown(f""" 
+        Latest {int(ss.time_range_basli)} weeks ({ss.time_range_basli/52} years) shown here. 
+        Here, baseline threshold is based on simple quantile for ease of usage.   
+        Candidate Flu seasons are automatically detected (transparent rectangles) based on 
+        smoothed trace and Threshold using a simple hysteresis method (like a thermostat).  
+        Flu seasons detection is not yet used elsewhere in this app.
+        """)

@@ -29,7 +29,7 @@ if "df_data" not in ss:
     ss.max_countries_in_plots = 20
     ss.nw_global = 6 # weeks from ref to be used for stats 
     ss.top_n = 5 # how much to show in 'top' pages
-    ss.nw_for_demo = 52*4
+    # ss.nw_for_demo = 52*4
     # (1) advanced pre-processing (slope / percent change)
     ss.nw_ma = 20 # 15
     ss.ma_bin_size = 3 # 4
@@ -100,7 +100,7 @@ if "df_data" not in ss:
 
     #------------------------------
     # set widget defaults here if really needed here!
-    ss.setdefault("k_who_06", ['CHE', 'ESP', 'FRA'])
+    ss.setdefault("k_who_06", ['CHE', 'ESP'])
 
 # Protect widget keys from being deleted (for multi-page consistency across clicks)
 # official docu Option 4: Interrupt the widget clean-up process
@@ -151,8 +151,8 @@ pages = {
     "Explore":      [p06, p07],
     "Methods":      [p08b, p13, p08a],
     "About":        [p10],
-    "More":         [p12],
     "Disclaimer":   [p11],
+    "More":         [p12],
 }
 
 pg = st.navigation(pages, position="top")

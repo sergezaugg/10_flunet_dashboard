@@ -54,7 +54,7 @@ m0, m1 = st.columns([280, 250])
 
 # smart way to fill in by rows (using st columns )
 with m0:
-    with st.container(border = False, height = 700):
+    with st.container(border = False, height = 680):
         c1, c2, c3, c4  = st.columns([50, 90, 50, 90])
         col_pairs = [(c1, c2), (c3, c4)]
         for i, row in df_metri.iterrows():
@@ -63,6 +63,7 @@ with m0:
             with c_plot:
                 with st.container(border=True, height=rowheight):
                     st.plotly_chart(prerend1[i], use_container_width=True, config={"staticPlot": True})
+    st.caption("Tip: Scroll down to see more")
 
 # make geo map 
 # mollweide , orthographic , natural earth

@@ -65,7 +65,7 @@ with c0:
 with c1:
     with st.container(border=True, height = 750 + 15):
         # st.text("Data prep summary" )
-        st.markdown(f""":primary[Data Preparation Summary]""")
+        st.caption(f"""Data Preparation Summary""")
         st.dataframe(dat_info, hide_index=True)
         st.caption("Fresh: At least 1 value in recent range" )
         st.caption("Analysable: Enough recent data for slope")

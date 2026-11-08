@@ -52,7 +52,7 @@ m0, m1 = st.columns([280, 250])
 
 # smart way to fill in by rows (using st columns )
 with m0:
-    with st.container(border = False, height = 700):
+    with st.container(border = False, height = 680):
         c1, c2, c3, c4 = st.columns([50, 90, 50, 90])
         col_pairs = [(c1, c2), (c3, c4)]
         for i, row in df_metri.iterrows():
@@ -61,7 +61,8 @@ with m0:
                 make_metric_items_baseline(row, rowheight, ss.time_range_stats)
             with c_plot:
                 make_mini_trace_baseline(row, rowheight, df_trace, ss.trace_x_range_bl, ss.stats_x_range_bl) 
-
+    st.caption("Tip: Scroll down to see more")
+    
 # make geo map 
 # mollweide , orthographic , natural earth
 fig_geo = make_geo_map(df_metri, "REL_BURDEN", "viridis", height = 300, range_color = [0.0, 2.0], 
