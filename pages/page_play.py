@@ -17,8 +17,8 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Didactic page to play with some parameters.""")
-    st.divider()
+    st.markdown(f""":primary[Play with parameters]""")
+    # st.divider()
     selected_country = st.selectbox("Choose a country:", options=ss.ALL_COUNTRIES, placeholder="Select country", index=indx, key="k_tre_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], key="k_tre_04")
     quantile_val = st.slider("Quantile for baseline", min_value=0.0, max_value=1.0,  step=0.05, value = ss.quantile_val, format="%.2f", key="k_tre_05")

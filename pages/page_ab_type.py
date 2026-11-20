@@ -17,8 +17,8 @@ indx = int(np.where(ss.ALL_COUNTRIES == "CHE")[0][0])
 
 # build control items in sidebar
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Inspect temporal patterns in Influenza type A/B ratio per country.""")
-    st.divider()
+    st.markdown(f""":primary[Temporal patterns type A/B] """)
+    # st.divider()
     selected_country = st.selectbox("Choose a Country:", options=ss.ALL_COUNTRIES, placeholder="Type or select a country...", 
                                     index=indx, key="k_ab_01")
     sel_data_source = st.radio(label = "Data Source", options = ["SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_ab_02")

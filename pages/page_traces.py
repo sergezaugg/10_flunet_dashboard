@@ -11,8 +11,8 @@ from src.utils_plots import make_facet_line_plot
 
 # filter by region
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Explore historical and recent flu activity across countries.""")
-    st.divider()
+    st.markdown(f""":primary[Explore flu across countries]""")
+    # st.divider()
     who_regions = st.multiselect("Pre-select WHO Regions", options = ss.WHOREGION_levels.tolist(), 
         default = ss.WHOREGION_levels.tolist(), key="k_who_01")
     country_info_temp = st.empty() 

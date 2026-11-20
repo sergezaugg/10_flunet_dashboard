@@ -26,12 +26,12 @@ def apply_global_styles():
         </style>
     """)
 
-    # Reduce spacing around st.divider() 
     st.html("""
         <style>
-            div[data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] hr) {
-                margin-top: -1.5rem !important;
-                margin-bottom: -0.8rem !important;}
+        div[data-testid="stElementContainer"]:has(hr) {
+             margin-top: -1.5rem !important;
+             margin-bottom: -1.7em !important;}
+        }
         </style>
         """)
 
@@ -110,6 +110,28 @@ def apply_global_styles():
     </style>
     """)
 
+
+
+
+    # notice about BETA stage on top-left 
+    st.html("""
+    <style>
+        .beta-info {
+            position: fixed;
+            top: 50px;
+            left: 20px;
+            color: #ee2a2a;
+            font-size: 15px;
+            line-height: 1.4;
+            z-index: 999999;
+            pointer-events: none;
+        }
+    </style>
+    <div class="beta-info">
+        BETA
+    </div>
+    """)
+
     # copyright notice and version at bottom-left
     st.html("""
     <style>
@@ -128,7 +150,6 @@ def apply_global_styles():
         v0.11.3-β<br>© 2026 Serge Zaugg
     </div>
     """)
-
   
 
 
