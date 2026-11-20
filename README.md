@@ -7,6 +7,9 @@
 - Identification of recent activity 
 - Country-level trend analysis
 
+### Preview
+<img src="pics/app_screenshot.png" width="500">
+
 ### Dependencies
 - Python 3.12 
 - Streamlit 1.64.0
