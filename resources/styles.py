@@ -26,15 +26,17 @@ def apply_global_styles():
         </style>
     """)
 
-    # Reduce spacing around st.divider() 
+    # st.divider() make compact
     st.html("""
         <style>
-            div[data-testid="stElementContainer"]:has([data-testid="stMarkdownContainer"] hr) {
-                margin-top: -1.5rem !important;
-                margin-bottom: -0.8rem !important;}
+        div[data-testid="stElementContainer"]:has(hr) {
+             margin-top: -1.5rem !important;
+             margin-bottom: -1.7em !important;}
+        }
         </style>
         """)
-
+    
+  
     # reduce vertical space between navig and items(content
     st.html("""
         <style> 
@@ -99,15 +101,35 @@ def apply_global_styles():
     st.html("""
     <style>
         .stAppHeader a {
-            width: 90px !important;
-            min-width: 90px !important;
-            max-width: 90px !important;
+            flex-shrink: 0 !important;
+            width: 120px !important;
+            min-width: 120px !important;
+            max-width: 120px !important;
             box-sizing: border-box !important;
             justify-content: center !important;
             text-align: center !important;
             white-space: nowrap !important;
         }
     </style>
+    """)
+
+    # notice about BETA stage on top-left 
+    st.html("""
+    <style>
+        .beta-info {
+            position: fixed;
+            top: 50px;
+            left: 20px;
+            color: #ee2a2a;
+            font-size: 15px;
+            line-height: 1.4;
+            z-index: 999999;
+            pointer-events: none;
+        }
+    </style>
+    <div class="beta-info">
+        BETA
+    </div>
     """)
 
     # copyright notice and version at bottom-left
@@ -125,10 +147,9 @@ def apply_global_styles():
         }
     </style>
     <div class="app-label">
-        v0.11.3-β<br>© 2026 Serge Zaugg
+        v0.11.4-β<br>© 2026 Serge Zaugg
     </div>
     """)
-
   
 
 

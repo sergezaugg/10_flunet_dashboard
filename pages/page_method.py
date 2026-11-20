@@ -8,6 +8,8 @@ import pandas as pd
 from streamlit import session_state as ss
 import streamlit as st
 
+with st.sidebar:
+    st.markdown(f""":primary[Description of methods]""")
 
 c1, c2, c3 = st.columns([30, 10, 2])
 with c1:

@@ -114,7 +114,7 @@ for key in list(st.session_state.keys()):
 #------------------------------
 # build app's visible  frontend
 with st.sidebar:
-    st.markdown(f"""## :primary[**Global Influenza Explorer (BETA)**] """)
+    st.markdown(f"""## :primary[**Global Influenza Explorer**] """)
     st.markdown("""
     <div style="line-height: 1.3; margin-bottom: 0.9em;">
         <div>Data Hash: <code style="color:#ee2a2a">{}</code></div>
@@ -127,7 +127,7 @@ with st.sidebar:
         ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
     st.caption(ss.dl_status)
-    st.divider()
+    
  
 # make navigation
 p01a = st.Page("pages/page_age1.py", title="Data Age")
@@ -139,9 +139,9 @@ p06 = st.Page("pages/page_traces.py", title="History")
 p07 = st.Page("pages/page_ab_type.py", title="Type A vs B")
 p08a = st.Page("pages/page_play.py", title="Interactive illustration")
 p08b = st.Page("pages/page_method.py", title="Methods")
-p10 = st.Page("pages/page_info.py", title="Info")
-p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer")
-p12 = st.Page("pages/page_refresh.py", title="Maintenance")
+p10 = st.Page("pages/page_info.py", title="Info", visibility="hidden")
+p11 = st.Page("pages/page_disclaimer.py", title="Disclaimer", visibility="hidden")
+p12 = st.Page("pages/page_refresh.py", title="Maintenance", visibility="hidden")
 p13 = st.Page("pages/page_bl_thld.py", title="Historic-BL-Threshold")
 
 pages = {
@@ -154,6 +154,13 @@ pages = {
     "Disclaimer":   [p11],
     "More":         [p12],
 }
+
+with st.sidebar:
+    st.page_link(p10, label="About", icon=":material/menu_book:", use_container_width=True)
+    st.page_link(p11, label="Disclaimer", icon=":material/info:", use_container_width=True)
+    st.page_link(p12, label="Maintenance", icon=":material/handyman:", use_container_width=True)
+    # st.caption(" ") # small trick to have above text and link-regions aligned
+    st.divider()
 
 pg = st.navigation(pages, position="top")
 

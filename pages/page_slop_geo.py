@@ -11,8 +11,8 @@ from src.utils_pages import prepre_for_pages_10_13, rm_if_stat_na_per_source
 from src.utils_plots import make_bar_plot_pages_10_13, make_geo_map
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Visualize the geographical distribution of flu trend.""")
-    st.divider()
+    st.markdown(f""":primary[Geo distribution trend]""")
+    # st.divider()
     source_options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED", ]
     sel_source = st.radio("Data Source", options=source_options, index=0, key="k_p10_01")
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()

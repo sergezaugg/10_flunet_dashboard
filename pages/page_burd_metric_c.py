@@ -13,8 +13,8 @@ from src.utils_plots import make_metric_items_baseline, make_mini_trace_baseline
 from src.utils_plots import make_geo_map, make_per_source_strip_plot
 
 with st.sidebar:
-    st.markdown(f""":primary[Summary:] Rank countries with highest flu burden first.""")
-    st.divider()
+    st.markdown(f""":primary[Countries with highest burden]""")
+    # st.divider()
     all_recent_dates = pd.Series(ss.df_metri_merged["ISO_WEEKSTARTDATE"].unique()).sort_values()
     sel_data_source = st.radio(label = "Data Source", options = ["COMBINED", "SENTINEL", "NONSENTINEL", "NOTDEFINED"], index=0, key="k_abcvbfg_02")
     sel_top_n = st.select_slider("Top N to Display", options=[10,20,30], value = 20, key = "k_burd_top_n")
