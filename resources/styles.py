@@ -26,6 +26,7 @@ def apply_global_styles():
         </style>
     """)
 
+    # st.divider() make compact
     st.html("""
         <style>
         div[data-testid="stElementContainer"]:has(hr) {
@@ -34,7 +35,8 @@ def apply_global_styles():
         }
         </style>
         """)
-
+    
+  
     # reduce vertical space between navig and items(content
     st.html("""
         <style> 
@@ -99,9 +101,10 @@ def apply_global_styles():
     st.html("""
     <style>
         .stAppHeader a {
-            width: 90px !important;
-            min-width: 90px !important;
-            max-width: 90px !important;
+            flex-shrink: 0 !important;
+            width: 120px !important;
+            min-width: 120px !important;
+            max-width: 120px !important;
             box-sizing: border-box !important;
             justify-content: center !important;
             text-align: center !important;
@@ -109,9 +112,6 @@ def apply_global_styles():
         }
     </style>
     """)
-
-
-
 
     # notice about BETA stage on top-left 
     st.html("""
@@ -147,7 +147,7 @@ def apply_global_styles():
         }
     </style>
     <div class="app-label">
-        v0.11.3-β<br>© 2026 Serge Zaugg
+        v0.11.4-β<br>© 2026 Serge Zaugg
     </div>
     """)
   

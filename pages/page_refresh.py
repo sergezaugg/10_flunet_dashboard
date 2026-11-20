@@ -8,9 +8,9 @@ import streamlit as st
 from src.utils_preproc import download_flunet_data
 
 
-with st.sidebar:
-    st.markdown(f""":primary[Summary:] Maintenance access.""")
-    st.divider()
+# with st.sidebar:
+#     st.markdown(f""":primary[Maintenance access]""")
+#     # st.divider()
 
 c1, c2 = st.columns([15, 50])
 with c1:
