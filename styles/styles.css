@@ -1,0 +1,125 @@
+
+/*--------------------
+ Author      : Serge Zaugg
+ Description : Overall page styles (affects all pages)
+--------------------*/
+
+
+/* =========================
+   Main page layout
+========================= */
+
+.block-container {
+    max-width: 1500px;
+    min-width: 1400px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+[data-testid="stMainBlockContainer"] {
+    padding-top: 5rem;
+    padding-left: 1.8rem;
+}
+
+
+/* =========================
+   Header and navigation
+========================= */
+
+[data-testid="stHeader"] {
+    height: 4.1rem;
+    min-height: 4rem;
+}
+
+.stAppHeader {
+    background-color: #111111 !important;
+}
+
+/* Navigation group labels */
+.stAppHeader button {
+    background-color: #4f4f4f !important;
+    color: white !important;
+    border-radius: 5px !important;
+}
+
+/* Navigation group hover */
+.stAppHeader button:hover {
+    background-color: #3b4d63 !important;
+}
+
+/* Navigation page links */
+.stAppHeader a {
+    background-color: #4f4f4f !important;
+    color: white !important;
+
+    flex-shrink: 0 !important;
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+
+/* Navigation page hover */
+.stAppHeader a:hover {
+    background-color: #3b4d63 !important;
+}
+
+/* Active page */
+.stAppHeader a[aria-current="page"] {
+    background-color: #fb2d2d !important;
+    color: white !important;
+}
+
+/* Dropdown menu */
+.stAppHeader [role="menu"] {
+    background-color: #222222 !important;
+}
+
+
+/* =========================
+   Dividers
+========================= */
+
+div[data-testid="stElementContainer"]:has(hr) {
+    margin-top: -1.9rem !important;
+    margin-bottom: -1.0em !important;
+}
+
+
+/* =========================
+   Beta notice
+========================= */
+
+.beta-info {
+    position: fixed;
+    top: 50px;
+    left: 20px;
+    color: #ee2a2a;
+    font-size: 15px;
+    line-height: 1.4;
+    z-index: 999999;
+    pointer-events: none;
+}
+
+
+/* =========================
+   Copyright / version label
+========================= */
+
+.app-label {
+    position: fixed;
+    bottom: 15px;
+    left: 20px;
+    color: #9CA3AF;
+    font-size: 15px;
+    line-height: 1.4;
+    z-index: 999999;
+    pointer-events: none;
+}
