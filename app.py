@@ -20,7 +20,7 @@ css = Path("styles/styles.css").read_text(encoding="utf-8")
 st.html(f"<style>{css}</style>")
 # beta info top-left, v & (c) info bottom-left, logo
 st.html("""<div class="beta-info">BETA</div>""")
-st.html("""<div class="app-label">v0.11.5-CSSTEST-β<br>© 2026 Serge Zaugg</div>""")
+st.html("""<div class="app-label">v0.11.5-β<br>© 2026 Serge Zaugg</div>""")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
 
