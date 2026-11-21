@@ -7,14 +7,20 @@
 import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
+from pathlib import Path
 from src.utils_preproc import download_flunet_data, preprocess_flunet_data, get_latest_date_per_group
 from src.utils_preproc import compute_recent_slope, compute_recent_level, combine_bl_and_slope_summaries
-from resources.styles import apply_global_styles
 
 #------------------------------
 # prepare app 
 st.set_page_config(layout = "wide", initial_sidebar_state = "expanded", page_title="Global Influenza Explorer", page_icon='pics/z_logo_red.png')
-apply_global_styles() # apply custom CSS styles 
+
+# load styles 
+css = Path("styles/styles.css").read_text(encoding="utf-8")
+st.html(f"<style>{css}</style>")
+# beta info top-left, v & (c) info bottom-left, logo
+st.html("""<div class="beta-info">BETA</div>""")
+st.html("""<div class="app-label">v0.11.5-CSSTEST-β<br>© 2026 Serge Zaugg</div>""")
 st.logo(image='pics/z_logo_red.png', size="large", link="https://github.com/sergezaugg")
 pd.set_option('display.max_rows', 500)
 
