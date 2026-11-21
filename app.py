@@ -133,6 +133,7 @@ with st.sidebar:
         ss.ts_today.strftime("%Y-%m-%d")),
     unsafe_allow_html=True)
     st.caption(ss.dl_status)
+    st.divider()
     
  
 # make navigation

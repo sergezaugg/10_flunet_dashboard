@@ -88,8 +88,8 @@
 ========================= */
 
 div[data-testid="stElementContainer"]:has(hr) {
-    margin-top: -1.5rem !important;
-    margin-bottom: -1.7em !important;
+    margin-top: -1.9rem !important;
+    margin-bottom: -1.0em !important;
 }
 
 
